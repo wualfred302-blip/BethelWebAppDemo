@@ -93,16 +93,24 @@
 - Global styles: --primary #2563EB, zinc theme, Inter font, no dark mode
 - Root layout with "Bethel CGL" metadata, redirect to /apply
 - Zustand store with 7 data sections, navigation, no persistence
+- ProgressBar: 7 dots, animated fill line, display-only
+- Wizard page: slide transitions, Start Over on step 1
+- 7 step shell components with Back/Continue navigation
+- Phase 1 plans created and executed (3 of 4 plans complete, Plan 04 is human checkpoint)
+- Phase 2 context gathered: form layout, cascading address, validation decisions locked
 - Requirements completed: UI-01, UI-02, UI-03, UI-05, UI-06, FLOW-01, FLOW-02, FLOW-03, FLOW-04, FLOW-05
 
 ### What Comes Next
-1. Plan 04: Human verification checkpoint (last plan for Phase 1)
+1. Run `/gsd-plan-phase 2` to plan Phase 2: Form Steps 1-3
+2. Phase 2 will implement Business Info, Location (cascading PSGC), Contact & Coverage forms
+3. After Phase 2: Phase 3 (Steps 4-7), Phase 4 (PDF), Phase 5 (Polish)
 
 ### Key Files
 - `.planning/phases/01-foundation/01-foundation-01-SUMMARY.md` — Plan 1: scaffold
 - `.planning/phases/01-foundation/01-foundation-02-SUMMARY.md` — Plan 2: Zustand store
 - `.planning/phases/01-foundation/01-foundation-03-SUMMARY.md` — Plan 3: ProgressBar + wizard
 - `.planning/phases/01-foundation/01-foundation-04-PLAN.md` — Plan 4: Human verification
+- `.planning/phases/02-form-steps-1-3/02-CONTEXT.md` — Phase 2 decisions
 - `src/components/ProgressBar.tsx` — 7-dot animated progress bar
 - `src/app/apply/page.tsx` — Wizard page with slide transitions
 - `src/store/useApplicationStore.ts` — Zustand wizard state
