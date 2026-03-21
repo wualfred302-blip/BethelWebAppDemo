@@ -7,10 +7,10 @@
 
 ### Application Flow
 
-- [ ] **FLOW-01**: User progresses through 7 steps: Business Info → Location → Contact & Coverage → Documents → Cover Note & Billing → Payment → Success
-- [ ] **FLOW-02**: User can navigate back to previous steps without losing data
-- [ ] **FLOW-03**: User cannot skip ahead — each step must be completed before proceeding
-- [ ] **FLOW-04**: Form data persists across page refreshes (Zustand + localStorage)
+- [x] **FLOW-01**: User progresses through 7 steps: Business Info → Location → Contact & Coverage → Documents → Cover Note & Billing → Payment → Success
+- [x] **FLOW-02**: User can navigate back to previous steps without losing data
+- [x] **FLOW-03**: User cannot skip ahead — each step must be completed before proceeding
+- [x] **FLOW-04**: Form data persists across steps via Zustand in-memory store (no localStorage — page refresh starts fresh per user decision)
 - [ ] **FLOW-05**: Progress bar shows current step, completed steps (with checkmark), and remaining steps
 
 ### Business Information (Step 1)
@@ -124,10 +124,10 @@ Deferred to future release.
 | UI-03 | Phase 1 | Complete |
 | UI-05 | Phase 1 | Pending |
 | UI-06 | Phase 1 | Complete |
-| FLOW-01 | Phase 1 | Pending |
-| FLOW-02 | Phase 1 | Pending |
-| FLOW-03 | Phase 1 | Pending |
-| FLOW-04 | Phase 1 | Pending |
+| FLOW-01 | Phase 1 | Complete |
+| FLOW-02 | Phase 1 | Complete |
+| FLOW-03 | Phase 1 | Complete |
+| FLOW-04 | Phase 1 | Complete |
 | FLOW-05 | Phase 1 | Pending |
 
 ### Phase 2: Form Steps 1-3 (17 requirements)
