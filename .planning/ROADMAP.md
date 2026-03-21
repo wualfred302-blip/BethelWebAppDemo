@@ -25,12 +25,17 @@
 **Requirements**: UI-01, UI-02, UI-03, UI-05, UI-06, FLOW-01, FLOW-02, FLOW-03, FLOW-04, FLOW-05
 **Success Criteria** (what must be TRUE):
 1. App loads on mobile viewport (max-w-md centered, single-column layout)
-2. "Bethel" text appears in header, browser tab says "Bethel CGL"
-3. Progress bar displays 7 steps — current step highlighted in blue (#2563EB), completed steps show checkmark
+2. Browser tab says "Bethel CGL" — branding present via document title
+3. Progress bar displays 7 dots at top — current step highlighted in blue (#2563EB), completed steps show checkmark, animated fill line
 4. User can navigate back to a previous step without losing entered data
 5. User cannot skip ahead — Continue button is disabled until current step is valid
 6. State lifecycle managed correctly — no persistence middleware, page refresh starts fresh from Step 1, Start Over clears all state
+7. Steps slide horizontally (right on forward, left on back, ~250ms spring animation)
 **Plans**: 4 plans
+- [ ] 01-foundation-01-PLAN.md — Project scaffold & setup
+- [ ] 01-foundation-02-PLAN.md — Zustand store (no persistence)
+- [ ] 01-foundation-03-PLAN.md — ProgressBar & wizard page
+- [ ] 01-foundation-04-PLAN.md — Human verification checkpoint
 - [ ] 01-foundation-01-PLAN.md — Project scaffold (Next.js, shadcn/ui, globals, layout)
 - [ ] 01-foundation-02-PLAN.md — Zustand store (wizard state, no persistence)
 - [ ] 01-foundation-03-PLAN.md — ProgressBar + wizard page + step shells
