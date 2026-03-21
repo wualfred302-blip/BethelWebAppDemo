@@ -87,11 +87,11 @@
 ### UI & Styling
 
 - [ ] **UI-01**: Mobile-first single-column layout (max-w-md centered)
-- [ ] **UI-02**: Blue accent color (#2563EB) throughout — buttons, focus rings, progress bar, links
-- [ ] **UI-03**: Inter font
+- [x] **UI-02**: Blue accent color (#2563EB) throughout — buttons, focus rings, progress bar, links
+- [x] **UI-03**: Inter font
 - [ ] **UI-04**: Smooth page transitions using Framer Motion (slide left/right)
 - [ ] **UI-05**: App header shows "Bethel" text (no logo)
-- [ ] **UI-06**: Browser tab title: "Bethel CGL"
+- [x] **UI-06**: Browser tab title: "Bethel CGL"
 
 ## v2 Requirements
 
@@ -120,10 +120,10 @@ Deferred to future release.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | UI-01 | Phase 1 | Pending |
-| UI-02 | Phase 1 | Pending |
-| UI-03 | Phase 1 | Pending |
+| UI-02 | Phase 1 | Complete |
+| UI-03 | Phase 1 | Complete |
 | UI-05 | Phase 1 | Pending |
-| UI-06 | Phase 1 | Pending |
+| UI-06 | Phase 1 | Complete |
 | FLOW-01 | Phase 1 | Pending |
 | FLOW-02 | Phase 1 | Pending |
 | FLOW-03 | Phase 1 | Pending |
