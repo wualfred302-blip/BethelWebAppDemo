@@ -64,6 +64,10 @@
 | 2026-03-21 | pdf-lib for PDFs | Lightweight, no server dependency, works client-side |
 | 2026-03-21 | Placeholder pricing | User has pricing table but wants form built first |
 | 2026-03-21 | 5-phase roadmap | Derived from requirements; Foundation → Form Steps 1-3 → Steps 4-7 → PDF → Polish |
+| 2026-03-21 | No persistence | Page refresh = start over. State lives in memory only (Zustand without persist). |
+| 2026-03-21 | No header text | Just progress bar at top. No "Bethel" text in header. |
+| 2026-03-21 | Dots-only progress bar | No step labels. Completed=blue+check, Current=ring, Pending=grey. Animated fill line. |
+| 2026-03-21 | Horizontal slide transitions | 200-300ms spring. Forward=from right, Back=from left. |
 
 ### Blockers
 
@@ -81,16 +85,18 @@
 - Project initialized with PROJECT.md, REQUIREMENTS.md, config.json
 - Research completed: stack decisions, architecture pattern, pitfalls identified
 - Roadmap created: 5 phases, 58 v1 requirements mapped
+- Phase 1 context gathered: progress bar, transitions, state, header decisions locked
 
 ### What Comes Next
 1. Run `/gsd-plan-phase 1` to plan Phase 1: Foundation
 2. Phase 1 will set up Next.js project, Tailwind, shadcn/ui, wizard scaffold, Zustand store, progress bar
 
 ### Key Files
-- `C:\Users\ampoy\Bethel\bethel-cgl\.planning\PROJECT.md` — Project context
-- `C:\Users\ampoy\Bethel\bethel-cgl\.planning\REQUIREMENTS.md` — 58 v1 requirements
-- `C:\Users\ampoy\Bethel\bethel-cgl\.planning\ROADMAP.md` — 5-phase roadmap
-- `C:\Users\ampoy\Bethel\bethel-cgl\.planning\research\SUMMARY.md` — Research findings
+- `.planning/PROJECT.md` — Project context
+- `.planning/REQUIREMENTS.md` — 58 v1 requirements
+- `.planning/ROADMAP.md` — 5-phase roadmap
+- `.planning/research/SUMMARY.md` — Research findings
+- `.planning/phases/01-foundation/01-CONTEXT.md` — Phase 1 decisions
 - `C:\Users\ampoy\Barangay Linkod Project\BarangayLinkodWebRegistration-main` — Reference project
 - `C:\Users\ampoy\Downloads\App Assets\philippine_full.json` — PSGC data (2.3MB)
 
