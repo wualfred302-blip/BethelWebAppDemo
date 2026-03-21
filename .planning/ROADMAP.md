@@ -20,7 +20,7 @@
 ## Phase Details
 
 ### Phase 1: Foundation
-**Goal**: A working Next.js app with the wizard shell, progress bar, navigation logic, and state persistence — no form content yet, just the skeleton that works on mobile.
+**Goal**: A working Next.js app with the wizard shell, progress bar, navigation logic, and in-memory state management (no persistence) — no form content yet, just the skeleton that works on mobile.
 **Depends on**: Nothing
 **Requirements**: UI-01, UI-02, UI-03, UI-05, UI-06, FLOW-01, FLOW-02, FLOW-03, FLOW-04, FLOW-05
 **Success Criteria** (what must be TRUE):
@@ -29,8 +29,12 @@
 3. Progress bar displays 7 steps — current step highlighted in blue (#2563EB), completed steps show checkmark
 4. User can navigate back to a previous step without losing entered data
 5. User cannot skip ahead — Continue button is disabled until current step is valid
-6. Form data survives a full page refresh (Zustand + localStorage persistence)
-**Plans**: TBD
+6. State lifecycle managed correctly — no persistence middleware, page refresh starts fresh from Step 1, Start Over clears all state
+**Plans**: 4 plans
+- [ ] 01-foundation-01-PLAN.md — Project scaffold (Next.js, shadcn/ui, globals, layout)
+- [ ] 01-foundation-02-PLAN.md — Zustand store (wizard state, no persistence)
+- [ ] 01-foundation-03-PLAN.md — ProgressBar + wizard page + step shells
+- [ ] 01-foundation-04-PLAN.md — Human verification checkpoint
 
 ### Phase 2: Form Steps 1-3
 **Goal**: Users can fill out business information, select their Philippine address via cascading PSGC dropdowns, enter contact details, and see auto-calculated coverage and premium.
@@ -87,7 +91,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/0 | Not started | - |
+| 1. Foundation | 0/4 | Not started | - |
 | 2. Form Steps 1-3 | 0/0 | Not started | - |
 | 3. Form Steps 4-7 | 0/0 | Not started | - |
 | 4. PDF Generation | 0/0 | Not started | - |
