@@ -115,23 +115,94 @@ Deferred to future release.
 
 ## Traceability
 
+### Phase 1: Foundation (10 requirements)
+
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FLOW-01 to FLOW-05 | Phase 1-2 | Pending |
-| BIZ-01 to BIZ-05 | Phase 2 | Pending |
-| LOC-01 to LOC-06 | Phase 2 | Pending |
-| CONT-01 to CONT-06 | Phase 2 | Pending |
-| DOC-01 to DOC-08 | Phase 3 | Pending |
-| COVER-01 to COVER-05 | Phase 3 | Pending |
-| PAY-01 to PAY-06 | Phase 3 | Pending |
-| SUCCESS-01 to SUCCESS-07 | Phase 3 | Pending |
-| PDF-01 to PDF-04 | Phase 3 | Pending |
-| UI-01 to UI-06 | Phase 1 | Pending |
+| UI-01 | Phase 1 | Pending |
+| UI-02 | Phase 1 | Pending |
+| UI-03 | Phase 1 | Pending |
+| UI-05 | Phase 1 | Pending |
+| UI-06 | Phase 1 | Pending |
+| FLOW-01 | Phase 1 | Pending |
+| FLOW-02 | Phase 1 | Pending |
+| FLOW-03 | Phase 1 | Pending |
+| FLOW-04 | Phase 1 | Pending |
+| FLOW-05 | Phase 1 | Pending |
+
+### Phase 2: Form Steps 1-3 (17 requirements)
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| BIZ-01 | Phase 2 | Pending |
+| BIZ-02 | Phase 2 | Pending |
+| BIZ-03 | Phase 2 | Pending |
+| BIZ-04 | Phase 2 | Pending |
+| BIZ-05 | Phase 2 | Pending |
+| LOC-01 | Phase 2 | Pending |
+| LOC-02 | Phase 2 | Pending |
+| LOC-03 | Phase 2 | Pending |
+| LOC-04 | Phase 2 | Pending |
+| LOC-05 | Phase 2 | Pending |
+| LOC-06 | Phase 2 | Pending |
+| CONT-01 | Phase 2 | Pending |
+| CONT-02 | Phase 2 | Pending |
+| CONT-03 | Phase 2 | Pending |
+| CONT-04 | Phase 2 | Pending |
+| CONT-05 | Phase 2 | Pending |
+| CONT-06 | Phase 2 | Pending |
+
+### Phase 3: Form Steps 4-7 (26 requirements)
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| DOC-01 | Phase 3 | Pending |
+| DOC-02 | Phase 3 | Pending |
+| DOC-03 | Phase 3 | Pending |
+| DOC-04 | Phase 3 | Pending |
+| DOC-05 | Phase 3 | Pending |
+| DOC-06 | Phase 3 | Pending |
+| DOC-07 | Phase 3 | Pending |
+| DOC-08 | Phase 3 | Pending |
+| COVER-01 | Phase 3 | Pending |
+| COVER-02 | Phase 3 | Pending |
+| COVER-03 | Phase 3 | Pending |
+| COVER-04 | Phase 3 | Pending |
+| COVER-05 | Phase 3 | Pending |
+| PAY-01 | Phase 3 | Pending |
+| PAY-02 | Phase 3 | Pending |
+| PAY-03 | Phase 3 | Pending |
+| PAY-04 | Phase 3 | Pending |
+| PAY-05 | Phase 3 | Pending |
+| PAY-06 | Phase 3 | Pending |
+| SUCCESS-01 | Phase 3 | Pending |
+| SUCCESS-02 | Phase 3 | Pending |
+| SUCCESS-03 | Phase 3 | Pending |
+| SUCCESS-04 | Phase 3 | Pending |
+| SUCCESS-05 | Phase 3 | Pending |
+| SUCCESS-06 | Phase 3 | Pending |
+| SUCCESS-07 | Phase 3 | Pending |
+
+### Phase 4: PDF Generation (4 requirements)
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| PDF-01 | Phase 4 | Pending |
+| PDF-02 | Phase 4 | Pending |
+| PDF-03 | Phase 4 | Pending |
+| PDF-04 | Phase 4 | Pending |
+
+### Phase 5: Polish (1 requirement)
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| UI-04 | Phase 5 | Pending |
 
 **Coverage:**
-- v1 requirements: 42 total
-- Mapped to phases: 42
+- v1 requirements: 58 total
+- Mapped to phases: 58
 - Unmapped: 0
+- Orphaned: 0
 
 ---
 *Requirements defined: 2026-03-21*
