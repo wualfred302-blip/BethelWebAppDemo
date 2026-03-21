@@ -34,11 +34,8 @@
 **Plans**: 4 plans
 - [x] 01-foundation-01-PLAN.md — Project scaffold & setup
 - [x] 01-foundation-02-PLAN.md — Zustand store (no persistence)
-- [ ] 01-foundation-03-PLAN.md — ProgressBar & wizard page
+- [x] 01-foundation-03-PLAN.md — ProgressBar + wizard page + step shells
 - [ ] 01-foundation-04-PLAN.md — Human verification checkpoint
-- [x] 01-foundation-01-PLAN.md — Project scaffold (Next.js, shadcn/ui, globals, layout)
-- [x] 01-foundation-02-PLAN.md — Zustand store (wizard state, no persistence)
-- [ ] 01-foundation-03-PLAN.md — ProgressBar + wizard page + step shells
 - [ ] 01-foundation-04-PLAN.md — Human verification checkpoint
 
 ### Phase 2: Form Steps 1-3
@@ -96,7 +93,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 2/4 | In progress | - |
+| 1. Foundation | 3/4 | In progress | - |
 | 2. Form Steps 1-3 | 0/0 | Not started | - |
 | 3. Form Steps 4-7 | 0/0 | Not started | - |
 | 4. PDF Generation | 0/0 | Not started | - |
