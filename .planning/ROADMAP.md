@@ -51,7 +51,7 @@
 6. All Step 1-3 fields validate before user can proceed — required fields show inline errors
 **Plans**: 6 plans
 - [ ] 02-form-steps-1-3/02-01-PLAN.md — Zustand store update, Zod schemas, PSGC data utility, pricing table
-- [ ] 02-form-steps-1-3/02-02-PLAN.md — Select + Input UI components (with suffix support)
+- [x] 02-form-steps-1-3/02-02-PLAN.md — Select + Input UI components (with suffix support)
 - [ ] 02-form-steps-1-3/02-03-PLAN.md — BusinessInfoStep form (4 fields, blur validation)
 - [ ] 02-form-steps-1-3/02-04-PLAN.md — LocationStep cascading PSGC dropdowns
 - [ ] 02-form-steps-1-3/02-05-PLAN.md — ContactCoverageStep + auto-calculated coverage/premium
@@ -100,7 +100,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/4 | In progress | - |
-| 2. Form Steps 1-3 | 0/6 | Planned | - |
+| 2. Form Steps 1-3 | 1/6 | In progress | - |
 | 3. Form Steps 4-7 | 0/0 | Not started | - |
 | 4. PDF Generation | 0/0 | Not started | - |
 | 5. Polish | 0/0 | Not started | - |
