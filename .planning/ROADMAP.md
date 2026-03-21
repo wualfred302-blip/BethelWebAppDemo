@@ -49,7 +49,13 @@
 4. User can enter email address and Philippine mobile number with format validation
 5. Limit of Liability and Premium auto-calculate based on floor area and nature of business classification (Class I / Class II)
 6. All Step 1-3 fields validate before user can proceed — required fields show inline errors
-**Plans**: TBD
+**Plans**: 6 plans
+- [ ] 02-form-steps-1-3/02-01-PLAN.md — Zustand store update, Zod schemas, PSGC data utility, pricing table
+- [ ] 02-form-steps-1-3/02-02-PLAN.md — Select + Input UI components (with suffix support)
+- [ ] 02-form-steps-1-3/02-03-PLAN.md — BusinessInfoStep form (4 fields, blur validation)
+- [ ] 02-form-steps-1-3/02-04-PLAN.md — LocationStep cascading PSGC dropdowns
+- [ ] 02-form-steps-1-3/02-05-PLAN.md — ContactCoverageStep + auto-calculated coverage/premium
+- [ ] 02-form-steps-1-3/02-06-PLAN.md — Wizard page integration + human verification
 
 ### Phase 3: Form Steps 4-7
 **Goal**: Users can upload documents, review a cover note with billing, select a payment method and upload proof, then reach a success confirmation page.
@@ -94,7 +100,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/4 | In progress | - |
-| 2. Form Steps 1-3 | 0/0 | Not started | - |
+| 2. Form Steps 1-3 | 0/6 | Planned | - |
 | 3. Form Steps 4-7 | 0/0 | Not started | - |
 | 4. PDF Generation | 0/0 | Not started | - |
 | 5. Polish | 0/0 | Not started | - |
