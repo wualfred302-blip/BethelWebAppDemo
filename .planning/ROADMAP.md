@@ -32,12 +32,12 @@
 6. State lifecycle managed correctly — no persistence middleware, page refresh starts fresh from Step 1, Start Over clears all state
 7. Steps slide horizontally (right on forward, left on back, ~250ms spring animation)
 **Plans**: 4 plans
-- [ ] 01-foundation-01-PLAN.md — Project scaffold & setup
-- [ ] 01-foundation-02-PLAN.md — Zustand store (no persistence)
+- [x] 01-foundation-01-PLAN.md — Project scaffold & setup
+- [x] 01-foundation-02-PLAN.md — Zustand store (no persistence)
 - [ ] 01-foundation-03-PLAN.md — ProgressBar & wizard page
 - [ ] 01-foundation-04-PLAN.md — Human verification checkpoint
-- [ ] 01-foundation-01-PLAN.md — Project scaffold (Next.js, shadcn/ui, globals, layout)
-- [ ] 01-foundation-02-PLAN.md — Zustand store (wizard state, no persistence)
+- [x] 01-foundation-01-PLAN.md — Project scaffold (Next.js, shadcn/ui, globals, layout)
+- [x] 01-foundation-02-PLAN.md — Zustand store (wizard state, no persistence)
 - [ ] 01-foundation-03-PLAN.md — ProgressBar + wizard page + step shells
 - [ ] 01-foundation-04-PLAN.md — Human verification checkpoint
 
@@ -96,7 +96,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/4 | Not started | - |
+| 1. Foundation | 2/4 | In progress | - |
 | 2. Form Steps 1-3 | 0/0 | Not started | - |
 | 3. Form Steps 4-7 | 0/0 | Not started | - |
 | 4. PDF Generation | 0/0 | Not started | - |
