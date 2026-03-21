@@ -7,6 +7,7 @@ export const TOTAL_STEPS = 7;
 interface BusinessInfoData {
   fullName: string;
   businessName: string;
+  tin: string;
   floorArea: string;
   natureOfBusiness: string;
   streetAddress: string;
@@ -25,7 +26,7 @@ interface LocationData {
 
 interface ContactCoverageData {
   email: string;
-  mobile: string;
+  phone: string;
   limitOfLiability: string;
   premium: string;
 }
@@ -55,6 +56,7 @@ interface WizardState {
   nextStep: () => void;
   prevStep: () => void;
   goToStep: (step: number) => void;
+  setCurrentStep: (step: number) => void;
 
   // Data setters
   setBusinessInfo: (data: Partial<BusinessInfoData>) => void;
@@ -72,6 +74,7 @@ interface WizardState {
 const initialBusinessInfo: BusinessInfoData = {
   fullName: '',
   businessName: '',
+  tin: '',
   floorArea: '',
   natureOfBusiness: '',
   streetAddress: '',
@@ -90,7 +93,7 @@ const initialLocation: LocationData = {
 
 const initialContactCoverage: ContactCoverageData = {
   email: '',
-  mobile: '',
+  phone: '',
   limitOfLiability: '',
   premium: '',
 };
@@ -132,6 +135,11 @@ export const useApplicationStore = create<WizardState>()((set) => ({
       currentStep: Math.max(1, Math.min(step, TOTAL_STEPS)),
     }),
 
+  setCurrentStep: (step) =>
+    set({
+      currentStep: Math.max(1, Math.min(step, TOTAL_STEPS)),
+    }),
+
   // Data setters (merge-style)
   setBusinessInfo: (data) =>
     set((state) => ({
@@ -169,3 +177,9 @@ export const useApplicationStore = create<WizardState>()((set) => ({
       payment: initialPayment,
     }),
 }));
+
+// ── Type exports ────────────────────────────────────────────
+
+export type BusinessInfo = BusinessInfoData;
+export type Location = LocationData;
+export type Contact = ContactCoverageData;
