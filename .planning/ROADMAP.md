@@ -52,7 +52,7 @@
 **Plans**: 6 plans
 - [x] 02-form-steps-1-3/02-01-PLAN.md — Zustand store update, Zod schemas, PSGC data utility, pricing table
 - [x] 02-form-steps-1-3/02-02-PLAN.md — Select + Input UI components (with suffix support)
-- [ ] 02-form-steps-1-3/02-03-PLAN.md — BusinessInfoStep form (4 fields, blur validation)
+- [x] 02-form-steps-1-3/02-03-PLAN.md — BusinessInfoStep form (4 fields, blur validation)
 - [x] 02-form-steps-1-3/02-04-PLAN.md — LocationStep cascading PSGC dropdowns
 - [x] 02-form-steps-1-3/02-05-PLAN.md — ContactCoverageStep + auto-calculated coverage/premium
 - [ ] 02-form-steps-1-3/02-06-PLAN.md — Wizard page integration + human verification
@@ -100,7 +100,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/4 | In progress | - |
-| 2. Form Steps 1-3 | 4/6 | In progress | - |
+| 2. Form Steps 1-3 | 5/6 | In progress | - |
 | 3. Form Steps 4-7 | 0/0 | Not started | - |
 | 4. PDF Generation | 0/0 | Not started | - |
 | 5. Polish | 0/0 | Not started | - |
