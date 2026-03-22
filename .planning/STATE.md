@@ -20,8 +20,8 @@
 | Field | Value |
 |-------|-------|
 | Phase | 2 of 5 — Form Steps 1-3 |
-| Plan | Completed 02-05 (next: 02-03 or 02-04) |
-| Status | In progress — 3/6 plans complete |
+| Plan | Completed 02-04 (next: 02-03) |
+| Status | In progress — 4/6 plans complete |
 | Progress | ██░░░░░░░░░░░░░░░░░░ 2/5 phases (Phase 2 in progress) |
 
 ---
@@ -31,7 +31,7 @@
 | # | Phase | Status | Requirements | Plans | Completed |
 |---|-------|--------|--------------|-------|-----------|
 | 1 | Foundation | In progress | 10 | 4 | 3 |
-| 2 | Form Steps 1-3 | In progress | 17 | 6 | 3 |
+| 2 | Form Steps 1-3 | In progress | 17 | 6 | 4 |
 | 3 | Form Steps 4-7 | Not started | 26 | 0 | - |
 | 4 | PDF Generation | Not started | 4 | 0 | - |
 | 5 | Polish | Not started | 1 | 0 | - |
@@ -47,7 +47,7 @@
 | Phases completed | 0 / 5 |
 | Requirements completed | 28 / 58 |
 | Plans created | 10 / ~15 estimated |
-| Plans completed | 6 / 10 |
+| Plans completed | 7 / 10 |
 | Blockers | 0 |
 
 | Phase | Plan | Duration | Tasks | Files |
@@ -58,6 +58,7 @@
 | 02-form-steps-1-3 | P02 | ~8min | 2 | 2 |
 | 02-form-steps-1-3 | P01 | 4min | 3 | 4 |
 | 02-form-steps-1-3 | P05 | ~5min | 1 | 1 |
+| 02-form-steps-1-3 | P04 | ~10min | 1 | 2 |
 
 ## Accumulated Context
 
@@ -111,11 +112,12 @@
 - Zustand store updated: tin field, phone field (renamed from mobile), setCurrentStep, type exports
 - Zod validation schemas: businessInfo, location, contact with PH-specific patterns
 - PSGC data utility: load, getRegions, getProvinces, getCities, getBarangays (cached fetch, nested traversal)
+- LocationStep built: 4 cascading PSGC dropdowns, parent-clears-children, blur validation, store integration
 - Requirements completed: UI-01, UI-02, UI-03, UI-05, UI-06, FLOW-01, FLOW-02, FLOW-03, FLOW-04, FLOW-05, BIZ-01, BIZ-02, BIZ-03, BIZ-04, BIZ-05, LOC-01, LOC-02, LOC-03, LOC-04, LOC-05, LOC-06, CONT-01, CONT-02, CONT-03, CONT-04, CONT-05, CONT-06
 
 ### What Comes Next
 1. Execute 02-03-PLAN.md: BusinessInfoStep form (4 fields, blur validation)
-2. Execute 02-04-PLAN.md: LocationStep cascading PSGC dropdowns
+2. Execute 02-06-PLAN.md: Wizard page integration + human verification
 
 ### Key Files
 - `.planning/phases/01-foundation/01-foundation-01-SUMMARY.md` — Plan 1: scaffold
@@ -126,6 +128,7 @@
 - `.planning/phases/02-form-steps-1-3/02-01-SUMMARY.md` — Plan 1: Store update, Zod schemas, PSGC data
 - `.planning/phases/02-form-steps-1-3/02-02-SUMMARY.md` — Plan 2: Select + Input UI components
 - `.planning/phases/02-form-steps-1-3/02-05-SUMMARY.md` — Plan 5: ContactCoverageStep with auto-calculated coverage/premium
+- `.planning/phases/02-form-steps-1-3/02-04-SUMMARY.md` — Plan 4: LocationStep with cascading PSGC dropdowns
 - `src/lib/validation.ts` — Zod schemas for business, location, contact
 - `src/lib/psgc-data.ts` — PSGC cascading address data utility
 - `src/components/ui/select.tsx` — Standalone Select compound component
