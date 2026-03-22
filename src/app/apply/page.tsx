@@ -1,28 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApplicationStore, TOTAL_STEPS } from '@/store/useApplicationStore';
 import { ProgressBar } from '@/components/ProgressBar';
-import { Button } from '@/components/ui/button';
 import BusinessInfoStep from './steps/BusinessInfoStep';
-import LocationStep from './steps/LocationStep';
 import ContactCoverageStep from './steps/ContactCoverageStep';
-import DocumentsStep from './steps/DocumentsStep';
-import CoverNoteStep from './steps/CoverNoteStep';
-import PaymentStep from './steps/PaymentStep';
-import SuccessStep from './steps/SuccessStep';
+import ReviewPayStep from './steps/ReviewPayStep';
+import DoneStep from './steps/DoneStep';
 
 // ── Step definitions ──────────────────────────────────────
 
 const STEPS = [
   { label: 'Business', component: BusinessInfoStep },
-  { label: 'Location', component: LocationStep },
   { label: 'Contact', component: ContactCoverageStep },
-  { label: 'Documents', component: DocumentsStep },
-  { label: 'Cover Note', component: CoverNoteStep },
-  { label: 'Payment', component: PaymentStep },
-  { label: 'Success', component: SuccessStep },
+  { label: 'Review & Pay', component: ReviewPayStep },
+  { label: 'Done', component: DoneStep },
 ] as const;
 
 // ── Slide transition variants ─────────────────────────────
@@ -45,18 +38,49 @@ const variants = {
 // ── Page component ────────────────────────────────────────
 
 export default function ApplyPage() {
-  const { currentStep, nextStep, prevStep, reset } = useApplicationStore();
+  const { currentStep, nextStep, prevStep, goToStep } = useApplicationStore();
   const [direction, setDirection] = useState(0);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     setDirection(1);
     nextStep();
-  };
+  }, [nextStep]);
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     setDirection(-1);
     prevStep();
-  };
+  }, [prevStep]);
+
+  // ── Browser back button support ─────────────────────────
+  useEffect(() => {
+    window.history.pushState({ step: currentStep }, '', '/apply');
+  }, [currentStep]);
+
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      const step = e.state?.step;
+      if (step && step >= 1 && step <= TOTAL_STEPS) {
+        goToStep(step);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [goToStep]);
+
+  // ── Enter key submission for placeholder steps ──────────
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        const target = e.target as HTMLElement;
+        // Don't interfere with form submissions (forms handle their own Enter)
+        if (target.tagName === 'FORM' || target.closest('form')) return;
+        e.preventDefault();
+        handleNext();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleNext]);
 
   const CurrentStepComponent = STEPS[currentStep - 1].component;
   const isFirstStep = currentStep === 1;
@@ -73,14 +97,6 @@ export default function ApplyPage() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-md mx-auto w-full px-4 py-6">
-        {isFirstStep && (
-          <div className="flex justify-end mb-4">
-            <Button variant="ghost" onClick={reset}>
-              Start Over
-            </Button>
-          </div>
-        )}
-
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={currentStep}
@@ -90,7 +106,7 @@ export default function ApplyPage() {
             animate="center"
             exit="exit"
             transition={{
-              x: { type: 'spring', stiffness: 300, damping: 30 },
+              x: { duration: 0.2, ease: 'easeOut' },
               opacity: { duration: 0.2 },
             }}
           >
