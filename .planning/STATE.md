@@ -19,10 +19,10 @@
 
 | Field | Value |
 |-------|-------|
-| Phase | 1 of 5 — Foundation (needs rework for 4-step flow) |
-| Plan | TBD |
-| Status | Needs rework — flow changed from 7 steps to 4 steps |
-| Progress | ░░░░░░░░░░░░░░░░░░░░ 0/5 phases (Phase 1 needs rework) |
+| Phase | 1 of 5 — Foundation |
+| Plan | 01-01 complete |
+| Status | Wizard restructured to 4-step flow |
+| Progress | ▓░░░░░░░░░░░░░░░░░░░ 1/5 phases (Phase 1 plan 1 done) |
 
 ---
 
@@ -41,7 +41,7 @@
 
 | # | Phase | Status | Requirements | Plans | Completed |
 |---|-------|--------|--------------|-------|-----------|
-| 1 | Foundation | Needs rework | 10 | TBD | - |
+| 1 | Foundation | In progress | 10 | 1/1 | 01-01 ✅ |
 | 2 | Steps 1-2 | Not started | 21 | 0 | - |
 | 3 | Step 3 | Not started | 15 | 0 | - |
 | 4 | Step 4 + PDF | Not started | 11 | 0 | - |
@@ -56,10 +56,10 @@
 | Metric | Value |
 |--------|-------|
 | Phases completed | 0 / 5 |
-| Requirements completed | 10 / 58 (UI-02, UI-03, UI-06, FLOW-02, FLOW-03, FLOW-04 from Phase 1) |
-| Plans created | 0 (old plans deprecated) |
-| Plans completed | 0 |
-| Blockers | Phase 1 needs rework for 4-step flow |
+| Requirements completed | 17 / 58 (added FLOW-01, FLOW-05, UI-05 from Phase 1 Plan 1) |
+| Plans created | 1 |
+| Plans completed | 1 (01-01) |
+| Blockers | None |
 
 ---
 
@@ -85,7 +85,6 @@
 
 ### Blockers
 
-- Phase 1 needs rework: store has 7 step definitions, ProgressBar has 7 dots, wizard page has 7 step components. Needs update to 4-step structure.
 - Old Phase 2 plans (02-01 through 02-06) are deprecated. Phase 2 scope changed (now 21 requirements, includes documents).
 
 ### Open Questions
@@ -106,20 +105,23 @@
 - BusinessInfoStep built (4 fields, blur validation, 24 business categories)
 - LocationStep built (4 cascading PSGC dropdowns, parent-clears-children)
 - ContactCoverageStep built (needs split — contact stays, coverage/premium moves to Phase 3)
+- **Plan 01-01 complete:** Wizard page restructured to 4-step flow with ReviewPayStep/DoneStep placeholders, browser back navigation, ease-out transitions, Enter key support
 
 ### What Comes Next
-1. Rework Phase 1: update store (7→4 steps), ProgressBar (7→4 dots), wizard page (7→4 step components)
+1. ~~Rework Phase 1: update store (7→4 steps), ProgressBar (7→4 dots), wizard page (7→4 step components)~~ ✅ Done
 2. Replan Phase 2: Steps 1-2 (Business + Contact & Docs, 21 requirements)
 3. Plan Phase 3: Step 3 (Review & Pay, 15 requirements)
 4. Plan Phase 4: Step 4 + PDF (Done + PDF, 11 requirements)
 
 ### Key Files
-- `src/store/useApplicationStore.ts` — Zustand store (needs 7→4 step update)
-- `src/components/ProgressBar.tsx` — Progress bar (needs 7→4 dot update)
-- `src/app/apply/page.tsx` — Wizard page (needs 7→4 step update)
-- `src/app/apply/steps/BusinessInfoStep.tsx` — Business form (still valid for Step 1)
-- `src/app/apply/steps/LocationStep.tsx` — Location cascading dropdowns (moves into Step 1)
-- `src/app/apply/steps/ContactCoverageStep.tsx` — Needs split: contact part stays, coverage moves
+- `src/store/useApplicationStore.ts` — Zustand store (TOTAL_STEPS=4, ready)
+- `src/components/ProgressBar.tsx` — Progress bar (4 dots, ready)
+- `src/app/apply/page.tsx` — Wizard page (4-step flow, ✅ restructured)
+- `src/app/apply/steps/BusinessInfoStep.tsx` — Business form (Step 1, ready)
+- `src/app/apply/steps/ContactCoverageStep.tsx` — Contact form (Step 2, ready)
+- `src/app/apply/steps/ReviewPayStep.tsx` — Step 3 placeholder (✅ created)
+- `src/app/apply/steps/DoneStep.tsx` — Step 4 placeholder (✅ created)
+- `src/app/apply/steps/LocationStep.tsx` — Location cascading dropdowns (moves into Step 1 Phase 2)
 - `src/lib/validation.ts` — Zod schemas
 - `src/lib/psgc-data.ts` — PSGC data utility
 - `src/components/ui/select.tsx` — Select compound component
@@ -130,4 +132,4 @@
 ---
 
 *Created: 2026-03-21 by roadmap initialization*
-*Last updated: 2026-03-22 — Reworked to 4-step flow*
+*Last updated: 2026-03-22 — Plan 01-01 complete: 4-step wizard flow*
