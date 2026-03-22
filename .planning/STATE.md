@@ -75,9 +75,9 @@
 | 2026-03-21 | pdf-lib for PDFs | Lightweight, no server dependency, works client-side |
 | 2026-03-21 | No persistence | Page refresh = start over. State lives in memory only (Zustand without persist). |
 | 2026-03-21 | No header text | Just progress bar at top. No "Bethel" text in header. |
-| 2026-03-21 | Dots-only progress bar | No step labels. Completed=blue+check, Current=ring, Pending=grey. Animated fill line. |
+| 2026-03-21 | Dots-only progress bar | No step labels. Completed=blue+check, Current=scale(1.3) no ring, Pending=grey. Animated fill line. |
 | 2026-03-21 | Horizontal slide transitions | 200-300ms spring. Forward=from right, Back=from left. |
-| 2026-03-21 | Ring style on current step dot | ring-2 ring-blue-600 ring-offset-2 + scale 1.3 via Framer Motion |
+| 2026-03-21 | ~~Ring style on current step dot~~ | Superseded: ring removed, scale 1.3 only |
 | 2026-03-21 | Standalone Select (no shadcn) | Full control, simpler for cascading dropdowns |
 | 2026-03-22 | **4-step flow (Option A)** | UX improvement — 7 steps over-fragmented a simple task. Merged Business+Location, Contact+Docs, Review+Pay+Payment |
 | 2026-03-22 | Billing on Review step | Coverage/premium calculated on Step 3 (Review & Pay), not on contact entry step |
