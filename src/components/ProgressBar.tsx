@@ -45,10 +45,7 @@ export function ProgressBar({ currentStep, className }: ProgressBarProps) {
                     ? '#2563EB'
                     : '#a1a1aa',
                 }}
-                className={cn(
-                  'h-2.5 w-2.5 rounded-full',
-                  isCurrent && 'ring-2 ring-blue-600 ring-offset-2'
-                )}
+                className="h-2.5 w-2.5 rounded-full"
               >
                 {isCompleted && (
                   <div className="flex items-center justify-center h-full">
