@@ -30,9 +30,9 @@ interface ContactData {
 }
 
 interface DocumentsData {
-  businessPermit: string | null;
-  dtiSec: string | null;
-  validId: string | null;
+  businessPermit: File | null;
+  dtiSec: File | null;
+  validId: File | null;
 }
 
 interface PaymentData {
