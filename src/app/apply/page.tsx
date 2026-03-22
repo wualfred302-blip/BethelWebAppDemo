@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApplicationStore, TOTAL_STEPS } from '@/store/useApplicationStore';
-import { cn } from '@/lib/utils';
+import { ProgressBar } from '@/components/ProgressBar';
 import { Button } from '@/components/ui/button';
 import BusinessInfoStep from './steps/BusinessInfoStep';
 import LocationStep from './steps/LocationStep';
@@ -42,49 +42,6 @@ const variants = {
   }),
 };
 
-// ── Step indicator (3-step circles) ──────────────────────
-
-function StepIndicator({ currentStep }: { currentStep: number }) {
-  return (
-    <div className="flex items-center justify-center gap-2 mb-8">
-      {STEPS.slice(0, 3).map((step, i) => (
-        <div key={i} className="flex items-center gap-2">
-          <div
-            className={cn(
-              'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium',
-              currentStep === i + 1
-                ? 'bg-[#2563EB] text-white'
-                : currentStep > i + 1
-                  ? 'bg-green-500 text-white'
-                  : 'bg-gray-200 text-gray-500'
-            )}
-          >
-            {currentStep > i + 1 ? '✓' : i + 1}
-          </div>
-          <span
-            className={cn(
-              'text-sm hidden sm:inline',
-              currentStep === i + 1
-                ? 'text-[#2563EB] font-medium'
-                : 'text-gray-400'
-            )}
-          >
-            {step.label}
-          </span>
-          {i < 2 && (
-            <div
-              className={cn(
-                'w-8 h-0.5',
-                currentStep > i + 1 ? 'bg-green-500' : 'bg-gray-200'
-              )}
-            />
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
-
 // ── Page component ────────────────────────────────────────
 
 export default function ApplyPage() {
@@ -106,12 +63,16 @@ export default function ApplyPage() {
   const isLastStep = currentStep === TOTAL_STEPS;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-md mx-auto px-4 py-8">
-        {/* Step indicator circles */}
-        <StepIndicator currentStep={currentStep} />
+    <div className="min-h-screen bg-zinc-50 flex flex-col">
+      {/* Progress Bar at top */}
+      <div className="bg-white px-4 pt-4">
+        <div className="max-w-md mx-auto">
+          <ProgressBar currentStep={currentStep} />
+        </div>
+      </div>
 
-        {/* Start over button (step 1 only) */}
+      {/* Main Content */}
+      <main className="flex-1 max-w-md mx-auto w-full px-4 py-6">
         {isFirstStep && (
           <div className="flex justify-end mb-4">
             <Button variant="ghost" onClick={reset}>
@@ -120,7 +81,6 @@ export default function ApplyPage() {
           </div>
         )}
 
-        {/* Step content with slide transitions */}
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={currentStep}
@@ -142,7 +102,7 @@ export default function ApplyPage() {
             />
           </motion.div>
         </AnimatePresence>
-      </div>
+      </main>
     </div>
   );
 }
