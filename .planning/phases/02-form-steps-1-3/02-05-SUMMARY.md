@@ -111,3 +111,10 @@ max-w-md mx-auto space-y-6
 ## Auth Gates
 
 None — no authentication required for this plan.
+
+## Self-Check: PASSED
+
+- [x] `src/app/apply/steps/ContactCoverageStep.tsx` exists
+- [x] `.planning/phases/02-form-steps-1-3/02-05-SUMMARY.md` exists
+- [x] Commit `534d35c` exists (feat: ContactCoverageStep implementation)
+- [x] Commit `444def9` exists (docs: summary + state update)
