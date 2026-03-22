@@ -35,15 +35,18 @@
 **Goal**: A working Next.js app with the 4-step wizard shell, progress bar (4 dots), navigation logic, and in-memory state management (no persistence) — no form content yet, just the skeleton that works on mobile.
 **Depends on**: Nothing
 **Requirements**: UI-01, UI-02, UI-03, UI-05, UI-06, FLOW-01, FLOW-02, FLOW-03, FLOW-04, FLOW-05
-**Success Criteria** (what must be TRUE):
-1. App loads on mobile viewport (max-w-md centered, single-column layout)
-2. Browser tab says "Bethel CGL" — branding present via document title
-3. Progress bar displays 4 dots at top — current step highlighted in blue (#2563EB), completed steps show checkmark, animated fill line
-4. User can navigate back to a previous step without losing entered data
-5. User cannot skip ahead — Continue button is disabled until current step is valid
-6. State lifecycle managed correctly — no persistence middleware, page refresh starts fresh from Step 1, Start Over clears all state
-7. Steps slide horizontally (right on forward, left on back, ~250ms spring animation)
-**Plans**: TBD (needs rework — was 4 plans for 7-step wizard)
+**Success Criteria** (observable user behaviors):
+1. User sees exactly 4 dots in the progress bar — completed dots show blue fill + white checkmark, current dot is larger (no ring)
+2. User can click Continue to advance through all 4 steps with horizontal slide transitions (~200ms, ease-out, no bounce)
+3. User can click Back to return to previous steps with reverse slide animation
+4. User can press browser back button to navigate between wizard steps without leaving /apply
+5. User can press Enter to advance placeholder steps (steps 3-4)
+6. No Start Over button is visible on any step
+7. URL stays at /apply during all navigation
+**Plans**: 3 plans
+- [ ] 01-01-PLAN.md — Wizard page restructure + placeholder steps
+- [ ] 01-02-PLAN.md — ProgressBar visual fix (remove ring)
+- [ ] 01-03-PLAN.md — End-to-end verification checkpoint
 
 ### Phase 2: Steps 1-2 — Business + Contact & Docs
 **Goal**: Users can fill out business information with cascading PSGC address, enter contact details, and upload documents — all validated before proceeding.
@@ -58,7 +61,9 @@
 6. Uploaded files validated for type (JPG, PNG, PDF) and size (max 5MB) with clear error messages
 7. User can remove and re-upload files
 8. All Step 1-2 fields validate before user can proceed — required fields show inline errors
-**Plans**: TBD
+**Plans**: 2 plans
+- [ ] 02-steps-1-2/02-01-PLAN.md — Merge Location into BusinessInfoStep (searchable combobox cascading PSGC dropdowns)
+- [ ] 02-steps-1-2/02-02-PLAN.md — Build DocumentsStep with drag-drop upload + combine into Step 2
 
 ### Phase 3: Step 3 — Review & Pay
 **Goal**: Users see a summary of their application, the calculated premium and billing, can download a cover note PDF, select a payment method, and upload proof of payment.
@@ -103,8 +108,8 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | TBD | Needs rework (7→4 steps) | - |
-| 2. Steps 1-2 | 0/0 | Not started | - |
+| 1. Foundation | 0/3 | Planned | - |
+| 2. Steps 1-2 | 0/2 | Planned | - |
 | 3. Step 3 | 0/0 | Not started | - |
 | 4. Step 4 + PDF | 0/0 | Not started | - |
 | 5. Polish | 0/0 | Not started | - |
