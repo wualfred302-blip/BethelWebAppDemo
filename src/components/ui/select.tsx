@@ -109,10 +109,11 @@ function Select({ value, onValueChange, disabled = false, children }: SelectProp
 
 interface SelectTriggerProps {
   className?: string;
+  onBlur?: () => void;
   children: ReactNode;
 }
 
-function SelectTrigger({ className, children }: SelectTriggerProps) {
+function SelectTrigger({ className, onBlur, children }: SelectTriggerProps) {
   const { open, setOpen, disabled, displayLabel, placeholder } = useSelectContext();
 
   return (
@@ -123,6 +124,7 @@ function SelectTrigger({ className, children }: SelectTriggerProps) {
       aria-haspopup="listbox"
       disabled={disabled}
       onClick={() => !disabled && setOpen(!open)}
+      onBlur={onBlur}
       className={cn(
         'flex h-12 w-full items-center justify-between rounded-lg border border-gray-300 bg-white px-4 text-sm text-left',
         'focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent',
