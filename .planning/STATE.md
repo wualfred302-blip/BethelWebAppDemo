@@ -19,10 +19,21 @@
 
 | Field | Value |
 |-------|-------|
-| Phase | 2 of 5 — Form Steps 1-3 |
-| Plan | Completed 02-03 (next: 02-06) |
-| Status | In progress — 5/6 plans complete |
-| Progress | ██░░░░░░░░░░░░░░░░░░ 2/5 phases (Phase 2 in progress) |
+| Phase | 1 of 5 — Foundation (needs rework for 4-step flow) |
+| Plan | TBD |
+| Status | Needs rework — flow changed from 7 steps to 4 steps |
+| Progress | ░░░░░░░░░░░░░░░░░░░░ 0/5 phases (Phase 1 needs rework) |
+
+---
+
+## Flow (Option A — 4 Steps)
+
+| Step | Name | Contents |
+|------|------|----------|
+| 1 | **Business** | Name, TIN, Nature of Business, Floor Area, Street Address, Location (Region→Province→City→Barangay) |
+| 2 | **Contact & Docs** | Phone, Email, Upload Business Permit, DTI/SEC, Valid ID |
+| 3 | **Review & Pay** | Summary, premium calculated, billing invoice, cover note PDF, payment method, proof of payment |
+| 4 | **Done** | Success checkmark, e-policy PDF, Bethel contact info, product links |
 
 ---
 
@@ -30,10 +41,10 @@
 
 | # | Phase | Status | Requirements | Plans | Completed |
 |---|-------|--------|--------------|-------|-----------|
-| 1 | Foundation | In progress | 10 | 4 | 3 |
-| 2 | Form Steps 1-3 | In progress | 17 | 6 | 4 |
-| 3 | Form Steps 4-7 | Not started | 26 | 0 | - |
-| 4 | PDF Generation | Not started | 4 | 0 | - |
+| 1 | Foundation | Needs rework | 10 | TBD | - |
+| 2 | Steps 1-2 | Not started | 21 | 0 | - |
+| 3 | Step 3 | Not started | 15 | 0 | - |
+| 4 | Step 4 + PDF | Not started | 11 | 0 | - |
 | 5 | Polish | Not started | 1 | 0 | - |
 
 **Total v1:** 58 requirements across 5 phases
@@ -45,21 +56,12 @@
 | Metric | Value |
 |--------|-------|
 | Phases completed | 0 / 5 |
-| Requirements completed | 28 / 58 |
-| Plans created | 10 / ~15 estimated |
-| Plans completed | 8 / 10 |
-| Blockers | 0 |
+| Requirements completed | 10 / 58 (UI-02, UI-03, UI-06, FLOW-02, FLOW-03, FLOW-04 from Phase 1) |
+| Plans created | 0 (old plans deprecated) |
+| Plans completed | 0 |
+| Blockers | Phase 1 needs rework for 4-step flow |
 
-| Phase | Plan | Duration | Tasks | Files |
-|-------|------|----------|-------|-------|
-| 01-foundation | P01 | 25min | 3 | 15 |
-| 01-foundation | P02 | 1min | 1 | 1 |
-| 01-foundation | P03 | 2min | 2 | 9 |
-| 02-form-steps-1-3 | P02 | ~8min | 2 | 2 |
-| 02-form-steps-1-3 | P01 | 4min | 3 | 4 |
-| 02-form-steps-1-3 | P05 | ~5min | 1 | 1 |
-| 02-form-steps-1-3 | P04 | ~10min | 1 | 2 |
-| 02-form-steps-1-3 | P03 | ~2min | 2 | 1 |
+---
 
 ## Accumulated Context
 
@@ -69,25 +71,22 @@
 |------|----------|-----------|
 | 2026-03-21 | No authentication | Simplifies flow, matches real PH insurer CGL web apps |
 | 2026-03-21 | Blue accent (#2563EB) | User preference, professional insurance feel |
-| 2026-03-21 | 7-step wizard | Matches Bethel's documented flow from their PDF spec |
 | 2026-03-21 | PSGC cascading address | User provided PSGC data file, standard for PH addresses |
 | 2026-03-21 | pdf-lib for PDFs | Lightweight, no server dependency, works client-side |
-| 2026-03-21 | Placeholder pricing | User has pricing table but wants form built first |
-| 2026-03-21 | 5-phase roadmap | Derived from requirements; Foundation → Form Steps 1-3 → Steps 4-7 → PDF → Polish |
 | 2026-03-21 | No persistence | Page refresh = start over. State lives in memory only (Zustand without persist). |
 | 2026-03-21 | No header text | Just progress bar at top. No "Bethel" text in header. |
 | 2026-03-21 | Dots-only progress bar | No step labels. Completed=blue+check, Current=ring, Pending=grey. Animated fill line. |
 | 2026-03-21 | Horizontal slide transitions | 200-300ms spring. Forward=from right, Back=from left. |
-| 2026-03-21 | Ring style on current step dot | ring-2 ring-blue-600 ring-offset-2 + scale 1.3 via Framer Motion for visual prominence |
-| 2026-03-21 | Standalone Select (no shadcn) | Avoids Radix/shadcn dependency, full control over open/close behavior, simpler for cascading dropdowns |
-| 2026-03-21 | TIN field added to store | Required for PH CGL insurance TIN format validation (XXX-XXX-XXX-XXX) |
-| 2026-03-21 | Renamed mobile to phone | Aligns store field naming with Zod validation schema for type consistency |
-| 2026-03-21 | PSGC nested traversal (no flatten) | Simpler, avoids memory overhead for cascading dropdown use case |
-| 2026-03-22 | Coverage/premium display-only | Auto-calculated from floor area, not editable by user; store raw numbers as strings |
+| 2026-03-21 | Ring style on current step dot | ring-2 ring-blue-600 ring-offset-2 + scale 1.3 via Framer Motion |
+| 2026-03-21 | Standalone Select (no shadcn) | Full control, simpler for cascading dropdowns |
+| 2026-03-22 | **4-step flow (Option A)** | UX improvement — 7 steps over-fragmented a simple task. Merged Business+Location, Contact+Docs, Review+Pay+Payment |
+| 2026-03-22 | Billing on Review step | Coverage/premium calculated on Step 3 (Review & Pay), not on contact entry step |
+| 2026-03-22 | No execution verifier | User disabled verifier in GSD settings |
 
 ### Blockers
 
-(None)
+- Phase 1 needs rework: store has 7 step definitions, ProgressBar has 7 dots, wizard page has 7 step components. Needs update to 4-step structure.
+- Old Phase 2 plans (02-01 through 02-06) are deprecated. Phase 2 scope changed (now 21 requirements, includes documents).
 
 ### Open Questions
 
@@ -97,49 +96,38 @@
 
 ## Session Continuity
 
-### What's Been Done
+### What's Been Done (carries over)
 - Project scaffolded: Next.js 16, TypeScript, Tailwind v4, shadcn/ui configured
-- Base components: Button (Bethel blue-600), Input (with suffix support), Label ready
+- Base components: Button, Input (with suffix), Label, Select (standalone compound)
 - Global styles: --primary #2563EB, zinc theme, Inter font, no dark mode
-- Root layout with "Bethel CGL" metadata, redirect to /apply
-- Zustand store with 7 data sections, navigation, no persistence
-- ProgressBar: 7 dots, animated fill line, display-only
-- Wizard page: slide transitions, Start Over on step 1
-- 7 step shell components with Back/Continue navigation
-- Phase 1 plans created and executed (3 of 4 plans complete, Plan 04 is human checkpoint)
-- Phase 2 context gathered: form layout, cascading address, validation decisions locked
-- Select compound component built (standalone, no shadcn, React Context, outside-click dismiss)
-- Input component updated: forwardRef, label, error, icon, suffix support
-- Zustand store updated: tin field, phone field (renamed from mobile), setCurrentStep, type exports
-- Zod validation schemas: businessInfo, location, contact with PH-specific patterns
-- PSGC data utility: load, getRegions, getProvinces, getCities, getBarangays (cached fetch, nested traversal)
-- LocationStep built: 4 cascading PSGC dropdowns, parent-clears-children, blur validation, store integration
-- ContactCoverageStep built: email, phone, auto-calculated coverage/premium from floor area
-- BusinessInfoStep built: 4 fields (businessName, TIN, natureOfBusiness dropdown 24 categories, floorArea sqm), blur validation
-- Requirements completed: UI-01, UI-02, UI-03, UI-05, UI-06, FLOW-01, FLOW-02, FLOW-03, FLOW-04, FLOW-05, BIZ-01, BIZ-02, BIZ-03, BIZ-04, BIZ-05, LOC-01, LOC-02, LOC-03, LOC-04, LOC-05, LOC-06, CONT-01, CONT-02, CONT-03, CONT-04, CONT-05, CONT-06
+- Zustand store with typed state sections, navigation, no persistence
+- Zod validation schemas: businessInfo, location, contact
+- PSGC data utility: load, getRegions, getProvinces, getCities, getBarangays
+- BusinessInfoStep built (4 fields, blur validation, 24 business categories)
+- LocationStep built (4 cascading PSGC dropdowns, parent-clears-children)
+- ContactCoverageStep built (needs split — contact stays, coverage/premium moves to Phase 3)
 
 ### What Comes Next
-1. Execute 02-06-PLAN.md: Wizard page integration + human verification (all 3 step forms wired into wizard)
+1. Rework Phase 1: update store (7→4 steps), ProgressBar (7→4 dots), wizard page (7→4 step components)
+2. Replan Phase 2: Steps 1-2 (Business + Contact & Docs, 21 requirements)
+3. Plan Phase 3: Step 3 (Review & Pay, 15 requirements)
+4. Plan Phase 4: Step 4 + PDF (Done + PDF, 11 requirements)
 
 ### Key Files
-- `.planning/phases/01-foundation/01-foundation-01-SUMMARY.md` — Plan 1: scaffold
-- `.planning/phases/01-foundation/01-foundation-02-SUMMARY.md` — Plan 2: Zustand store
-- `.planning/phases/01-foundation/01-foundation-03-SUMMARY.md` — Plan 3: ProgressBar + wizard
-- `.planning/phases/01-foundation/01-foundation-04-PLAN.md` — Plan 4: Human verification
-- `.planning/phases/02-form-steps-1-3/02-CONTEXT.md` — Phase 2 decisions
-- `.planning/phases/02-form-steps-1-3/02-01-SUMMARY.md` — Plan 1: Store update, Zod schemas, PSGC data
-- `.planning/phases/02-form-steps-1-3/02-02-SUMMARY.md` — Plan 2: Select + Input UI components
-- `.planning/phases/02-form-steps-1-3/02-03-SUMMARY.md` — Plan 3: BusinessInfoStep form (blur validation)
-- `.planning/phases/02-form-steps-1-3/02-04-SUMMARY.md` — Plan 4: LocationStep with cascading PSGC dropdowns
-- `.planning/phases/02-form-steps-1-3/02-05-SUMMARY.md` — Plan 5: ContactCoverageStep with auto-calculated coverage/premium
-- `src/lib/validation.ts` — Zod schemas for business, location, contact
-- `src/lib/psgc-data.ts` — PSGC cascading address data utility
-- `src/components/ui/select.tsx` — Standalone Select compound component
-- `src/components/ui/input.tsx` — Input with label, error, icon, suffix
-- `src/components/ProgressBar.tsx` — 7-dot animated progress bar
-- `src/app/apply/page.tsx` — Wizard page with slide transitions
-- `src/store/useApplicationStore.ts` — Zustand wizard state
+- `src/store/useApplicationStore.ts` — Zustand store (needs 7→4 step update)
+- `src/components/ProgressBar.tsx` — Progress bar (needs 7→4 dot update)
+- `src/app/apply/page.tsx` — Wizard page (needs 7→4 step update)
+- `src/app/apply/steps/BusinessInfoStep.tsx` — Business form (still valid for Step 1)
+- `src/app/apply/steps/LocationStep.tsx` — Location cascading dropdowns (moves into Step 1)
+- `src/app/apply/steps/ContactCoverageStep.tsx` — Needs split: contact part stays, coverage moves
+- `src/lib/validation.ts` — Zod schemas
+- `src/lib/psgc-data.ts` — PSGC data utility
+- `src/components/ui/select.tsx` — Select compound component
+- `src/components/ui/input.tsx` — Input with suffix
+- `.planning/ROADMAP.md` — Updated for 4-step flow
+- `.planning/REQUIREMENTS.md` — Updated with BILL-* and DONE-* requirement IDs
 
 ---
 
 *Created: 2026-03-21 by roadmap initialization*
+*Last updated: 2026-03-22 — Reworked to 4-step flow*

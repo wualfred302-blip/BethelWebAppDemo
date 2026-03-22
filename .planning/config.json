@@ -7,7 +7,10 @@
   "workflow": {
     "research": true,
     "plan_check": true,
-    "verifier": true,
+    "verifier": false,
     "auto_advance": false
+  },
+  "git": {
+    "branching_strategy": "none"
   }
 }

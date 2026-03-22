@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export const TOTAL_STEPS = 7;
+export const TOTAL_STEPS = 4;
 
 // ── Data interfaces ──────────────────────────────────────────
 
@@ -24,11 +24,9 @@ interface LocationData {
   barangayName: string;
 }
 
-interface ContactCoverageData {
+interface ContactData {
   email: string;
   phone: string;
-  limitOfLiability: string;
-  premium: string;
 }
 
 interface DocumentsData {
@@ -48,7 +46,7 @@ interface WizardState {
   currentStep: number;
   businessInfo: BusinessInfoData;
   location: LocationData;
-  contactCoverage: ContactCoverageData;
+  contactCoverage: ContactData;
   documents: DocumentsData;
   payment: PaymentData;
 
@@ -61,7 +59,7 @@ interface WizardState {
   // Data setters
   setBusinessInfo: (data: Partial<BusinessInfoData>) => void;
   setLocation: (data: Partial<LocationData>) => void;
-  setContactCoverage: (data: Partial<ContactCoverageData>) => void;
+  setContactCoverage: (data: Partial<ContactData>) => void;
   setDocuments: (data: Partial<DocumentsData>) => void;
   setPayment: (data: Partial<PaymentData>) => void;
 
@@ -91,11 +89,9 @@ const initialLocation: LocationData = {
   barangayName: '',
 };
 
-const initialContactCoverage: ContactCoverageData = {
+const initialContactCoverage: ContactData = {
   email: '',
   phone: '',
-  limitOfLiability: '',
-  premium: '',
 };
 
 const initialDocuments: DocumentsData = {
@@ -182,4 +178,4 @@ export const useApplicationStore = create<WizardState>()((set) => ({
 
 export type BusinessInfo = BusinessInfoData;
 export type Location = LocationData;
-export type Contact = ContactCoverageData;
+export type Contact = ContactData;

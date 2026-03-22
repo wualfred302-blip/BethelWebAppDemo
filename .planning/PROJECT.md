@@ -16,18 +16,18 @@ Business owners can complete a CGL insurance application entirely online in one 
 
 ### Active
 
-- [ ] 7-step wizard flow: Business Info → Location → Contact & Coverage → Documents → Cover Note & Billing → Payment → Success
+- [ ] 4-step wizard flow: Business → Contact & Docs → Review & Pay → Done
 - [ ] Cascading Philippine address selects (Region → Province → City → Barangay) using PSGC data
 - [ ] Document upload for Business Permit, DTI/SEC Registration, and Valid Government ID
 - [ ] Auto-generated Cover Note PDF with control number and 6-hour validity countdown
-- [ ] Auto-generated Billing Invoice showing premium amount
+- [ ] Auto-generated Billing Invoice showing premium amount (calculated on Review step)
 - [ ] Payment options: Online Banking, Bank Transfer, Over-the-Counter, GCash
 - [ ] Proof of payment upload
 - [ ] Auto-generated Electronic Policy PDF
 - [ ] Success page with Bethel contact info and links to other insurance products
-- [ ] Progress bar showing step completion
+- [ ] Progress bar showing 4-step completion
 - [ ] Form validation on every step
-- [ ] State persistence across page refreshes (Zustand + localStorage)
+- [ ] State in Zustand (NO localStorage — page refresh starts fresh)
 - [ ] Smooth page transitions (Framer Motion)
 
 ### Out of Scope

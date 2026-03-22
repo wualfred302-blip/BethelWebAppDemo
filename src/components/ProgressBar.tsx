@@ -10,7 +10,7 @@ interface ProgressBarProps {
 }
 
 export function ProgressBar({ currentStep, className }: ProgressBarProps) {
-  const TOTAL_DOTS = 7;
+  const TOTAL_DOTS = 4;
   const totalIntervals = TOTAL_DOTS - 1;
 
   return (
