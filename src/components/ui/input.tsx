@@ -17,13 +17,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="space-y-2">
         {label && (
-          <label htmlFor={inputId} className="text-sm font-medium text-gray-700">
+          <label htmlFor={inputId} className="text-sm font-medium text-zinc-700">
             {label}
           </label>
         )}
         <div className="relative flex items-center">
           {icon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400">
               {icon}
             </div>
           )}
@@ -31,9 +31,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             type={type}
             id={inputId}
             className={cn(
-              'flex h-11 w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm transition-colors',
+              'flex h-11 w-full rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm transition-colors',
               'file:border-0 file:bg-transparent file:text-sm file:font-medium',
-              'placeholder:text-gray-400',
+              'placeholder:text-zinc-400',
               'focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent',
               'disabled:cursor-not-allowed disabled:opacity-50',
               icon && 'pl-10',
@@ -44,7 +44,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           {suffix && (
-            <span className="ml-1 text-sm text-gray-500 whitespace-nowrap">{suffix}</span>
+            <span className="ml-1 text-sm text-zinc-500 whitespace-nowrap">{suffix}</span>
           )}
         </div>
         {error && <p className="text-sm text-red-500">{error}</p>}

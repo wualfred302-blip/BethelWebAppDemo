@@ -220,8 +220,8 @@ export default function ReviewPayStep({ onNext, onBack }: StepProps) {
   const isPdf = proofFile && proofFile.type === 'application/pdf';
 
   return (
-    <div className="max-w-md mx-auto space-y-6">
-      <h2 className="text-xl font-semibold text-zinc-900">Review &amp; Pay</h2>
+    <div className="max-w-md mx-auto space-y-5">
+      <h2 className="text-2xl font-bold text-zinc-900">Review &amp; Pay</h2>
       <p className="text-sm text-zinc-500">
         Review your application details and complete payment.
       </p>
@@ -282,7 +282,7 @@ export default function ReviewPayStep({ onNext, onBack }: StepProps) {
           <p className="text-xs font-semibold text-zinc-500 uppercase">Billing</p>
           <div className="flex justify-between text-sm">
             <span className="text-zinc-500">Premium</span>
-            <span className="text-lg font-bold text-zinc-900">
+             <span className="text-2xl font-bold text-zinc-900">
               {premium ? formatPHP(premium.grossPremium) : '—'}
             </span>
           </div>

@@ -126,16 +126,16 @@ function SelectTrigger({ className, onBlur, children }: SelectTriggerProps) {
       onClick={() => !disabled && setOpen(!open)}
       onBlur={onBlur}
       className={cn(
-        'flex h-12 w-full items-center justify-between rounded-lg border border-gray-300 bg-white px-4 text-sm text-left',
+        'flex h-11 w-full items-center justify-between rounded-lg border border-zinc-300 bg-white px-4 text-sm text-left',
         'focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent',
         'disabled:cursor-not-allowed disabled:opacity-50',
-        !displayLabel && 'text-gray-400',
+        !displayLabel && 'text-zinc-400',
         className,
       )}
     >
       <span className="truncate">{displayLabel || placeholder}</span>
       <svg
-        className={cn('ml-2 h-4 w-4 shrink-0 text-gray-400 transition-transform', open && 'rotate-180')}
+        className={cn('ml-2 h-4 w-4 shrink-0 text-zinc-400 transition-transform', open && 'rotate-180')}
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -179,7 +179,7 @@ function SelectContent({ className, children }: SelectContentProps) {
     <ul
       role="listbox"
       className={cn(
-        'absolute z-50 mt-1 w-full max-h-[300px] overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg',
+        'absolute z-50 mt-1 w-full max-h-[300px] overflow-y-auto rounded-lg border border-zinc-200 bg-white shadow-lg',
         className,
       )}
     >

@@ -36,10 +36,10 @@ export default function ContactCoverageStep({ onNext, onBack, isFirstStep, isLas
   };
 
   return (
-    <div className="max-w-md mx-auto space-y-6">
-      <h2 className="text-xl font-semibold text-zinc-900">Contact</h2>
+    <div className="max-w-md mx-auto space-y-5">
+      <h2 className="text-2xl font-bold text-zinc-900">Contact</h2>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="space-y-4">
           <Input
             label="Phone Number"

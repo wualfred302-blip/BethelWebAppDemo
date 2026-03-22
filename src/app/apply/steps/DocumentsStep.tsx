@@ -86,7 +86,7 @@ function UploadSlot({
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <label className="text-sm font-medium text-zinc-700">{label}</label>
 
       {!file ? (
         <>
@@ -99,11 +99,11 @@ function UploadSlot({
               'flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 cursor-pointer transition-colors',
               dragging
                 ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50',
+                : 'border-zinc-300 hover:border-zinc-400 hover:bg-zinc-50',
             )}
           >
             <svg
-              className="h-8 w-8 text-gray-400"
+              className="h-8 w-8 text-zinc-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -115,8 +115,8 @@ function UploadSlot({
                 d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
               />
             </svg>
-            <p className="text-sm text-gray-500">Drop file here or click to upload</p>
-            <p className="text-xs text-gray-400">JPG, PNG, PDF — max 5MB</p>
+            <p className="text-sm text-zinc-500">Drop file here or click to upload</p>
+            <p className="text-xs text-zinc-400">JPG, PNG, PDF — max 5MB</p>
           </div>
           <input
             ref={inputRef}
@@ -127,7 +127,7 @@ function UploadSlot({
           />
         </>
       ) : (
-        <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3">
+        <div className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-white p-3">
           {isImage && (
             <img
               src={URL.createObjectURL(file)}
@@ -154,12 +154,12 @@ function UploadSlot({
           )}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-zinc-900 truncate">{file.name}</p>
-            <p className="text-xs text-gray-400">{formatSize(file.size)}</p>
+            <p className="text-xs text-zinc-400">{formatSize(file.size)}</p>
           </div>
           <button
             type="button"
             onClick={onRemove}
-            className="shrink-0 rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+            className="shrink-0 rounded-md p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 transition-colors"
             aria-label="Remove file"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -221,10 +221,10 @@ export default function DocumentsStep({ onNext, onBack, isFirstStep, isLastStep 
   };
 
   return (
-    <div className="max-w-md mx-auto space-y-6">
-      <h2 className="text-xl font-semibold text-zinc-900">Document Upload</h2>
+    <div className="max-w-md mx-auto space-y-5">
+      <h2 className="text-2xl font-bold text-zinc-900">Document Upload</h2>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         <UploadSlot
           label="Business Permit *"
           file={businessPermit}

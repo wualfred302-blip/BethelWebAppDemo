@@ -73,19 +73,19 @@ function SearchableSelectContent({
 
   return (
     <SelectContent className={className}>
-      <div className="sticky top-0 z-10 bg-white p-2 border-b border-gray-100">
+      <div className="sticky top-0 z-10 bg-white p-2 border-b border-zinc-100">
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={placeholder || 'Search...'}
-          className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
+          className="w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
         />
       </div>
       {filtered.length === 0 ? (
-        <li className="px-4 py-2 text-sm text-gray-400">No results found</li>
+        <li className="px-4 py-2 text-sm text-zinc-400">No results found</li>
       ) : (
         filtered.map((option) => (
           <SelectItem key={option.value} value={option.value}>
@@ -264,9 +264,9 @@ export default function BusinessInfoStep({ onNext, onBack, isFirstStep }: StepPr
   const natureOfBusinessValue = watch('natureOfBusiness');
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto space-y-5">
       {/* ── Personal ──────────────────────────────────────────── */}
-      <h3 className="text-lg font-semibold text-zinc-900">Personal</h3>
+      <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mt-6 first:mt-0">Personal</h3>
 
       <Input
         label="Full Name of Assured *"
@@ -276,7 +276,7 @@ export default function BusinessInfoStep({ onNext, onBack, isFirstStep }: StepPr
       />
 
       {/* ── Business ──────────────────────────────────────────── */}
-      <h3 className="text-lg font-semibold text-zinc-900">Business</h3>
+      <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mt-6 first:mt-0">Business</h3>
 
       <Input
         label="Business Name *"
@@ -293,7 +293,7 @@ export default function BusinessInfoStep({ onNext, onBack, isFirstStep }: StepPr
       />
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Nature of Business *</label>
+        <label className="text-sm font-medium text-zinc-700">Nature of Business *</label>
         <Select
           value={natureOfBusinessValue}
           onValueChange={(v) => {
@@ -327,7 +327,7 @@ export default function BusinessInfoStep({ onNext, onBack, isFirstStep }: StepPr
       />
 
       {/* ── Location ──────────────────────────────────────────── */}
-      <h3 className="text-lg font-semibold text-zinc-900">Location</h3>
+      <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mt-6 first:mt-0">Location</h3>
 
       <Input
         label="Street Address *"
@@ -338,7 +338,7 @@ export default function BusinessInfoStep({ onNext, onBack, isFirstStep }: StepPr
 
       {/* Region */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Region *</label>
+        <label className="text-sm font-medium text-zinc-700">Region *</label>
         <Select
           value={location.regionCode}
           onValueChange={handleRegionChange}
@@ -359,7 +359,7 @@ export default function BusinessInfoStep({ onNext, onBack, isFirstStep }: StepPr
 
       {/* Province */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Province *</label>
+        <label className="text-sm font-medium text-zinc-700">Province *</label>
         <Select
           value={location.provinceCode}
           onValueChange={handleProvinceChange}
@@ -382,7 +382,7 @@ export default function BusinessInfoStep({ onNext, onBack, isFirstStep }: StepPr
 
       {/* City/Municipality */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">City/Municipality *</label>
+        <label className="text-sm font-medium text-zinc-700">City/Municipality *</label>
         <Select
           value={location.cityCode}
           onValueChange={handleCityChange}
@@ -405,7 +405,7 @@ export default function BusinessInfoStep({ onNext, onBack, isFirstStep }: StepPr
 
       {/* Barangay */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Barangay *</label>
+        <label className="text-sm font-medium text-zinc-700">Barangay *</label>
         <Select
           value={location.barangayCode}
           onValueChange={handleBarangayChange}
