@@ -3,6 +3,10 @@ import { z } from 'zod';
 // ── Business Info Schema ────────────────────────────────────
 
 export const businessInfoSchema = z.object({
+  fullName: z
+    .string()
+    .min(2, 'Full name is required (2-100 characters)')
+    .max(100, 'Full name is required (2-100 characters)'),
   natureOfBusiness: z
     .string()
     .min(1, 'Please select a nature of business'),
@@ -22,6 +26,9 @@ export const businessInfoSchema = z.object({
       /^\d+(\.\d{1,2})?$/,
       'Floor area must be a valid number'
     ),
+  streetAddress: z
+    .string()
+    .min(1, 'Street address is required'),
 });
 
 // ── Location Schema ─────────────────────────────────────────
