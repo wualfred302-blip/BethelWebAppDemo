@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useApplicationStore, TOTAL_STEPS } from '@/store/useApplicationStore';
 import { ProgressBar } from '@/components/ProgressBar';
 import BusinessInfoStep from './steps/BusinessInfoStep';
-import ContactCoverageStep from './steps/ContactCoverageStep';
+import Step2Combined from './steps/Step2Combined';
 import ReviewPayStep from './steps/ReviewPayStep';
 import DoneStep from './steps/DoneStep';
 
@@ -13,7 +13,7 @@ import DoneStep from './steps/DoneStep';
 
 const STEPS = [
   { label: 'Business', component: BusinessInfoStep },
-  { label: 'Contact', component: ContactCoverageStep },
+  { label: 'Contact & Docs', component: Step2Combined },
   { label: 'Review & Pay', component: ReviewPayStep },
   { label: 'Done', component: DoneStep },
 ] as const;
