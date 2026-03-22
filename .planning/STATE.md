@@ -1,6 +1,6 @@
 # State: Bethel CGL Web Application
 
-**Last updated:** 2026-03-21
+**Last updated:** 2026-03-22
 
 ---
 
@@ -20,8 +20,8 @@
 | Field | Value |
 |-------|-------|
 | Phase | 2 of 5 — Form Steps 1-3 |
-| Plan | Completed 02-02 (next: 02-03) |
-| Status | In progress — 1/6 plans complete |
+| Plan | Completed 02-05 (next: 02-03 or 02-04) |
+| Status | In progress — 3/6 plans complete |
 | Progress | ██░░░░░░░░░░░░░░░░░░ 2/5 phases (Phase 2 in progress) |
 
 ---
@@ -31,7 +31,7 @@
 | # | Phase | Status | Requirements | Plans | Completed |
 |---|-------|--------|--------------|-------|-----------|
 | 1 | Foundation | In progress | 10 | 4 | 3 |
-| 2 | Form Steps 1-3 | In progress | 17 | 6 | 1 |
+| 2 | Form Steps 1-3 | In progress | 17 | 6 | 3 |
 | 3 | Form Steps 4-7 | Not started | 26 | 0 | - |
 | 4 | PDF Generation | Not started | 4 | 0 | - |
 | 5 | Polish | Not started | 1 | 0 | - |
@@ -45,9 +45,9 @@
 | Metric | Value |
 |--------|-------|
 | Phases completed | 0 / 5 |
-| Requirements completed | 11 / 58 |
+| Requirements completed | 28 / 58 |
 | Plans created | 10 / ~15 estimated |
-| Plans completed | 4 / 10 |
+| Plans completed | 6 / 10 |
 | Blockers | 0 |
 
 | Phase | Plan | Duration | Tasks | Files |
@@ -56,6 +56,8 @@
 | 01-foundation | P02 | 1min | 1 | 1 |
 | 01-foundation | P03 | 2min | 2 | 9 |
 | 02-form-steps-1-3 | P02 | ~8min | 2 | 2 |
+| 02-form-steps-1-3 | P01 | 4min | 3 | 4 |
+| 02-form-steps-1-3 | P05 | ~5min | 1 | 1 |
 
 ## Accumulated Context
 
@@ -76,6 +78,10 @@
 | 2026-03-21 | Horizontal slide transitions | 200-300ms spring. Forward=from right, Back=from left. |
 | 2026-03-21 | Ring style on current step dot | ring-2 ring-blue-600 ring-offset-2 + scale 1.3 via Framer Motion for visual prominence |
 | 2026-03-21 | Standalone Select (no shadcn) | Avoids Radix/shadcn dependency, full control over open/close behavior, simpler for cascading dropdowns |
+| 2026-03-21 | TIN field added to store | Required for PH CGL insurance TIN format validation (XXX-XXX-XXX-XXX) |
+| 2026-03-21 | Renamed mobile to phone | Aligns store field naming with Zod validation schema for type consistency |
+| 2026-03-21 | PSGC nested traversal (no flatten) | Simpler, avoids memory overhead for cascading dropdown use case |
+| 2026-03-22 | Coverage/premium display-only | Auto-calculated from floor area, not editable by user; store raw numbers as strings |
 
 ### Blockers
 
@@ -102,12 +108,14 @@
 - Phase 2 context gathered: form layout, cascading address, validation decisions locked
 - Select compound component built (standalone, no shadcn, React Context, outside-click dismiss)
 - Input component updated: forwardRef, label, error, icon, suffix support
-- Requirements completed: UI-01, UI-02, UI-03, UI-05, UI-06, FLOW-01, FLOW-02, FLOW-03, FLOW-04, FLOW-05
+- Zustand store updated: tin field, phone field (renamed from mobile), setCurrentStep, type exports
+- Zod validation schemas: businessInfo, location, contact with PH-specific patterns
+- PSGC data utility: load, getRegions, getProvinces, getCities, getBarangays (cached fetch, nested traversal)
+- Requirements completed: UI-01, UI-02, UI-03, UI-05, UI-06, FLOW-01, FLOW-02, FLOW-03, FLOW-04, FLOW-05, BIZ-01, BIZ-02, BIZ-03, BIZ-04, BIZ-05, LOC-01, LOC-02, LOC-03, LOC-04, LOC-05, LOC-06, CONT-01, CONT-02, CONT-03, CONT-04, CONT-05, CONT-06
 
 ### What Comes Next
 1. Execute 02-03-PLAN.md: BusinessInfoStep form (4 fields, blur validation)
 2. Execute 02-04-PLAN.md: LocationStep cascading PSGC dropdowns
-3. Execute 02-05-PLAN.md: ContactCoverageStep + auto-calculated coverage/premium
 
 ### Key Files
 - `.planning/phases/01-foundation/01-foundation-01-SUMMARY.md` — Plan 1: scaffold
@@ -115,7 +123,11 @@
 - `.planning/phases/01-foundation/01-foundation-03-SUMMARY.md` — Plan 3: ProgressBar + wizard
 - `.planning/phases/01-foundation/01-foundation-04-PLAN.md` — Plan 4: Human verification
 - `.planning/phases/02-form-steps-1-3/02-CONTEXT.md` — Phase 2 decisions
+- `.planning/phases/02-form-steps-1-3/02-01-SUMMARY.md` — Plan 1: Store update, Zod schemas, PSGC data
 - `.planning/phases/02-form-steps-1-3/02-02-SUMMARY.md` — Plan 2: Select + Input UI components
+- `.planning/phases/02-form-steps-1-3/02-05-SUMMARY.md` — Plan 5: ContactCoverageStep with auto-calculated coverage/premium
+- `src/lib/validation.ts` — Zod schemas for business, location, contact
+- `src/lib/psgc-data.ts` — PSGC cascading address data utility
 - `src/components/ui/select.tsx` — Standalone Select compound component
 - `src/components/ui/input.tsx` — Input with label, error, icon, suffix
 - `src/components/ProgressBar.tsx` — 7-dot animated progress bar
