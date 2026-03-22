@@ -40,6 +40,11 @@ interface PaymentData {
   proofOfPayment: string | null;
 }
 
+interface CoverNoteData {
+  controlNumber: string;
+  expiryTime: string;
+}
+
 // ── Store state ──────────────────────────────────────────────
 
 interface WizardState {
@@ -49,6 +54,7 @@ interface WizardState {
   contactCoverage: ContactData;
   documents: DocumentsData;
   payment: PaymentData;
+  coverNote: CoverNoteData;
 
   // Navigation
   nextStep: () => void;
@@ -62,6 +68,7 @@ interface WizardState {
   setContactCoverage: (data: Partial<ContactData>) => void;
   setDocuments: (data: Partial<DocumentsData>) => void;
   setPayment: (data: Partial<PaymentData>) => void;
+  setCoverNote: (data: Partial<CoverNoteData>) => void;
 
   // Reset
   reset: () => void;
@@ -105,6 +112,11 @@ const initialPayment: PaymentData = {
   proofOfPayment: null,
 };
 
+const initialCoverNote: CoverNoteData = {
+  controlNumber: '',
+  expiryTime: '',
+};
+
 // ── Store ────────────────────────────────────────────────────
 
 export const useApplicationStore = create<WizardState>()((set) => ({
@@ -114,6 +126,7 @@ export const useApplicationStore = create<WizardState>()((set) => ({
   contactCoverage: initialContactCoverage,
   documents: initialDocuments,
   payment: initialPayment,
+  coverNote: initialCoverNote,
 
   // Navigation
   nextStep: () =>
@@ -162,6 +175,11 @@ export const useApplicationStore = create<WizardState>()((set) => ({
       payment: { ...state.payment, ...data },
     })),
 
+  setCoverNote: (data) =>
+    set((state) => ({
+      coverNote: { ...state.coverNote, ...data },
+    })),
+
   // Reset
   reset: () =>
     set({
@@ -171,6 +189,7 @@ export const useApplicationStore = create<WizardState>()((set) => ({
       contactCoverage: initialContactCoverage,
       documents: initialDocuments,
       payment: initialPayment,
+      coverNote: initialCoverNote,
     }),
 }));
 
@@ -179,3 +198,18 @@ export const useApplicationStore = create<WizardState>()((set) => ({
 export type BusinessInfo = BusinessInfoData;
 export type Location = LocationData;
 export type Contact = ContactData;
+export type { CoverNoteData };
+
+// ── Helper functions ────────────────────────────────────────
+
+export function generateControlNumber(): string {
+  const now = new Date();
+  const date = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+  const suffix = String(Math.floor(1000 + Math.random() * 9000));
+  return `CGL-${date}-${suffix}`;
+}
+
+export function generateExpiryTime(hours: number = 6): string {
+  const expiry = new Date(Date.now() + hours * 60 * 60 * 1000);
+  return expiry.toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit', hour12: true });
+}
