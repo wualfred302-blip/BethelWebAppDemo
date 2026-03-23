@@ -3,19 +3,18 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApplicationStore, TOTAL_STEPS } from '@/store/useApplicationStore';
-import { ProgressBar } from '@/components/ProgressBar';
 import BusinessInfoStep from './steps/BusinessInfoStep';
-import Step2Combined from './steps/Step2Combined';
+import DocumentsStep from './steps/DocumentsStep';
 import ReviewPayStep from './steps/ReviewPayStep';
 import DoneStep from './steps/DoneStep';
+import SplashScreen from './SplashScreen';
 
 // ── Step definitions ──────────────────────────────────────
 
 const STEPS = [
-  { label: 'Business', component: BusinessInfoStep },
-  { label: 'Contact & Docs', component: Step2Combined },
-  { label: 'Review & Pay', component: ReviewPayStep },
-  { label: 'Done', component: DoneStep },
+  { label: 'General Info', name: 'Business & Contact', component: BusinessInfoStep },
+  { label: 'Documents', name: 'Document Upload', component: DocumentsStep },
+  { label: 'Review & Pay', name: 'Review & Payment', component: ReviewPayStep },
 ] as const;
 
 // ── Slide transition variants ─────────────────────────────
@@ -35,16 +34,59 @@ const variants = {
   }),
 };
 
+// ── Segmented Progress Bar ────────────────────────────────
+
+function SegmentedProgressBar({
+  currentStep,
+  stepName,
+}: {
+  currentStep: number;
+  stepName: string;
+}) {
+  return (
+    <section className="mt-4 mb-10">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[11px] font-bold tracking-widest text-primary uppercase">
+          Step {currentStep} of {TOTAL_STEPS}
+        </span>
+        <span className="text-[11px] font-medium text-on-surface-variant">{stepName}</span>
+      </div>
+      <div className="flex gap-2">
+        {Array.from({ length: TOTAL_STEPS }, (_, i) => {
+          const step = i + 1;
+          const isFilled = step <= currentStep;
+          return (
+            <div
+              key={step}
+              className={`h-1.5 flex-1 rounded-full ${isFilled ? 'bg-primary shadow-sm' : 'bg-zinc-200'}`}
+            />
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 // ── Page component ────────────────────────────────────────
 
 export default function ApplyPage() {
   const { currentStep, nextStep, prevStep, goToStep } = useApplicationStore();
   const [direction, setDirection] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+
+  const handleGetStarted = useCallback(() => {
+    setShowSplash(false);
+  }, []);
 
   const handleNext = useCallback(() => {
+    if (currentStep === TOTAL_STEPS) {
+      setSubmitted(true);
+      return;
+    }
     setDirection(1);
     nextStep();
-  }, [nextStep]);
+  }, [currentStep, nextStep]);
 
   const handleBack = useCallback(() => {
     setDirection(-1);
@@ -86,38 +128,97 @@ export default function ApplyPage() {
   const isFirstStep = currentStep === 1;
   const isLastStep = currentStep === TOTAL_STEPS;
 
-  return (
-    <div className="min-h-screen bg-zinc-50 flex flex-col">
-      {/* Progress Bar at top */}
-      <div className="bg-white px-4 pt-4">
-        <div className="max-w-md mx-auto">
-          <ProgressBar currentStep={currentStep} />
+  return showSplash ? (
+    <SplashScreen onGetStarted={handleGetStarted} />
+  ) : (
+    <div className="min-h-screen bg-surface text-on-surface flex flex-col">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-surface flex items-center justify-between px-6 py-4">
+        <div className="flex items-center gap-4">
+          {currentStep > 1 && !submitted ? (
+            <button
+              onClick={handleBack}
+              className="active:opacity-70 transition-opacity"
+              aria-label="Go back"
+            >
+              <svg
+                className="h-6 w-6 text-primary"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+          ) : (
+            <div className="w-6" />
+          )}
+          <h1 className="text-xl font-bold text-on-surface tracking-tight">
+            {submitted ? 'Done' : STEPS[currentStep - 1].label}
+          </h1>
         </div>
-      </div>
+        <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+          <svg
+            className="h-5 w-5 text-on-surface-variant"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={1.5}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
+            />
+          </svg>
+        </div>
+      </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-md mx-auto w-full px-4 py-6">
-        <AnimatePresence mode="wait" custom={direction}>
-          <motion.div
-            key={currentStep}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{
-              x: { duration: 0.2, ease: 'easeOut' },
-              opacity: { duration: 0.2 },
-            }}
-          >
-            <CurrentStepComponent
-              onNext={handleNext}
-              onBack={handleBack}
-              isFirstStep={isFirstStep}
-              isLastStep={isLastStep}
-            />
-          </motion.div>
-        </AnimatePresence>
+      <main className="flex-1 max-w-md mx-auto w-full px-6 pb-32">
+        {submitted ? (
+          <DoneStep
+            onNext={() => {}}
+            onBack={() => {}}
+            isFirstStep={false}
+            isLastStep={true}
+          />
+        ) : (
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={currentStep}
+              custom={direction}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { duration: 0.2, ease: 'easeOut' },
+                opacity: { duration: 0.2 },
+              }}
+            >
+              {/* Progress */}
+              {currentStep < TOTAL_STEPS && (
+                <SegmentedProgressBar
+                  currentStep={currentStep}
+                  stepName={STEPS[currentStep - 1].name}
+                />
+              )}
+
+              <CurrentStepComponent
+                onNext={handleNext}
+                onBack={handleBack}
+                isFirstStep={isFirstStep}
+                isLastStep={isLastStep}
+              />
+            </motion.div>
+          </AnimatePresence>
+        )}
       </main>
     </div>
   );

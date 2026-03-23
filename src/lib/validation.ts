@@ -29,6 +29,15 @@ export const businessInfoSchema = z.object({
   streetAddress: z
     .string()
     .min(1, 'Street address is required'),
+  phone: z
+    .string()
+    .regex(
+      /^(\+63|09)\d{9}$/,
+      'Enter a valid PH mobile number (e.g., 09123456789)'
+    ),
+  email: z
+    .string()
+    .email('Enter a valid email address'),
 });
 
 // ── Location Schema ─────────────────────────────────────────

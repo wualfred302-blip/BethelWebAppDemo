@@ -47,16 +47,58 @@ export async function loadPSGCData(): Promise<PSGCData> {
   return cachedData!;
 }
 
+// ── Title case helper ──────────────────────────────────────
+
+/** Articles/prepositions that stay lowercase (except at start of string) */
+const LOWER_WORDS = new Set(['of', 'de', 'del', 'ng', 'and', 'the', 'sa']);
+
+/**
+ * Convert ALL CAPS to Title Case.
+ * Keeps acronyms (3+ uppercase letters with no vowels) uppercase.
+ */
+function toTitleCase(str: string): string {
+  if (!str) return str;
+  return str
+    .toLowerCase()
+    .replace(/\b(\w+)\b/g, (word, _, offset) => {
+      if (offset === 0) return word.charAt(0).toUpperCase() + word.slice(1);
+      if (LOWER_WORDS.has(word)) return word;
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    });
+}
+
+// ── Region name mapping ────────────────────────────────────
+
+const REGION_NAMES: Record<string, string> = {
+  '01': 'Ilocos Region',
+  '02': 'Cagayan Valley',
+  '03': 'Central Luzon',
+  '05': 'Bicol Region',
+  '06': 'Western Visayas',
+  '07': 'Central Visayas',
+  '08': 'Eastern Visayas',
+  '09': 'Zamboanga Peninsula',
+  '10': 'Northern Mindanao',
+  '11': 'Davao Region',
+  '12': 'SOCCSKSARGEN',
+  '13': 'Caraga',
+  '4A': 'CALABARZON',
+  '4B': 'MIMAROPA',
+  'NCR': 'National Capital Region',
+  'CAR': 'Cordillera Administrative Region',
+  'BARMM': 'Bangsamoro',
+};
+
 // ── Region ──────────────────────────────────────────────────
 
 /**
- * Get all unique regions as SelectOptions, sorted by label.
+ * Get all unique regions as SelectOptions with proper names, sorted alphabetically.
  */
 export function getRegions(data: PSGCData): SelectOption[] {
   return Object.entries(data)
-    .map(([code, region]) => ({
+    .map(([code]) => ({
       value: code,
-      label: region.region_name,
+      label: REGION_NAMES[code] || data[code].region_name,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 }
@@ -74,7 +116,7 @@ export function getProvinces(data: PSGCData, regionCode: string): SelectOption[]
   if (!region) return [];
 
   return Object.keys(region.province_list)
-    .map((name) => ({ value: name, label: name }))
+    .map((name) => ({ value: name, label: toTitleCase(name) }))
     .sort((a, b) => a.label.localeCompare(b.label));
 }
 
@@ -98,7 +140,7 @@ export function getCities(
   if (!province) return [];
 
   return Object.keys(province.municipality_list)
-    .map((name) => ({ value: name, label: name }))
+    .map((name) => ({ value: name, label: toTitleCase(name) }))
     .sort((a, b) => a.label.localeCompare(b.label));
 }
 
@@ -126,6 +168,6 @@ export function getBarangays(
   if (!city) return [];
 
   return city.barangay_list
-    .map((name) => ({ value: name, label: name }))
+    .map((name) => ({ value: name, label: toTitleCase(name) }))
     .sort((a, b) => a.label.localeCompare(b.label));
 }

@@ -1,21 +1,20 @@
 # Roadmap: Bethel CGL Web Application
 
 **Created:** 2026-03-21
-**Updated:** 2026-03-22 — Reworked to 4-step flow (Option A)
+**Updated:** 2026-03-23 — Added Phase 6 (UI fixes & 4-to-3 wizard merge)
 **Depth:** Standard
 **Total v1 Requirements:** 56
-**Phases:** 5
+**Phases:** 6
 
 ---
 
-## Flow Overview (4 Steps)
+## Flow Overview (3 Steps)
 
 | Step | Name | Contents |
 |------|------|----------|
-| 1 | **Business** | Name, TIN, Nature of Business, Floor Area, Street Address, Location (Region→Province→City→Barangay) |
-| 2 | **Contact & Docs** | Phone, Email, Upload Business Permit, DTI/SEC, Valid ID |
-| 3 | **Review & Pay** | Summary, premium calculated, billing invoice, cover note PDF, payment method, proof of payment upload |
-| 4 | **Done** | Success checkmark, e-policy PDF, Bethel contact info, product links |
+| 1 | **Business** | Name, TIN, Nature of Business, Floor Area, Street Address, Location (Region→Province→City→Barangay), Phone, Email |
+| 2 | **Documents** | Upload Business Permit, DTI/SEC, Valid ID |
+| 3 | **Review & Pay** | Summary, premium calculated, billing invoice, cover note PDF, payment method, proof of payment upload, success confirmation
 
 ---
 
@@ -26,6 +25,7 @@
 - [ ] **Phase 3: Step 3** — Review & Pay (cover note, billing calculation, payment)
 - [ ] **Phase 4: Step 4 + PDF** — Done page, cover note PDF, e-policy PDF
 - [ ] **Phase 5: Polish** — Animations, mobile refinement, edge cases
+- [x] **Phase 6: UI fixes & 4-to-3 wizard merge** — Darken street address, clean PSGC region names, merge contact into Step 1
 
 ---
 
@@ -102,6 +102,21 @@
 2. App handles edge cases gracefully: long names in PDFs, PSGC data load failure, localStorage quota exceeded, empty dropdown states
 **Plans**: TBD
 
+### Phase 6: UI fixes & 4-to-3 step wizard merge
+**Goal**: Three visual/architectural fixes: (1) darken the street address textarea to match surrounding input shades, (2) use original PSGC region names sorted alphabetically, (3) merge phone/email fields into Step 1 and reduce the wizard from 4 steps to 3.
+**Depends on**: Phase 1
+**Requirements**: FLOW-01, FLOW-05, BIZ-05, LOC-01, CONT-01, CONT-02
+**Success Criteria** (what must be TRUE):
+1. Street address textarea uses the same background shade as the other form inputs (no visual break)
+2. Region dropdown shows original PSGC names (NCR, CAR, BARMM, REGION I, etc.) sorted alphabetically
+3. Phone and Email fields appear in Step 1 (Business) below the Location section
+4. Step 2 is Documents only (no contact sub-step)
+5. Wizard has exactly 3 steps: Business → Documents → Review & Pay
+6. Progress bar shows 3 segments, TOTAL_STEPS = 3
+7. All existing validation continues to work (phone regex, email format, required fields)
+**Plans**: 1 plan
+- [x] 06-01-PLAN.md — Implement all 3 UI fixes
+
 ---
 
 ## Progress Table
@@ -113,6 +128,7 @@
 | 3. Step 3 | 0/0 | Not started | - |
 | 4. Step 4 + PDF | 0/0 | Not started | - |
 | 5. Polish | 0/0 | Not started | - |
+| 6. UI fixes & merge | 1/1 | Complete | ✓ |
 
 ---
 
@@ -124,6 +140,7 @@ Phase 2 (Steps 1-2):     BIZ-01..BIZ-05, LOC-01..LOC-06, CONT-01..CONT-02, DOC-0
 Phase 3 (Step 3):         BILL-01..BILL-09, PAY-01..PAY-06 (15)
 Phase 4 (Step 4 + PDF):   DONE-01..DONE-07, PDF-01..PDF-04 (11)
 Phase 5 (Polish):         UI-04 (1)
+Phase 6 (UI fixes):       FLOW-01, FLOW-05, BIZ-05, LOC-01, CONT-01, CONT-02 (6)
 
 Total: 58/58 v1 requirements mapped ✓
 ```

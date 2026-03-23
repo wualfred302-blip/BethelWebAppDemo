@@ -5,9 +5,10 @@
   /* Bethel brand color */
   --primary: oklch(0.5406 0.1809 264.05);
   --primary-foreground: #ffffff;
+  --primary-container: oklch(0.45 0.18 264);
 
   /* shadcn/ui zinc theme (light mode only) */
-  --background: oklch(1 0 0);
+  --background: #faf8ff;
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -25,6 +26,16 @@
   --input: oklch(0.922 0 0);
   --ring: oklch(0.5406 0.1809 264.05);
   --radius: 0.625rem;
+
+  /* Stitch surface tokens */
+  --surface: #ffffff;
+  --on-surface: #191b23;
+  --on-surface-variant: #434654;
+  --surface-container: #ffffff;
+  --surface-container-high: #ffffff;
+  --surface-container-highest: #f7f7f7;
+  --surface-container-low: #fafafa;
+  --surface-container-lowest: #ffffff;
 }
 
 @theme inline {
@@ -32,6 +43,7 @@
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-container: var(--primary-container);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -43,6 +55,14 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-surface: var(--surface);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container-lowest: var(--surface-container-lowest);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

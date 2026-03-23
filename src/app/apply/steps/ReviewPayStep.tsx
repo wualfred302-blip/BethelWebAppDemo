@@ -107,7 +107,6 @@ async function generateCoverNotePDF(data: {
 export default function ReviewPayStep({ onNext, onBack }: StepProps) {
   const businessInfo = useApplicationStore((s) => s.businessInfo);
   const location = useApplicationStore((s) => s.location);
-  const contactCoverage = useApplicationStore((s) => s.contactCoverage);
   const coverNote = useApplicationStore((s) => s.coverNote);
   const setCoverNote = useApplicationStore((s) => s.setCoverNote);
   const setPayment = useApplicationStore((s) => s.setPayment);
@@ -243,8 +242,8 @@ export default function ReviewPayStep({ onNext, onBack }: StepProps) {
           <p className="text-sm font-medium text-zinc-900">{businessInfo.fullName}</p>
           <p className="text-sm text-zinc-700">{businessInfo.businessName}</p>
           {fullAddress && <p className="text-sm text-zinc-500">{fullAddress}</p>}
-          {contactCoverage.email && (
-            <p className="text-sm text-zinc-500">{contactCoverage.email}</p>
+          {businessInfo.email && (
+            <p className="text-sm text-zinc-500">{businessInfo.email}</p>
           )}
         </div>
 

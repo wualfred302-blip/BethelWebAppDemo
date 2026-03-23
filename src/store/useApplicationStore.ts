@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export const TOTAL_STEPS = 4;
+export const TOTAL_STEPS = 3;
 
 // ── Data interfaces ──────────────────────────────────────────
 
@@ -11,6 +11,8 @@ interface BusinessInfoData {
   floorArea: string;
   natureOfBusiness: string;
   streetAddress: string;
+  phone: string;
+  email: string;
 }
 
 interface LocationData {
@@ -83,6 +85,8 @@ const initialBusinessInfo: BusinessInfoData = {
   floorArea: '',
   natureOfBusiness: '',
   streetAddress: '',
+  phone: '',
+  email: '',
 };
 
 const initialLocation: LocationData = {

@@ -79,7 +79,7 @@ function SearchableSelectContent({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={placeholder || 'Search...'}
-          className="w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
+          className="w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent"
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
         />
@@ -108,7 +108,7 @@ interface StepProps {
 
 // ── Component ─────────────────────────────────────────────────
 
-export default function BusinessInfoStep({ onNext, onBack, isFirstStep }: StepProps) {
+export default function BusinessInfoStep({ onNext }: StepProps) {
   const { businessInfo, location, setBusinessInfo, setLocation } = useApplicationStore();
 
   // ── Business form (react-hook-form + zod) ───────────────────
@@ -129,6 +129,8 @@ export default function BusinessInfoStep({ onNext, onBack, isFirstStep }: StepPr
       natureOfBusiness: businessInfo.natureOfBusiness,
       floorArea: businessInfo.floorArea,
       streetAddress: businessInfo.streetAddress,
+      phone: businessInfo.phone,
+      email: businessInfo.email,
     },
     mode: 'onBlur',
   });
@@ -240,7 +242,6 @@ export default function BusinessInfoStep({ onNext, onBack, isFirstStep }: StepPr
   // ── Submit ─────────────────────────────────────────────────
 
   const onSubmit = async (data: BusinessInfoFormData) => {
-    // Validate location fields too
     const locationResult = locationSchema.safeParse(location);
     if (!locationResult.success) {
       const newErrors: Record<string, string> = {};
@@ -264,178 +265,250 @@ export default function BusinessInfoStep({ onNext, onBack, isFirstStep }: StepPr
   const natureOfBusinessValue = watch('natureOfBusiness');
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto space-y-5">
-      {/* ── Personal ──────────────────────────────────────────── */}
-      <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mt-6 first:mt-0">Personal</h3>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      {/* ── Assured Details ──────────────────────────────────── */}
+      <div className="space-y-6">
+        <h2 className="text-xl font-bold text-on-surface tracking-tight">Assured Details</h2>
 
-      <Input
-        label="Full Name of Assured *"
-        placeholder="Juan Dela Cruz"
-        error={errors.fullName?.message}
-        {...register('fullName')}
-      />
+        <Input
+          label="Full Name of Assured"
+          placeholder="Enter legal name"
+          error={errors.fullName?.message}
+          {...register('fullName')}
+        />
 
-      {/* ── Business ──────────────────────────────────────────── */}
-      <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mt-6 first:mt-0">Business</h3>
+        <Input
+          label="Business Name"
+          placeholder="Trading name (if different)"
+          error={errors.businessName?.message}
+          {...register('businessName')}
+        />
 
-      <Input
-        label="Business Name *"
-        placeholder="e.g., Juan Dela Cruz Store"
-        error={errors.businessName?.message}
-        {...register('businessName')}
-      />
-
-      <Input
-        label="TIN (Tax Identification Number) *"
-        placeholder="123-456-789-000"
-        error={errors.tin?.message}
-        {...register('tin')}
-      />
-
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-zinc-700">Nature of Business *</label>
-        <Select
-          value={natureOfBusinessValue}
-          onValueChange={(v) => {
-            setValue('natureOfBusiness', v);
-            trigger('natureOfBusiness');
-          }}
-        >
-          <SelectTrigger onBlur={() => trigger('natureOfBusiness')}>
-            <SelectValue placeholder="Select nature of business" />
-          </SelectTrigger>
-          <SelectContent>
-            {NATURE_OF_BUSINESS_OPTIONS.map((option) => (
-              <SelectItem key={option} value={option}>
-                {option}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {errors.natureOfBusiness && (
-          <p className="text-sm text-red-500">{errors.natureOfBusiness.message}</p>
-        )}
-      </div>
-
-      <Input
-        label="Floor Area *"
-        placeholder="0"
-        suffix="sqm"
-        type="text"
-        error={errors.floorArea?.message}
-        {...register('floorArea')}
-      />
-
-      {/* ── Location ──────────────────────────────────────────── */}
-      <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mt-6 first:mt-0">Location</h3>
-
-      <Input
-        label="Street Address *"
-        placeholder="123 Main St"
-        error={errors.streetAddress?.message}
-        {...register('streetAddress')}
-      />
-
-      {/* Region */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-zinc-700">Region *</label>
-        <Select
-          value={location.regionCode}
-          onValueChange={handleRegionChange}
-          disabled={isLoading}
-        >
-          <SelectTrigger onBlur={() => handleLocationBlur('regionCode')}>
-            <SelectValue placeholder={isLoading ? 'Loading...' : 'Select Region'} />
-          </SelectTrigger>
-          <SearchableSelectContent
-            options={regions}
-            placeholder="Search regions..."
+        {/* Two-column: TIN + Floor Area */}
+        <div className="grid grid-cols-2 gap-4">
+          <Input
+            label="TIN"
+            placeholder="000-000-000"
+            error={errors.tin?.message}
+            {...register('tin')}
           />
-        </Select>
-        {touched.regionCode && locationErrors.regionCode && (
-          <p className="text-sm text-red-500">{locationErrors.regionCode}</p>
-        )}
+          <Input
+            label="Floor Area"
+            placeholder="0.00"
+            suffix="sqm"
+            type="text"
+            error={errors.floorArea?.message}
+            {...register('floorArea')}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant px-1">
+            Nature of Business
+          </label>
+          <Select
+            value={natureOfBusinessValue}
+            onValueChange={(v) => {
+              setValue('natureOfBusiness', v);
+              trigger('natureOfBusiness');
+            }}
+          >
+            <SelectTrigger onBlur={() => trigger('natureOfBusiness')}>
+              <SelectValue placeholder="Select category" />
+            </SelectTrigger>
+            <SelectContent>
+              {NATURE_OF_BUSINESS_OPTIONS.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {errors.natureOfBusiness && (
+            <p className="text-sm text-red-500 px-1">{errors.natureOfBusiness.message}</p>
+          )}
+        </div>
       </div>
 
-      {/* Province */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-zinc-700">Province *</label>
-        <Select
-          value={location.provinceCode}
-          onValueChange={handleProvinceChange}
-          disabled={!location.regionCode}
-        >
-          <SelectTrigger onBlur={() => handleLocationBlur('provinceCode')}>
-            <SelectValue
-              placeholder={!location.regionCode ? 'Select Region first' : 'Select Province'}
+      {/* ── Location ────────────────────────────────────────── */}
+      <div className="pt-4 space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-on-surface tracking-tight">Location</h2>
+          <svg
+            className="h-5 w-5 text-primary/60"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
             />
-          </SelectTrigger>
-          <SearchableSelectContent
-            options={provinces}
-            placeholder="Search provinces..."
-          />
-        </Select>
-        {touched.provinceCode && locationErrors.provinceCode && (
-          <p className="text-sm text-red-500">{locationErrors.provinceCode}</p>
-        )}
-      </div>
-
-      {/* City/Municipality */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-zinc-700">City/Municipality *</label>
-        <Select
-          value={location.cityCode}
-          onValueChange={handleCityChange}
-          disabled={!location.provinceCode}
-        >
-          <SelectTrigger onBlur={() => handleLocationBlur('cityCode')}>
-            <SelectValue
-              placeholder={!location.provinceCode ? 'Select Province first' : 'Select City/Municipality'}
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
             />
-          </SelectTrigger>
-          <SearchableSelectContent
-            options={cities}
-            placeholder="Search cities..."
+          </svg>
+        </div>
+
+        {/* Street Address */}
+        <div className="space-y-2">
+          <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant px-1">
+            Street Address
+          </label>
+          <textarea
+            placeholder="Building, Unit No., Street name"
+            rows={1}
+            className="w-full bg-surface-container-highest border-none rounded-lg px-4 py-4 text-sm text-on-surface placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
+            {...register('streetAddress')}
           />
-        </Select>
-        {touched.cityCode && locationErrors.cityCode && (
-          <p className="text-sm text-red-500">{locationErrors.cityCode}</p>
-        )}
+          {errors.streetAddress && (
+            <p className="text-sm text-red-500 px-1">{errors.streetAddress.message}</p>
+          )}
+        </div>
+
+        {/* Region & Province */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant px-1">
+              Region
+            </label>
+            <Select
+              value={location.regionCode}
+              onValueChange={handleRegionChange}
+              disabled={isLoading}
+            >
+              <SelectTrigger onBlur={() => handleLocationBlur('regionCode')}>
+                <SelectValue placeholder={isLoading ? 'Loading...' : 'Select Region'} />
+              </SelectTrigger>
+              <SearchableSelectContent options={regions} placeholder="Search regions..." />
+            </Select>
+            {touched.regionCode && locationErrors.regionCode && (
+              <p className="text-sm text-red-500">{locationErrors.regionCode}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant px-1">
+              Province
+            </label>
+            <Select
+              value={location.provinceCode}
+              onValueChange={handleProvinceChange}
+              disabled={!location.regionCode}
+            >
+              <SelectTrigger onBlur={() => handleLocationBlur('provinceCode')}>
+                <SelectValue
+                  placeholder={
+                    !location.regionCode ? 'Select Region first' : 'Select Province'
+                  }
+                />
+              </SelectTrigger>
+              <SearchableSelectContent options={provinces} placeholder="Search provinces..." />
+            </Select>
+            {touched.provinceCode && locationErrors.provinceCode && (
+              <p className="text-sm text-red-500">{locationErrors.provinceCode}</p>
+            )}
+          </div>
+        </div>
+
+        {/* City & Barangay */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant px-1">
+              City
+            </label>
+            <Select
+              value={location.cityCode}
+              onValueChange={handleCityChange}
+              disabled={!location.provinceCode}
+            >
+              <SelectTrigger onBlur={() => handleLocationBlur('cityCode')}>
+                <SelectValue
+                  placeholder={
+                    !location.provinceCode ? 'Select Province first' : 'Select City'
+                  }
+                />
+              </SelectTrigger>
+              <SearchableSelectContent options={cities} placeholder="Search cities..." />
+            </Select>
+            {touched.cityCode && locationErrors.cityCode && (
+              <p className="text-sm text-red-500">{locationErrors.cityCode}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant px-1">
+              Barangay
+            </label>
+            <Select
+              value={location.barangayCode}
+              onValueChange={handleBarangayChange}
+              disabled={!location.cityCode}
+            >
+              <SelectTrigger onBlur={() => handleLocationBlur('barangayCode')}>
+                <SelectValue
+                  placeholder={!location.cityCode ? 'Select City first' : 'Select Barangay'}
+                />
+              </SelectTrigger>
+              <SearchableSelectContent
+                options={barangays}
+                placeholder="Search barangays..."
+              />
+            </Select>
+            {touched.barangayCode && locationErrors.barangayCode && (
+              <p className="text-sm text-red-500">{locationErrors.barangayCode}</p>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Barangay */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-zinc-700">Barangay *</label>
-        <Select
-          value={location.barangayCode}
-          onValueChange={handleBarangayChange}
-          disabled={!location.cityCode}
+      {/* ── Contact ──────────────────────────────────────────── */}
+      <div className="pt-4 space-y-6">
+        <h2 className="text-xl font-bold text-on-surface tracking-tight">Contact</h2>
+
+        <Input
+          label="Phone Number"
+          placeholder="09123456789"
+          error={errors.phone?.message}
+          {...register('phone')}
+        />
+
+        <Input
+          label="Email Address"
+          type="email"
+          placeholder="you@example.com"
+          error={errors.email?.message}
+          {...register('email')}
+        />
+      </div>
+
+      {/* ── Security Notice ─────────────────────────────────── */}
+      <div className="bg-primary/5 rounded-2xl p-4 flex items-start gap-4 border border-primary/10">
+        <svg
+          className="h-5 w-5 text-primary mt-0.5 shrink-0"
+          fill="currentColor"
+          viewBox="0 0 24 24"
         >
-          <SelectTrigger onBlur={() => handleLocationBlur('barangayCode')}>
-            <SelectValue
-              placeholder={!location.cityCode ? 'Select City first' : 'Select Barangay'}
-            />
-          </SelectTrigger>
-          <SearchableSelectContent
-            options={barangays}
-            placeholder="Search barangays..."
-          />
-        </Select>
-        {touched.barangayCode && locationErrors.barangayCode && (
-          <p className="text-sm text-red-500">{locationErrors.barangayCode}</p>
-        )}
+          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
+        </svg>
+        <p className="text-xs text-on-surface-variant leading-relaxed">
+          All data is encrypted. We use your business details solely for risk assessment and
+          policy underwriting.
+        </p>
       </div>
 
-      {/* ── Navigation ────────────────────────────────────────── */}
-      <div className="flex gap-3 pt-4">
-        {!isFirstStep && (
-          <Button type="button" variant="outline" onClick={onBack} className="flex-1">
-            Back
+      {/* ── Fixed Bottom Continue ───────────────────────────── */}
+      <div className="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-xl border-t border-zinc-200/50 px-6 py-6 z-50">
+        <div className="max-w-md mx-auto">
+          <Button
+            type="submit"
+            className="w-full bg-gradient-to-r from-primary to-primary-container text-primary-foreground font-bold py-4 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-transform duration-200"
+          >
+            Continue
           </Button>
-        )}
-        <Button type="submit" className="flex-1">
-          Continue
-        </Button>
+        </div>
       </div>
     </form>
   );
