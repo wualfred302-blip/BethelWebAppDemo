@@ -6,23 +6,20 @@ export default function SplashScreen({ onGetStarted }: { onGetStarted: () => voi
   return (
     <div className="flex flex-col min-h-screen bg-white text-[#1a1a2e] overflow-hidden">
       {/* Top — logo + descriptions grouped together */}
-      <main className="flex flex-col items-center text-center px-6 pt-[18vh]">
+      <main className="flex flex-col items-center text-center px-6 pt-[28vh]">
         {/* Bethel shield logo */}
         <Image
           src="/bethel-shield.png"
           alt="Bethel General Insurance and Surety Corporation"
-          width={300}
-          height={300}
+          width={196}
+          height={196}
           priority
         />
 
         {/* Brand name — slightly spaced from logo */}
-        <h1 className="text-[28px] font-bold tracking-[-0.04em] mt-1 mb-1" style={{ color: '#4868a8' }}>
+        <h1 className="text-[28px] font-bold tracking-[-0.04em] -mt-10 mb-1" style={{ color: '#4868a8' }}>
           Bethel
         </h1>
-
-        {/* Thin rule */}
-        <div className="w-10 h-[1px] mb-1 mx-auto" style={{ backgroundColor: '#5868a8' }} />
 
         {/* Corporation name — gold */}
         <p
