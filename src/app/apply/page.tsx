@@ -38,19 +38,11 @@ const variants = {
 
 function SegmentedProgressBar({
   currentStep,
-  stepName,
 }: {
   currentStep: number;
-  stepName: string;
 }) {
   return (
-    <section className="mt-4 mb-10">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-[11px] font-bold tracking-widest text-primary uppercase">
-          Step {currentStep} of {TOTAL_STEPS}
-        </span>
-        <span className="text-[11px] font-medium text-on-surface-variant">{stepName}</span>
-      </div>
+    <section className="mt-2 mb-5">
       <div className="flex gap-2">
         {Array.from({ length: TOTAL_STEPS }, (_, i) => {
           const step = i + 1;
@@ -206,7 +198,6 @@ export default function ApplyPage() {
               {currentStep < TOTAL_STEPS && (
                 <SegmentedProgressBar
                   currentStep={currentStep}
-                  stepName={STEPS[currentStep - 1].name}
                 />
               )}
 
