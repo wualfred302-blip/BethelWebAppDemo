@@ -17,7 +17,7 @@ export default function SplashScreen({ onGetStarted }: { onGetStarted: () => voi
         />
 
         {/* Brand name — slightly spaced from logo */}
-        <h1 className="text-[28px] font-bold tracking-[-0.04em] mt-3 mb-1" style={{ color: '#4868a8' }}>
+        <h1 className="text-[28px] font-bold tracking-[-0.04em] mt-1 mb-1" style={{ color: '#4868a8' }}>
           Bethel
         </h1>
 
