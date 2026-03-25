@@ -222,7 +222,7 @@ export default function DocumentsStep({ onNext, onBack, isFirstStep, isLastStep 
 
   return (
     <div className="max-w-md mx-auto space-y-5">
-      <h2 className="text-2xl font-bold text-zinc-900">Document Upload</h2>
+      <h2 className="text-2xl font-bold" style={{ color: '#4868a8' }}>Document Upload</h2>
 
       <div className="space-y-4">
         <UploadSlot

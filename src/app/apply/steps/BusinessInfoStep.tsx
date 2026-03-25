@@ -268,7 +268,7 @@ export default function BusinessInfoStep({ onNext }: StepProps) {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* ── Assured Details ──────────────────────────────────── */}
       <div className="space-y-4">
-        <h2 className="text-xl font-bold text-on-surface tracking-tight">Assured Details</h2>
+        <h2 className="text-xl font-bold tracking-tight" style={{ color: '#4868a8' }}>Assured Details</h2>
 
         <Input
           label="Full Name of Assured"
@@ -333,7 +333,7 @@ export default function BusinessInfoStep({ onNext }: StepProps) {
       {/* ── Location ────────────────────────────────────────── */}
       <div className="pt-2 space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-on-surface tracking-tight">Location</h2>
+          <h2 className="text-xl font-bold tracking-tight" style={{ color: '#4868a8' }}>Location</h2>
           <svg
             className="h-5 w-5 text-primary/60"
             fill="none"
@@ -466,7 +466,7 @@ export default function BusinessInfoStep({ onNext }: StepProps) {
 
       {/* ── Contact ──────────────────────────────────────────── */}
       <div className="pt-2 space-y-4">
-        <h2 className="text-xl font-bold text-on-surface tracking-tight">Contact</h2>
+        <h2 className="text-xl font-bold tracking-tight" style={{ color: '#4868a8' }}>Contact</h2>
 
         <Input
           label="Phone Number"

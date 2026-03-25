@@ -2,10 +2,14 @@
 @import "shadcn/tailwind.css";
 
 :root {
-  /* Bethel brand color */
-  --primary: oklch(0.5406 0.1809 264.05);
+  /* Bethel brand colors */
+  --primary: #384888;           /* navy - main brand color */
   --primary-foreground: #ffffff;
-  --primary-container: oklch(0.45 0.18 264);
+  --primary-container: #2d3a6d; /* darker navy for hover states */
+  
+  /* Brand accent colors */
+  --brand-accent: #4868a8;      /* medium blue - for headings */
+  --brand-gold: #b89858;        /* gold - subtle accents */
 
   /* shadcn/ui zinc theme (light mode only) */
   --background: #faf8ff;
@@ -24,7 +28,7 @@
   --destructive-foreground: #ffffff;
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.5406 0.1809 264.05);
+  --ring: #384888;              /* use Bethel navy for focus ring */
   --radius: 0.625rem;
 
   /* Stitch surface tokens */
@@ -63,6 +67,8 @@
   --color-surface-container-highest: var(--surface-container-highest);
   --color-surface-container-low: var(--surface-container-low);
   --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-gold: var(--brand-gold);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
