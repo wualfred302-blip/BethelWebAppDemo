@@ -8,11 +8,13 @@ import DocumentsStep from './steps/DocumentsStep';
 import ReviewPayStep from './steps/ReviewPayStep';
 import DoneStep from './steps/DoneStep';
 import SplashScreen from './SplashScreen';
+import ScanStep from './steps/ScanStep';
 
 // ── Step definitions ──────────────────────────────────────
 
 const STEPS = [
-  { label: 'General Info', name: 'Business & Contact', component: BusinessInfoStep },
+  { label: 'Business Info', name: 'Business Details', component: BusinessInfoStep },
+  { label: 'Scan Permit', name: 'Scan & OCR', component: ScanStep },
   { label: 'Documents', name: 'Document Upload', component: DocumentsStep },
   { label: 'Review & Pay', name: 'Review & Payment', component: ReviewPayStep },
 ] as const;
