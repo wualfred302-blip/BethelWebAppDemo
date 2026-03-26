@@ -1,7 +1,11 @@
 import { create } from 'zustand';
 import type { BusinessPermitOcrData } from '@/lib/ocr-schema';
 
-export const TOTAL_STEPS = 4;
+export const TOTAL_STEPS = 5;
+
+// ── Scan Type ───────────────────────────────────────────────
+
+export type ScanType = 'permit' | 'policy' | 'manual' | null;
 
 // ── Data interfaces ──────────────────────────────────────────
 
@@ -62,6 +66,7 @@ interface WizardState {
   payment: PaymentData;
   coverNote: CoverNoteData;
   scanData: BusinessPermitOcrData | null;
+  scanType: ScanType;
 
   // Navigation
   nextStep: () => void;
@@ -77,6 +82,7 @@ interface WizardState {
   setPayment: (data: Partial<PaymentData>) => void;
   setCoverNote: (data: Partial<CoverNoteData>) => void;
   setScanData: (data: BusinessPermitOcrData | null) => void;
+  setScanType: (type: ScanType) => void;
 
   // Reset
   reset: () => void;
@@ -141,6 +147,7 @@ export const useApplicationStore = create<WizardState>()((set) => ({
   payment: initialPayment,
   coverNote: initialCoverNote,
   scanData: null,
+  scanType: null,
 
   // Navigation
   nextStep: () =>
@@ -199,6 +206,11 @@ export const useApplicationStore = create<WizardState>()((set) => ({
       scanData: data,
     }),
 
+  setScanType: (type: ScanType) =>
+    set({
+      scanType: type,
+    }),
+
   // Reset
   reset: () =>
     set({
@@ -210,6 +222,7 @@ export const useApplicationStore = create<WizardState>()((set) => ({
       payment: initialPayment,
       coverNote: initialCoverNote,
       scanData: null,
+      scanType: null,
     }),
 }));
 

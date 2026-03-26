@@ -9,10 +9,12 @@ import ReviewPayStep from './steps/ReviewPayStep';
 import DoneStep from './steps/DoneStep';
 import SplashScreen from './SplashScreen';
 import ScanStep from './steps/ScanStep';
+import ScanSelectionStep from './steps/ScanSelectionStep';
 
 // ── Step definitions ──────────────────────────────────────
 
 const STEPS = [
+  { label: 'Select', name: 'Choose Action', component: ScanSelectionStep },
   { label: 'Scan Permit', name: 'Scan & OCR', component: ScanStep },
   { label: 'Business Info', name: 'Business Details', component: BusinessInfoStep },
   { label: 'Documents', name: 'Document Upload', component: DocumentsStep },
