@@ -8,8 +8,9 @@ import DocumentsStep from './steps/DocumentsStep';
 import ReviewPayStep from './steps/ReviewPayStep';
 import DoneStep from './steps/DoneStep';
 import SplashScreen from './SplashScreen';
-import ScanStep from './steps/ScanStep';
 import ScanSelectionStep from './steps/ScanSelectionStep';
+import ScanStep from './steps/ScanStep';
+import PolicyScanStep from './steps/PolicyScanStep';
 
 // ── Step definitions ──────────────────────────────────────
 
