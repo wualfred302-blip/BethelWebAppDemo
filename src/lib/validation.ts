@@ -38,6 +38,22 @@ export const businessInfoSchema = z.object({
   email: z
     .string()
     .email('Enter a valid email address'),
+  buildingFloors: z
+    .string()
+    .regex(
+      /^[1-9]\d*$/,
+      'Building floors must be a positive whole number'
+    )
+    .refine(
+      (val) => parseInt(val, 10) >= 1 && parseInt(val, 10) <= 50,
+      'Building floors must be between 1 and 50'
+    ),
+  buildingType: z
+    .string()
+    .min(1, 'Please select a building type'),
+  constructionType: z
+    .string()
+    .min(1, 'Please select a construction type'),
 });
 
 // ── Location Schema ─────────────────────────────────────────

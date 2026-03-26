@@ -14,6 +14,9 @@ interface BusinessInfoData {
   streetAddress: string;
   phone: string;
   email: string;
+  buildingFloors: string;
+  buildingType: string;
+  constructionType: string;
 }
 
 interface LocationData {
@@ -90,6 +93,9 @@ const initialBusinessInfo: BusinessInfoData = {
   streetAddress: '',
   phone: '',
   email: '',
+  buildingFloors: '',
+  buildingType: '',
+  constructionType: '',
 };
 
 const initialLocation: LocationData = {

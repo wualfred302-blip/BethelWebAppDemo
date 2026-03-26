@@ -52,6 +52,24 @@ const NATURE_OF_BUSINESS_OPTIONS = [
   'Other',
 ] as const;
 
+// ── Building Type options ────────────────────────────────────
+
+const BUILDING_TYPE_OPTIONS = [
+  'Commercial',
+  'Residential',
+  'Industrial',
+  'Mixed-Use',
+] as const;
+
+// ── Construction Type options ────────────────────────────────
+
+const CONSTRUCTION_TYPE_OPTIONS = [
+  'Concrete',
+  'Wood',
+  'Metal',
+  'Mixed',
+] as const;
+
 // ── Searchable SelectContent ─────────────────────────────────
 
 function SearchableSelectContent({
@@ -109,7 +127,7 @@ interface StepProps {
 // ── Component ─────────────────────────────────────────────────
 
 export default function BusinessInfoStep({ onNext }: StepProps) {
-  const { businessInfo, location, setBusinessInfo, setLocation } = useApplicationStore();
+  const { businessInfo, location, scanData, setBusinessInfo, setLocation } = useApplicationStore();
 
   // ── Business form (react-hook-form + zod) ───────────────────
 
@@ -131,9 +149,27 @@ export default function BusinessInfoStep({ onNext }: StepProps) {
       streetAddress: businessInfo.streetAddress,
       phone: businessInfo.phone,
       email: businessInfo.email,
+      buildingFloors: businessInfo.buildingFloors,
+      buildingType: businessInfo.buildingType,
+      constructionType: businessInfo.constructionType,
     },
     mode: 'onBlur',
   });
+
+  // ── Pre-fill form from OCR scan data ───────────────────────
+
+  useEffect(() => {
+    if (scanData) {
+      if (scanData.fullName) setValue('fullName', scanData.fullName);
+      if (scanData.businessName) setValue('businessName', scanData.businessName);
+      if (scanData.tin) setValue('tin', scanData.tin);
+      if (scanData.streetAddress) setValue('streetAddress', scanData.streetAddress);
+      if (scanData.regionName) setLocation({ regionName: scanData.regionName });
+      if (scanData.provinceName) setLocation({ provinceName: scanData.provinceName });
+      if (scanData.cityName) setLocation({ cityName: scanData.cityName });
+      if (scanData.barangayName) setLocation({ barangayName: scanData.barangayName });
+    }
+  }, [scanData, setValue, setLocation]);
 
   // ── PSGC data loading ──────────────────────────────────────
 
@@ -263,6 +299,8 @@ export default function BusinessInfoStep({ onNext }: StepProps) {
   };
 
   const natureOfBusinessValue = watch('natureOfBusiness');
+  const buildingTypeValue = watch('buildingType');
+  const constructionTypeValue = watch('constructionType');
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -327,6 +365,76 @@ export default function BusinessInfoStep({ onNext }: StepProps) {
           {errors.natureOfBusiness && (
             <p className="text-sm text-red-500 px-1">{errors.natureOfBusiness.message}</p>
           )}
+        </div>
+      </div>
+
+      {/* ── Building Details ──────────────────────────────────── */}
+      <div className="pt-2 space-y-4">
+        <h2 className="text-xl font-bold tracking-tight" style={{ color: '#4868a8' }}>Building Details</h2>
+
+        {/* Building Floors */}
+        <Input
+          label="Building Floors/Level"
+          placeholder="e.g. 3"
+          type="text"
+          error={errors.buildingFloors?.message}
+          {...register('buildingFloors')}
+        />
+
+        {/* Building Type & Construction Type */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant px-1">
+              Building Type
+            </label>
+            <Select
+              value={buildingTypeValue}
+              onValueChange={(v) => {
+                setValue('buildingType', v);
+                trigger('buildingType');
+              }}
+            >
+              <SelectTrigger onBlur={() => trigger('buildingType')}>
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                {BUILDING_TYPE_OPTIONS.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.buildingType && (
+              <p className="text-sm text-red-500 px-1">{errors.buildingType.message}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant px-1">
+              Construction Type
+            </label>
+            <Select
+              value={constructionTypeValue}
+              onValueChange={(v) => {
+                setValue('constructionType', v);
+                trigger('constructionType');
+              }}
+            >
+              <SelectTrigger onBlur={() => trigger('constructionType')}>
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                {CONSTRUCTION_TYPE_OPTIONS.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.constructionType && (
+              <p className="text-sm text-red-500 px-1">{errors.constructionType.message}</p>
+            )}
+          </div>
         </div>
       </div>
 
