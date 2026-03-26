@@ -13,8 +13,8 @@ import ScanStep from './steps/ScanStep';
 // ── Step definitions ──────────────────────────────────────
 
 const STEPS = [
-  { label: 'Business Info', name: 'Business Details', component: BusinessInfoStep },
   { label: 'Scan Permit', name: 'Scan & OCR', component: ScanStep },
+  { label: 'Business Info', name: 'Business Details', component: BusinessInfoStep },
   { label: 'Documents', name: 'Document Upload', component: DocumentsStep },
   { label: 'Review & Pay', name: 'Review & Payment', component: ReviewPayStep },
 ] as const;
