@@ -42,7 +42,11 @@ async function generateCoverNotePDF(data: {
   natureOfBusiness: string;
   floorArea: string;
   limitOfLiability: string;
-  premium: string;
+  netPremium: string;
+  dst: string;
+  vat: string;
+  lgTax: string;
+  grossPremium: string;
   coveragePeriod: string;
 }) {
   const { PDFDocument, StandardFonts, rgb } = await import('pdf-lib');
@@ -77,7 +81,11 @@ async function generateCoverNotePDF(data: {
 
   y -= 20;
   drawText('BILLING', 50, y, 10, true); y -= 18;
-  drawText(`Premium: ${data.premium}`, 50, y, 11, true); y -= 14;
+  drawText(`Net Premium: ${data.netPremium}`, 50, y); y -= 14;
+  drawText(`Documentary Stamp Tax (DST) 25%: ${data.dst}`, 50, y); y -= 14;
+  drawText(`Value Added Tax (VAT) 12%: ${data.vat}`, 50, y); y -= 14;
+  drawText(`Local Government Tax (LGT) 2%: ${data.lgTax}`, 50, y); y -= 14;
+  drawText(`Gross Premium: ${data.grossPremium}`, 50, y, 11, true); y -= 14;
   drawText('Amount subject to final assessment', 50, y, 8); y -= 14;
 
   y -= 30;
@@ -152,7 +160,11 @@ export default function CoverNoteStep() {
         natureOfBusiness: businessInfo.natureOfBusiness,
         floorArea: businessInfo.floorArea,
         limitOfLiability: premium ? formatPHP(premium.limitOfLiability) : '—',
-        premium: premium ? formatPHP(premium.grossPremium) : '—',
+        netPremium: premium ? formatPHP(premium.netPremium) : '—',
+        dst: premium ? formatPHP(premium.dst) : '—',
+        vat: premium ? formatPHP(premium.vat) : '—',
+        lgTax: premium ? formatPHP(premium.lgTax) : '—',
+        grossPremium: premium ? formatPHP(premium.grossPremium) : '—',
         coveragePeriod: '1 year from date of payment',
       });
     } finally {
@@ -198,19 +210,34 @@ export default function CoverNoteStep() {
         </div>
       </fieldset>
 
-      {/* ── Billing ─────────────────────────────────────────── */}
+       {/* ── Billing ─────────────────────────────────────────── */}
       <fieldset>
         <SectionLegend>BILLING</SectionLegend>
-        <div className="space-y-3">
-          <Row label="Net Premium" value={premium ? formatPHP(premium.netPremium) : '—'} />
-          <div className="border-t border-outline-variant pt-3 flex justify-between items-baseline">
-            <span className="text-sm font-bold text-on-surface uppercase tracking-wide">Total</span>
-            <span className="text-xl font-bold text-primary">
-              {premium ? formatPHP(premium.grossPremium) : '—'}
-            </span>
+        {premium ? (
+          <div className="space-y-3">
+            <Row label="Net Premium" value={formatPHP(premium.netPremium)} />
+            <div className="border-t border-outline-variant pt-3 space-y-3">
+              <Row label="Documentary Stamp Tax (DST) 25%" value={formatPHP(premium.dst)} />
+              <Row label="Value Added Tax (VAT) 12%" value={formatPHP(premium.vat)} />
+              <Row label="Local Government Tax (LGT) 2%" value={formatPHP(premium.lgTax)} />
+            </div>
+            <div className="border-t border-outline-variant pt-3 flex justify-between items-baseline">
+              <span className="text-sm font-bold text-on-surface uppercase tracking-wide">
+                Total
+              </span>
+              <span className="text-xl font-bold text-primary">
+                {formatPHP(premium.grossPremium)}
+              </span>
+            </div>
+            <p className="text-[11px] text-outline">Amount subject to final assessment</p>
           </div>
-          <p className="text-[11px] text-outline">Amount subject to final assessment</p>
-        </div>
+        ) : (
+          <div className="space-y-3">
+            <p className="text-sm text-outline">
+              Floor area is required to calculate your premium.
+            </p>
+          </div>
+        )}
       </fieldset>
 
       {/* ── Disclaimer ──────────────────────────────────────── */}

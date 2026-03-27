@@ -70,10 +70,18 @@ export function lookupPremium(floorAreaSqM: string, natureOfBusiness: string) {
   const row = PRICING_TABLE.find((r) => sqm >= r.minSqm && sqm <= r.maxSqm);
   if (!row) return null;
   const cls = NATURE_TO_CLASS[natureOfBusiness] ?? 2;
+  const netPremium = cls === 1 ? row.classINet : row.classIINet;
+  const grossPremium = cls === 1 ? row.classIGross : row.classIIGross;
+  const dst = Math.round(netPremium * 0.25 * 100) / 100;     // Documentary Stamp Tax 25%
+  const vat = Math.round(netPremium * 0.12 * 100) / 100;      // VAT 12%
+  const lgTax = Math.round(netPremium * 0.02 * 100) / 100;    // Local Government Tax 2%
   return {
     limitOfLiability: row.limitOfLiability,
-    netPremium: cls === 1 ? row.classINet : row.classIINet,
-    grossPremium: cls === 1 ? row.classIGross : row.classIIGross,
+    netPremium,
+    grossPremium,
+    dst,
+    vat,
+    lgTax,
     class: cls,
   };
 }
