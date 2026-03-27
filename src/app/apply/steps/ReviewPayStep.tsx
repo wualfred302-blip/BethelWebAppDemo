@@ -10,13 +10,6 @@ import {
 import { lookupPremium, formatPHP } from '@/lib/pricing';
 import { cn } from '@/lib/utils';
 
-interface StepProps {
-  onNext: () => void;
-  onBack: () => void;
-  isFirstStep: boolean;
-  isLastStep: boolean;
-}
-
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'application/pdf'];
 const MAX_SIZE = 5 * 1024 * 1024;
 
@@ -104,12 +97,14 @@ async function generateCoverNotePDF(data: {
   URL.revokeObjectURL(url);
 }
 
-export default function ReviewPayStep({ onNext, onBack }: StepProps) {
+export default function ReviewPayStep() {
   const businessInfo = useApplicationStore((s) => s.businessInfo);
   const location = useApplicationStore((s) => s.location);
   const coverNote = useApplicationStore((s) => s.coverNote);
   const setCoverNote = useApplicationStore((s) => s.setCoverNote);
   const setPayment = useApplicationStore((s) => s.setPayment);
+  const nextStep = useApplicationStore((s) => s.nextStep);
+  const prevStep = useApplicationStore((s) => s.prevStep);
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [proofFile, setProofFile] = useState<File | null>(null);
@@ -212,8 +207,8 @@ export default function ReviewPayStep({ onNext, onBack }: StepProps) {
     if (proofFile) {
       setPayment({ proofOfPayment: proofFile.name });
     }
-    onNext();
-  }, [proofFile, setPayment, onNext]);
+    nextStep();
+  }, [proofFile, setPayment, nextStep]);
 
   const isImage = proofFile && proofFile.type.startsWith('image/');
   const isPdf = proofFile && proofFile.type === 'application/pdf';
@@ -405,7 +400,7 @@ export default function ReviewPayStep({ onNext, onBack }: StepProps) {
 
       {/* Navigation */}
       <div className="flex gap-3 pt-4">
-        <Button type="button" variant="outline" onClick={onBack} className="flex-1">
+        <Button type="button" variant="outline" onClick={prevStep} className="flex-1">
           Back
         </Button>
         <Button type="button" onClick={handleContinue} className="flex-1">

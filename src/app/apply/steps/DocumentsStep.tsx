@@ -5,13 +5,6 @@ import { useApplicationStore } from '@/store/useApplicationStore';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-interface StepProps {
-  onNext: () => void;
-  onBack: () => void;
-  isFirstStep: boolean;
-  isLastStep: boolean;
-}
-
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'application/pdf'];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -174,8 +167,8 @@ function UploadSlot({
   );
 }
 
-export default function DocumentsStep({ onNext, onBack, isFirstStep, isLastStep }: StepProps) {
-  const { setDocuments } = useApplicationStore();
+export default function DocumentsStep() {
+  const { setDocuments, nextStep, prevStep, currentStep } = useApplicationStore();
 
   const [businessPermit, setBusinessPermit] = useState<File | null>(null);
   const [dtiSec, setDtiSec] = useState<File | null>(null);
@@ -217,7 +210,7 @@ export default function DocumentsStep({ onNext, onBack, isFirstStep, isLastStep 
     if (!valid) return;
 
     setDocuments({ businessPermit, dtiSec, validId });
-    onNext();
+    nextStep();
   };
 
   return (
@@ -260,13 +253,13 @@ export default function DocumentsStep({ onNext, onBack, isFirstStep, isLastStep 
       </div>
 
       <div className="flex gap-3 pt-4">
-        {!isFirstStep && (
-          <Button variant="outline" onClick={onBack} className="flex-1">
+        {currentStep > 1 && (
+          <Button variant="outline" onClick={prevStep} className="flex-1">
             Back
           </Button>
         )}
         <Button onClick={handleSubmit} className="flex-1">
-          {isLastStep ? 'Submit' : 'Continue'}
+          Continue
         </Button>
       </div>
     </div>

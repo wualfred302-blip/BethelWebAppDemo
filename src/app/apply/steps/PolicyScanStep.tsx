@@ -3,13 +3,8 @@
 import { useState } from 'react';
 import { useApplicationStore } from '@/store/useApplicationStore';
 
-interface PolicyScanStepProps {
-  onNext: () => void;
-  onBack: () => void;
-}
-
-export default function PolicyScanStep({ onNext, onBack }: PolicyScanStepProps) {
-  const { scanType } = useApplicationStore();
+export default function PolicyScanStep() {
+  const { scanType, nextStep, prevStep } = useApplicationStore();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleSelectFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,15 +28,15 @@ export default function PolicyScanStep({ onNext, onBack }: PolicyScanStepProps) 
       if (result.success && result.data) {
         // Store extracted policy data
         setPolicyData(result.data);
-        onNext();
+        nextStep();
       } else {
         // For now, just proceed even if extraction fails
-        onNext();
+        nextStep();
       }
     } catch (error) {
       console.error('Policy OCR error:', error);
       // Proceed even on error
-      onNext();
+      nextStep();
     } finally {
       setIsProcessing(false);
     }
@@ -111,7 +106,7 @@ export default function PolicyScanStep({ onNext, onBack }: PolicyScanStepProps) 
 
       {/* Skip option */}
       <button
-        onClick={onNext}
+        onClick={nextStep}
         className="w-full py-3 text-sm text-zinc-500 hover:text-zinc-700 transition-colors"
       >
         Skip, enter details manually

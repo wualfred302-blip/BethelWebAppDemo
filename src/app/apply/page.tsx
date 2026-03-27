@@ -179,12 +179,7 @@ export default function ApplyPage() {
       {/* Main Content */}
       <main className="flex-1 max-w-md mx-auto w-full px-6 pb-32">
         {submitted ? (
-          <DoneStep
-            onNext={() => {}}
-            onBack={() => {}}
-            isFirstStep={false}
-            isLastStep={true}
-          />
+          <DoneStep />
         ) : (
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
@@ -206,12 +201,7 @@ export default function ApplyPage() {
                 />
               )}
 
-              <CurrentStepComponent
-                onNext={handleNext}
-                onBack={handleBack}
-                isFirstStep={isFirstStep}
-                isLastStep={isLastStep}
-              />
+              <CurrentStepComponent />
             </motion.div>
           </AnimatePresence>
         )}

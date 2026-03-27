@@ -3,19 +3,12 @@
 import { useState, useRef } from 'react';
 import { useApplicationStore } from '@/store/useApplicationStore';
 import { Button } from '@/components/ui/button';
-import { Camera, Upload, Loader2, ArrowLeft, ArrowRight, SkipForward } from 'lucide-react';
-
-interface ScanStepProps {
-  onNext: () => void;
-  onBack: () => void;
-  isFirstStep: boolean;
-  isLastStep: boolean;
-}
+import { Camera, Loader2, ArrowLeft, ArrowRight, SkipForward } from 'lucide-react';
 
 type ScanStatus = 'idle' | 'scanning' | 'success' | 'error';
 
-export default function ScanStep({ onNext, onBack, isFirstStep, isLastStep }: ScanStepProps) {
-  const { scanData, setScanData } = useApplicationStore();
+export default function ScanStep() {
+  const { scanData, setScanData, nextStep, prevStep, currentStep } = useApplicationStore();
   const [status, setStatus] = useState<ScanStatus>('idle');
   const [error, setError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -73,11 +66,11 @@ export default function ScanStep({ onNext, onBack, isFirstStep, isLastStep }: Sc
 
   const handleSkip = () => {
     setScanData(null);
-    onNext();
+    nextStep();
   };
 
   const handleContinue = () => {
-    onNext();
+    nextStep();
   };
 
   return (
@@ -183,8 +176,8 @@ export default function ScanStep({ onNext, onBack, isFirstStep, isLastStep }: Sc
         <Button
           type="button"
           variant="outline"
-          onClick={onBack}
-          disabled={isFirstStep}
+          onClick={prevStep}
+          disabled={currentStep <= 1}
           className="flex-1"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />

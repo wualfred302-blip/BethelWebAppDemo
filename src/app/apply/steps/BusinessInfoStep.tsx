@@ -115,19 +115,8 @@ function SearchableSelectContent({
   );
 }
 
-// ── Props ─────────────────────────────────────────────────────
-
-interface StepProps {
-  onNext: () => void;
-  onBack: () => void;
-  isFirstStep: boolean;
-  isLastStep: boolean;
-}
-
-// ── Component ─────────────────────────────────────────────────
-
-export default function BusinessInfoStep({ onNext }: StepProps) {
-  const { businessInfo, location, scanData, setBusinessInfo, setLocation } = useApplicationStore();
+export default function BusinessInfoStep() {
+  const { businessInfo, location, scanData, setBusinessInfo, setLocation, nextStep } = useApplicationStore();
 
   // ── Business form (react-hook-form + zod) ───────────────────
 
@@ -295,7 +284,7 @@ export default function BusinessInfoStep({ onNext }: StepProps) {
     }
 
     setBusinessInfo(data);
-    onNext();
+    nextStep();
   };
 
   const natureOfBusinessValue = watch('natureOfBusiness');

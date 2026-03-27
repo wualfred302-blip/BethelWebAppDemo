@@ -31,6 +31,10 @@
   --ring: #384888;              /* use Bethel navy for focus ring */
   --radius: 0.625rem;
 
+  /* Stitch outline tokens */
+  --outline: #757681;             /* muted labels, helper text */
+  --outline-variant: #c6c5d2;     /* subtle borders, separators */
+
   /* Stitch surface tokens */
   --surface: #ffffff;
   --on-surface: #191b23;
@@ -62,6 +66,8 @@
   --color-surface: var(--surface);
   --color-on-surface: var(--on-surface);
   --color-on-surface-variant: var(--on-surface-variant);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
   --color-surface-container: var(--surface-container);
   --color-surface-container-high: var(--surface-container-high);
   --color-surface-container-highest: var(--surface-container-highest);

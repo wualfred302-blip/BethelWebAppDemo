@@ -1,99 +1,92 @@
 'use client';
 
 import { useApplicationStore } from '@/store/useApplicationStore';
-
-interface ScanSelectionStepProps {
-  onNext: () => void;
-  onBack: () => void;
-  isFirstStep: boolean;
-  isLastStep: boolean;
-}
+import { Scan, FileText, PenLine, ChevronRight } from 'lucide-react';
 
 type ScanType = 'permit' | 'policy' | 'manual' | null;
 
-const SCAN_OPTIONS: { type: ScanType; icon: string; title: string; subtitle: string }[] = [
+const SCAN_OPTIONS: {
+  type: ScanType;
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+}[] = [
   {
     type: 'permit',
-    icon: '📷',
+    icon: <Scan className="w-5 h-5" />,
     title: 'Scan Business Permit',
     subtitle: 'New CGL Application',
   },
   {
     type: 'policy',
-    icon: '📄',
+    icon: <FileText className="w-5 h-5" />,
     title: 'Scan Existing Policy',
     subtitle: 'Renewal / Transfer',
   },
   {
     type: 'manual',
-    icon: '⏭️',
+    icon: <PenLine className="w-5 h-5" />,
     title: 'Skip, Fill Manually',
     subtitle: 'No documents available',
   },
 ];
 
-export default function ScanSelectionStep({ onNext }: ScanSelectionStepProps) {
-  const { setScanType } = useApplicationStore();
+export default function ScanSelectionStep() {
+  const { setScanType, nextStep } = useApplicationStore();
 
   const handleSelect = (type: ScanType) => {
     setScanType(type);
-    onNext();
+    nextStep();
   };
 
   return (
-    <div className="max-w-md mx-auto space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-xl font-bold" style={{ color: '#4868a8' }}>
+    <div className="max-w-xl mx-auto">
+      {/* Title — matches Stitch form h1 */}
+      <section className="mb-10">
+        <h1 className="text-3xl font-bold tracking-tight text-primary mb-2">
           What would you like to do?
-        </h2>
-        <p className="text-sm text-zinc-500">
+        </h1>
+        <p className="text-sm text-outline">
           Choose how you&apos;d like to proceed
         </p>
-      </div>
+      </section>
 
-      <div className="space-y-3">
-        {SCAN_OPTIONS.map((option) => (
-          <button
-            key={option.type}
-            onClick={() => handleSelect(option.type)}
-            className="w-full bg-white border border-zinc-200 rounded-lg p-4 flex items-center gap-4 transition-all hover:border-[#384888] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#384888]/20"
-          >
-            <div className="w-12 h-12 rounded-lg bg-zinc-100 flex items-center justify-center text-2xl">
-              {option.icon}
-            </div>
-            <div className="flex-1 text-left">
-              <div className="font-semibold text-base text-[#1a1a2e]">
-                {option.title}
+      {/* Options — fieldset/legend pattern matching Stitch form */}
+      <fieldset>
+        <legend className="font-bold text-[0.75rem] tracking-[0.1rem] uppercase text-outline mb-6">
+          SELECT OPTION
+        </legend>
+
+        <div className="space-y-0">
+          {SCAN_OPTIONS.map((option) => (
+            <button
+              key={option.type}
+              onClick={() => handleSelect(option.type)}
+              className="group w-full flex items-center gap-4 py-5 border-b border-outline-variant transition-colors hover:border-primary focus:outline-none focus:border-primary text-left"
+            >
+              {/* Icon */}
+              <div className="text-outline group-hover:text-primary transition-colors">
+                {option.icon}
               </div>
-              <div className="text-[13px] text-zinc-500">
-                {option.subtitle}
+
+              {/* Text */}
+              <div className="flex-1">
+                <div className="font-semibold text-base text-on-surface">
+                  {option.title}
+                </div>
+                <div className="text-[13px] text-outline">
+                  {option.subtitle}
+                </div>
               </div>
-            </div>
-            <div className="text-zinc-300">
-              <ChevronRight />
-            </div>
-          </button>
-        ))}
-      </div>
+
+              {/* Chevron */}
+              <div className="text-outline-variant group-hover:text-primary transition-colors">
+                <ChevronRight className="w-5 h-5" />
+              </div>
+            </button>
+          ))}
+        </div>
+      </fieldset>
     </div>
-  );
-}
-
-function ChevronRight() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m9 18 6-6-6" />
-      <path d="m18 12-6 6-6 6" />
-    </svg>
   );
 }
