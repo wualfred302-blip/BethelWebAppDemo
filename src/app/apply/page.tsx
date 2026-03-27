@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft } from 'lucide-react';
 import { useApplicationStore, TOTAL_STEPS } from '@/store/useApplicationStore';
 import BusinessInfoStep from './steps/BusinessInfoStep';
-import DocumentsStep from './steps/DocumentsStep';
-import ReviewPayStep from './steps/ReviewPayStep';
+import CoverNoteStep from './steps/CoverNoteStep';
+import PaymentStep from './steps/PaymentStep';
 import DoneStep from './steps/DoneStep';
 import SplashScreen from './SplashScreen';
 import ScanSelectionStep from './steps/ScanSelectionStep';
@@ -18,8 +19,8 @@ const STEPS = [
   { label: 'Select', name: 'Choose Action', component: ScanSelectionStep },
   { label: 'Scan Permit', name: 'Scan & OCR', component: ScanStep },
   { label: 'Business Info', name: 'Business Details', component: BusinessInfoStep },
-  { label: 'Documents', name: 'Document Upload', component: DocumentsStep },
-  { label: 'Review & Pay', name: 'Review & Payment', component: ReviewPayStep },
+  { label: 'Cover Note', name: 'Cover Note', component: CoverNoteStep },
+  { label: 'Payment', name: 'Payment', component: PaymentStep },
 ] as const;
 
 // ── Slide transition variants ─────────────────────────────
@@ -130,54 +131,30 @@ export default function ApplyPage() {
   ) : (
     <div className="min-h-screen bg-surface text-on-surface flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-surface flex items-center justify-between px-6 py-4">
+      <header className="fixed top-0 w-full z-50 bg-slate-50/80 backdrop-blur-xl border-b border-slate-200/15 flex items-center justify-between px-6 h-16">
         <div className="flex items-center gap-4">
           {currentStep > 1 && !submitted ? (
             <button
               onClick={handleBack}
-              className="active:opacity-70 transition-opacity"
+              className="active:scale-95 transition-transform duration-200 text-primary"
               aria-label="Go back"
             >
-              <svg
-                className="h-6 w-6 text-primary"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
+              <ArrowLeft className="h-6 w-6" />
             </button>
           ) : (
             <div className="w-6" />
           )}
-          <h1 className="text-xl font-bold text-on-surface tracking-tight">
-            {submitted ? 'Done' : STEPS[currentStep - 1].label}
-          </h1>
+          <span className="font-bold text-[0.625rem] tracking-[0.1rem] uppercase text-primary">
+            STEP {currentStep} OF {TOTAL_STEPS}
+          </span>
         </div>
-        <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
-          <svg
-            className="h-5 w-5 text-on-surface-variant"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.5}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
-            />
-          </svg>
+        <div className="text-primary font-bold tracking-tighter">
+          BETHEL
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-md mx-auto w-full px-6 pb-32">
+      <main className="flex-1 mt-20 mb-32 px-6 max-w-xl mx-auto w-full">
         {submitted ? (
           <DoneStep />
         ) : (
@@ -194,8 +171,8 @@ export default function ApplyPage() {
                 opacity: { duration: 0.2 },
               }}
             >
-              {/* Progress */}
-              {currentStep < TOTAL_STEPS && (
+              {/* Progress — hidden, not deleted */}
+              {false && currentStep < TOTAL_STEPS && (
                 <SegmentedProgressBar
                   currentStep={currentStep}
                 />

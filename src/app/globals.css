@@ -102,3 +102,26 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Stitch underline inputs */
+.input-underline {
+  border: none;
+  border-bottom: 1px solid var(--outline-variant);
+  border-radius: 0;
+  padding-left: 0;
+  padding-right: 0;
+  background-color: transparent;
+  width: 100%;
+  color: var(--on-surface);
+  font-size: 0.875rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.input-underline:focus {
+  outline: none;
+  box-shadow: none;
+  border-bottom: 2px solid var(--primary);
+}
+.input-underline::placeholder {
+  color: var(--outline-variant);
+}

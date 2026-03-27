@@ -5,14 +5,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useApplicationStore } from '@/store/useApplicationStore';
 import { businessInfoSchema, locationSchema, type BusinessInfoFormData } from '@/lib/validation';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import {
   loadPSGCData,
@@ -52,71 +44,45 @@ const NATURE_OF_BUSINESS_OPTIONS = [
   'Other',
 ] as const;
 
-// ── Building Type options ────────────────────────────────────
+const BUILDING_TYPE_OPTIONS = ['Commercial', 'Residential', 'Industrial', 'Mixed-Use'] as const;
 
-const BUILDING_TYPE_OPTIONS = [
-  'Commercial',
-  'Residential',
-  'Industrial',
-  'Mixed-Use',
-] as const;
+const CONSTRUCTION_TYPE_OPTIONS = ['Concrete', 'Wood', 'Metal', 'Mixed'] as const;
 
-// ── Construction Type options ────────────────────────────────
+// ── Underline label ───────────────────────────────────────────
 
-const CONSTRUCTION_TYPE_OPTIONS = [
-  'Concrete',
-  'Wood',
-  'Metal',
-  'Mixed',
-] as const;
-
-// ── Searchable SelectContent ─────────────────────────────────
-
-function SearchableSelectContent({
-  options,
-  placeholder,
-  className,
-}: {
-  options: SelectOption[];
-  placeholder?: string;
-  className?: string;
-}) {
-  const [search, setSearch] = useState('');
-
-  const filtered = useMemo(() => {
-    if (!search) return options;
-    const lower = search.toLowerCase();
-    return options.filter((o) => o.label.toLowerCase().includes(lower));
-  }, [options, search]);
-
+function UnderlineLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
   return (
-    <SelectContent className={className}>
-      <div className="sticky top-0 z-10 bg-white p-2 border-b border-zinc-100">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder={placeholder || 'Search...'}
-          className="w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent"
-          onMouseDown={(e) => e.stopPropagation()}
-          onClick={(e) => e.stopPropagation()}
-        />
-      </div>
-      {filtered.length === 0 ? (
-        <li className="px-4 py-2 text-sm text-zinc-400">No results found</li>
-      ) : (
-        filtered.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
-            {option.label}
-          </SelectItem>
-        ))
-      )}
-    </SelectContent>
+    <label
+      htmlFor={htmlFor}
+      className="block text-[10px] font-bold uppercase tracking-widest text-outline mb-1 group-focus-within:text-primary transition-colors"
+    >
+      {children}
+    </label>
   );
 }
 
+// ── Field error ───────────────────────────────────────────────
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null;
+  return <p className="text-[11px] text-red-500 mt-1">{message}</p>;
+}
+
+// ── Section legend ────────────────────────────────────────────
+
+function SectionLegend({ children }: { children: React.ReactNode }) {
+  return (
+    <legend className="font-bold text-[0.75rem] tracking-[0.1rem] uppercase text-on-surface-variant mb-6">
+      {children}
+    </legend>
+  );
+}
+
+// ── Component ─────────────────────────────────────────────────
+
 export default function BusinessInfoStep() {
-  const { businessInfo, location, scanData, setBusinessInfo, setLocation, nextStep } = useApplicationStore();
+  const { businessInfo, location, scanData, setBusinessInfo, setLocation, nextStep } =
+    useApplicationStore();
 
   // ── Business form (react-hook-form + zod) ───────────────────
 
@@ -199,7 +165,8 @@ export default function BusinessInfoStep() {
 
   // ── Location change handlers (parent clears children) ──────
 
-  const handleRegionChange = (value: string) => {
+  const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
     const region = regions.find((r) => r.value === value);
     setLocation({
       regionCode: value,
@@ -213,7 +180,8 @@ export default function BusinessInfoStep() {
     });
   };
 
-  const handleProvinceChange = (value: string) => {
+  const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
     const province = provinces.find((p) => p.value === value);
     setLocation({
       provinceCode: value,
@@ -225,7 +193,8 @@ export default function BusinessInfoStep() {
     });
   };
 
-  const handleCityChange = (value: string) => {
+  const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
     const city = cities.find((c) => c.value === value);
     setLocation({
       cityCode: value,
@@ -235,7 +204,8 @@ export default function BusinessInfoStep() {
     });
   };
 
-  const handleBarangayChange = (value: string) => {
+  const handleBarangayChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
     const barangay = barangays.find((b) => b.value === value);
     setLocation({ barangayCode: value, barangayName: barangay?.label || '' });
   };
@@ -245,7 +215,7 @@ export default function BusinessInfoStep() {
   const validateLocationField = (field: string) => {
     const result = locationSchema.safeParse(location);
     if (!result.success) {
-      const fieldError = result.error.issues.find((e) => e.path[0] === field);
+      const fieldError = result.error.issues.find((err) => err.path[0] === field);
       setLocationErrors((prev) => ({
         ...prev,
         [field]: fieldError?.message || '',
@@ -292,316 +262,322 @@ export default function BusinessInfoStep() {
   const constructionTypeValue = watch('constructionType');
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-12">
+      {/* ── Title Section ───────────────────────────────────── */}
+      <section className="mb-10">
+        <h1 className="text-3xl font-bold tracking-tight text-primary mb-2">Business Details</h1>
+        <p className="text-sm text-on-surface-variant">
+          Please provide the details of the establishment to be insured under the CGL policy.
+        </p>
+      </section>
+
       {/* ── Assured Details ──────────────────────────────────── */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-bold tracking-tight" style={{ color: '#4868a8' }}>Assured Details</h2>
+      <fieldset>
+        <SectionLegend>ASSURED DETAILS</SectionLegend>
+        <div className="space-y-8">
+          <div className="group">
+            <UnderlineLabel htmlFor="fullName">Full Name</UnderlineLabel>
+            <input
+              id="fullName"
+              className="input-underline"
+              placeholder="Juan Dela Cruz"
+              type="text"
+              {...register('fullName')}
+            />
+            <FieldError message={errors.fullName?.message} />
+          </div>
 
-        <Input
-          label="Full Name of Assured"
-          placeholder="Enter legal name"
-          error={errors.fullName?.message}
-          {...register('fullName')}
-        />
+          <div className="group">
+            <UnderlineLabel htmlFor="businessName">Business Name</UnderlineLabel>
+            <input
+              id="businessName"
+              className="input-underline"
+              placeholder="Bethel Enterprises Corp."
+              type="text"
+              {...register('businessName')}
+            />
+            <FieldError message={errors.businessName?.message} />
+          </div>
 
-        <Input
-          label="Business Name"
-          placeholder="Trading name (if different)"
-          error={errors.businessName?.message}
-          {...register('businessName')}
-        />
+          <div className="grid grid-cols-2 gap-6">
+            <div className="group">
+              <UnderlineLabel htmlFor="tin">TIN</UnderlineLabel>
+              <input
+                id="tin"
+                className="input-underline"
+                placeholder="000-000-000"
+                type="text"
+                {...register('tin')}
+              />
+              <FieldError message={errors.tin?.message} />
+            </div>
+            <div className="group">
+              <UnderlineLabel htmlFor="floorArea">Floor Area (sqm)</UnderlineLabel>
+              <input
+                id="floorArea"
+                className="input-underline"
+                placeholder="120"
+                type="text"
+                {...register('floorArea')}
+              />
+              <FieldError message={errors.floorArea?.message} />
+            </div>
+          </div>
 
-        {/* Two-column: TIN + Floor Area */}
-        <div className="grid grid-cols-2 gap-4">
-          <Input
-            label="TIN"
-            placeholder="000-000-000"
-            error={errors.tin?.message}
-            {...register('tin')}
-          />
-          <Input
-            label="Floor Area"
-            placeholder="0.00"
-            suffix="sqm"
-            type="text"
-            error={errors.floorArea?.message}
-            {...register('floorArea')}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant px-1">
-            Nature of Business
-          </label>
-          <Select
-            value={natureOfBusinessValue}
-            onValueChange={(v) => {
-              setValue('natureOfBusiness', v);
-              trigger('natureOfBusiness');
-            }}
-          >
-            <SelectTrigger onBlur={() => trigger('natureOfBusiness')}>
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent>
-              {NATURE_OF_BUSINESS_OPTIONS.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {option}
-                </SelectItem>
+          <div className="group">
+            <UnderlineLabel htmlFor="natureOfBusiness">Nature of Business</UnderlineLabel>
+            <select
+              id="natureOfBusiness"
+              className="input-underline"
+              value={natureOfBusinessValue || ''}
+              onChange={(e) => {
+                setValue('natureOfBusiness', e.target.value);
+                trigger('natureOfBusiness');
+              }}
+              onBlur={() => trigger('natureOfBusiness')}
+            >
+              <option disabled value="">
+                Select option
+              </option>
+              {NATURE_OF_BUSINESS_OPTIONS.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
               ))}
-            </SelectContent>
-          </Select>
-          {errors.natureOfBusiness && (
-            <p className="text-sm text-red-500 px-1">{errors.natureOfBusiness.message}</p>
-          )}
+            </select>
+            <FieldError message={errors.natureOfBusiness?.message} />
+          </div>
         </div>
-      </div>
+      </fieldset>
 
       {/* ── Building Details ──────────────────────────────────── */}
-      <div className="pt-2 space-y-4">
-        <h2 className="text-xl font-bold tracking-tight" style={{ color: '#4868a8' }}>Building Details</h2>
+      <fieldset>
+        <SectionLegend>BUILDING DETAILS</SectionLegend>
+        <div className="space-y-8">
+          <div className="group">
+            <UnderlineLabel htmlFor="buildingFloors">Building Floors/Levels</UnderlineLabel>
+            <input
+              id="buildingFloors"
+              className="input-underline"
+              placeholder="2"
+              type="text"
+              {...register('buildingFloors')}
+            />
+            <FieldError message={errors.buildingFloors?.message} />
+          </div>
 
-        {/* Building Floors */}
-        <Input
-          label="Building Floors/Level"
-          placeholder="e.g. 3"
-          type="text"
-          error={errors.buildingFloors?.message}
-          {...register('buildingFloors')}
-        />
-
-        {/* Building Type & Construction Type */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant px-1">
-              Building Type
-            </label>
-            <Select
-              value={buildingTypeValue}
-              onValueChange={(v) => {
-                setValue('buildingType', v);
+          <div className="group">
+            <UnderlineLabel htmlFor="buildingType">Building Type</UnderlineLabel>
+            <select
+              id="buildingType"
+              className="input-underline"
+              value={buildingTypeValue || ''}
+              onChange={(e) => {
+                setValue('buildingType', e.target.value);
                 trigger('buildingType');
               }}
+              onBlur={() => trigger('buildingType')}
             >
-              <SelectTrigger onBlur={() => trigger('buildingType')}>
-                <SelectValue placeholder="Select type" />
-              </SelectTrigger>
-              <SelectContent>
-                {BUILDING_TYPE_OPTIONS.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {option}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.buildingType && (
-              <p className="text-sm text-red-500 px-1">{errors.buildingType.message}</p>
-            )}
+              <option disabled value="">
+                Select option
+              </option>
+              {BUILDING_TYPE_OPTIONS.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+            <FieldError message={errors.buildingType?.message} />
           </div>
-          <div className="space-y-2">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant px-1">
-              Construction Type
-            </label>
-            <Select
-              value={constructionTypeValue}
-              onValueChange={(v) => {
-                setValue('constructionType', v);
+
+          <div className="group">
+            <UnderlineLabel htmlFor="constructionType">Construction Type</UnderlineLabel>
+            <select
+              id="constructionType"
+              className="input-underline"
+              value={constructionTypeValue || ''}
+              onChange={(e) => {
+                setValue('constructionType', e.target.value);
                 trigger('constructionType');
               }}
+              onBlur={() => trigger('constructionType')}
             >
-              <SelectTrigger onBlur={() => trigger('constructionType')}>
-                <SelectValue placeholder="Select type" />
-              </SelectTrigger>
-              <SelectContent>
-                {CONSTRUCTION_TYPE_OPTIONS.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {option}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.constructionType && (
-              <p className="text-sm text-red-500 px-1">{errors.constructionType.message}</p>
-            )}
+              <option disabled value="">
+                Select option
+              </option>
+              {CONSTRUCTION_TYPE_OPTIONS.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+            <FieldError message={errors.constructionType?.message} />
           </div>
         </div>
-      </div>
+      </fieldset>
 
       {/* ── Location ────────────────────────────────────────── */}
-      <div className="pt-2 space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold tracking-tight" style={{ color: '#4868a8' }}>Location</h2>
-          <svg
-            className="h-5 w-5 text-primary/60"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
+      <fieldset>
+        <SectionLegend>LOCATION</SectionLegend>
+        <div className="space-y-8">
+          <div className="group">
+            <UnderlineLabel htmlFor="streetAddress">Street Address</UnderlineLabel>
+            <textarea
+              id="streetAddress"
+              className="input-underline resize-none"
+              placeholder="Unit 402, High-Street Tower"
+              rows={2}
+              {...register('streetAddress')}
             />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
-            />
-          </svg>
-        </div>
+            <FieldError message={errors.streetAddress?.message} />
+          </div>
 
-        {/* Street Address */}
-        <div className="space-y-2">
-          <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant px-1">
-            Street Address
-          </label>
-          <textarea
-            placeholder="Building, Unit No., Street name"
-            rows={1}
-            className="w-full bg-surface-container-highest border-none rounded-lg px-4 py-4 text-sm text-on-surface placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
-            {...register('streetAddress')}
-          />
-          {errors.streetAddress && (
-            <p className="text-sm text-red-500 px-1">{errors.streetAddress.message}</p>
-          )}
-        </div>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="group">
+              <UnderlineLabel htmlFor="region">Region</UnderlineLabel>
+              <select
+                id="region"
+                className="input-underline"
+                value={location.regionCode}
+                onChange={handleRegionChange}
+                disabled={isLoading}
+                onBlur={() => handleLocationBlur('regionCode')}
+              >
+                <option disabled value="">
+                  {isLoading ? 'Loading...' : 'Select'}
+                </option>
+                {regions.map((r) => (
+                  <option key={r.value} value={r.value}>
+                    {r.label}
+                  </option>
+                ))}
+              </select>
+              {touched.regionCode && <FieldError message={locationErrors.regionCode} />}
+            </div>
+            <div className="group">
+              <UnderlineLabel htmlFor="province">Province</UnderlineLabel>
+              <select
+                id="province"
+                className="input-underline"
+                value={location.provinceCode}
+                onChange={handleProvinceChange}
+                disabled={!location.regionCode}
+                onBlur={() => handleLocationBlur('provinceCode')}
+              >
+                <option disabled value="">
+                  {!location.regionCode ? 'Select Region first' : 'Select'}
+                </option>
+                {provinces.map((p) => (
+                  <option key={p.value} value={p.value}>
+                    {p.label}
+                  </option>
+                ))}
+              </select>
+              {touched.provinceCode && <FieldError message={locationErrors.provinceCode} />}
+            </div>
+          </div>
 
-        {/* Region & Province */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant px-1">
-              Region
-            </label>
-            <Select
-              value={location.regionCode}
-              onValueChange={handleRegionChange}
-              disabled={isLoading}
-            >
-              <SelectTrigger onBlur={() => handleLocationBlur('regionCode')}>
-                <SelectValue placeholder={isLoading ? 'Loading...' : 'Select Region'} />
-              </SelectTrigger>
-              <SearchableSelectContent options={regions} placeholder="Search regions..." />
-            </Select>
-            {touched.regionCode && locationErrors.regionCode && (
-              <p className="text-sm text-red-500">{locationErrors.regionCode}</p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant px-1">
-              Province
-            </label>
-            <Select
-              value={location.provinceCode}
-              onValueChange={handleProvinceChange}
-              disabled={!location.regionCode}
-            >
-              <SelectTrigger onBlur={() => handleLocationBlur('provinceCode')}>
-                <SelectValue
-                  placeholder={
-                    !location.regionCode ? 'Select Region first' : 'Select Province'
-                  }
-                />
-              </SelectTrigger>
-              <SearchableSelectContent options={provinces} placeholder="Search provinces..." />
-            </Select>
-            {touched.provinceCode && locationErrors.provinceCode && (
-              <p className="text-sm text-red-500">{locationErrors.provinceCode}</p>
-            )}
-          </div>
-        </div>
-
-        {/* City & Barangay */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant px-1">
-              City
-            </label>
-            <Select
-              value={location.cityCode}
-              onValueChange={handleCityChange}
-              disabled={!location.provinceCode}
-            >
-              <SelectTrigger onBlur={() => handleLocationBlur('cityCode')}>
-                <SelectValue
-                  placeholder={
-                    !location.provinceCode ? 'Select Province first' : 'Select City'
-                  }
-                />
-              </SelectTrigger>
-              <SearchableSelectContent options={cities} placeholder="Search cities..." />
-            </Select>
-            {touched.cityCode && locationErrors.cityCode && (
-              <p className="text-sm text-red-500">{locationErrors.cityCode}</p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant px-1">
-              Barangay
-            </label>
-            <Select
-              value={location.barangayCode}
-              onValueChange={handleBarangayChange}
-              disabled={!location.cityCode}
-            >
-              <SelectTrigger onBlur={() => handleLocationBlur('barangayCode')}>
-                <SelectValue
-                  placeholder={!location.cityCode ? 'Select City first' : 'Select Barangay'}
-                />
-              </SelectTrigger>
-              <SearchableSelectContent
-                options={barangays}
-                placeholder="Search barangays..."
-              />
-            </Select>
-            {touched.barangayCode && locationErrors.barangayCode && (
-              <p className="text-sm text-red-500">{locationErrors.barangayCode}</p>
-            )}
+          <div className="grid grid-cols-2 gap-6">
+            <div className="group">
+              <UnderlineLabel htmlFor="city">City</UnderlineLabel>
+              <select
+                id="city"
+                className="input-underline"
+                value={location.cityCode}
+                onChange={handleCityChange}
+                disabled={!location.provinceCode}
+                onBlur={() => handleLocationBlur('cityCode')}
+              >
+                <option disabled value="">
+                  {!location.provinceCode ? 'Select Province first' : 'Select'}
+                </option>
+                {cities.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.label}
+                  </option>
+                ))}
+              </select>
+              {touched.cityCode && <FieldError message={locationErrors.cityCode} />}
+            </div>
+            <div className="group">
+              <UnderlineLabel htmlFor="barangay">Barangay</UnderlineLabel>
+              <select
+                id="barangay"
+                className="input-underline"
+                value={location.barangayCode}
+                onChange={handleBarangayChange}
+                disabled={!location.cityCode}
+                onBlur={() => handleLocationBlur('barangayCode')}
+              >
+                <option disabled value="">
+                  {!location.cityCode ? 'Select City first' : 'Select'}
+                </option>
+                {barangays.map((b) => (
+                  <option key={b.value} value={b.value}>
+                    {b.label}
+                  </option>
+                ))}
+              </select>
+              {touched.barangayCode && <FieldError message={locationErrors.barangayCode} />}
+            </div>
           </div>
         </div>
-      </div>
+      </fieldset>
 
       {/* ── Contact ──────────────────────────────────────────── */}
-      <div className="pt-2 space-y-4">
-        <h2 className="text-xl font-bold tracking-tight" style={{ color: '#4868a8' }}>Contact</h2>
+      <fieldset>
+        <SectionLegend>CONTACT</SectionLegend>
+        <div className="space-y-8">
+          <div className="group">
+            <UnderlineLabel htmlFor="phone">Phone Number</UnderlineLabel>
+            <input
+              id="phone"
+              className="input-underline"
+              placeholder="+63 900 000 0000"
+              type="tel"
+              {...register('phone')}
+            />
+            <FieldError message={errors.phone?.message} />
+          </div>
 
-        <Input
-          label="Phone Number"
-          placeholder="09123456789"
-          error={errors.phone?.message}
-          {...register('phone')}
-        />
-
-        <Input
-          label="Email Address"
-          type="email"
-          placeholder="you@example.com"
-          error={errors.email?.message}
-          {...register('email')}
-        />
-      </div>
+          <div className="group">
+            <UnderlineLabel htmlFor="email">Email Address</UnderlineLabel>
+            <input
+              id="email"
+              className="input-underline"
+              placeholder="juan.dc@example.com"
+              type="email"
+              {...register('email')}
+            />
+            <FieldError message={errors.email?.message} />
+          </div>
+        </div>
+      </fieldset>
 
       {/* ── Security Notice ─────────────────────────────────── */}
-      <div className="bg-primary/5 rounded-2xl p-4 flex items-start gap-4 border border-primary/10">
+      <div className="flex items-center justify-center gap-2 pt-8 pb-12">
         <svg
-          className="h-5 w-5 text-primary mt-0.5 shrink-0"
-          fill="currentColor"
+          className="w-4 h-4 text-outline"
+          fill="none"
           viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
         >
-          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0110 0v4" />
         </svg>
-        <p className="text-xs text-on-surface-variant leading-relaxed">
-          All data is encrypted. We use your business details solely for risk assessment and
-          policy underwriting.
+        <p className="text-[11px] font-medium text-outline-variant uppercase tracking-wider">
+          Your information is encrypted and secure
         </p>
       </div>
 
       {/* ── Fixed Bottom Continue ───────────────────────────── */}
-      <div className="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-xl border-t border-zinc-200/50 px-6 py-6 z-50">
+      <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-100 px-6 pt-4 pb-8 z-50">
         <div className="max-w-md mx-auto">
           <Button
-            type="submit"
-            className="w-full bg-gradient-to-r from-primary to-primary-container text-primary-foreground font-bold py-4 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-transform duration-200"
+            type="button"
+            onClick={nextStep}
+            className="w-full bg-primary text-primary-foreground font-bold py-4 rounded-md"
           >
             Continue
           </Button>
