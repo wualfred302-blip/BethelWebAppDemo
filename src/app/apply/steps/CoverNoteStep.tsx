@@ -41,6 +41,7 @@ async function generateCoverNotePDF(data: {
   fullAddress: string;
   natureOfBusiness: string;
   floorArea: string;
+  effectiveDate: string;
   limitOfLiability: string;
   netPremium: string;
   dst: string;
@@ -76,6 +77,7 @@ async function generateCoverNotePDF(data: {
   drawText('COVERAGE', 50, y, 10, true); y -= 18;
   drawText(`Nature of Business: ${data.natureOfBusiness}`, 50, y); y -= 14;
   drawText(`Floor Area: ${data.floorArea} sqm`, 50, y); y -= 14;
+  drawText(`Effective Date: ${data.effectiveDate}`, 50, y); y -= 14;
   drawText(`Limit of Liability: ${data.limitOfLiability}`, 50, y); y -= 14;
   drawText(`Coverage Period: ${data.coveragePeriod}`, 50, y); y -= 14;
 
@@ -137,6 +139,15 @@ export default function CoverNoteStep() {
     [businessInfo.floorArea, businessInfo.natureOfBusiness],
   );
 
+  const coveragePeriod = useMemo(() => {
+    if (!businessInfo.effectiveDate) return null;
+    const start = new Date(businessInfo.effectiveDate + 'T00:00:00');
+    const end = new Date(start);
+    end.setFullYear(end.getFullYear() + 1);
+    const fmt = (d: Date) => d.toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' });
+    return `${fmt(start)} — ${fmt(end)}`;
+  }, [businessInfo.effectiveDate]);
+
   const fullAddress = useMemo(() => {
     const parts = [
       businessInfo.streetAddress,
@@ -159,18 +170,19 @@ export default function CoverNoteStep() {
         fullAddress,
         natureOfBusiness: businessInfo.natureOfBusiness,
         floorArea: businessInfo.floorArea,
+        effectiveDate: businessInfo.effectiveDate ? new Date(businessInfo.effectiveDate + 'T00:00:00').toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' }) : '—',
         limitOfLiability: premium ? formatPHP(premium.limitOfLiability) : '—',
         netPremium: premium ? formatPHP(premium.netPremium) : '—',
         dst: premium ? formatPHP(premium.dst) : '—',
         vat: premium ? formatPHP(premium.vat) : '—',
         lgTax: premium ? formatPHP(premium.lgTax) : '—',
         grossPremium: premium ? formatPHP(premium.grossPremium) : '—',
-        coveragePeriod: '1 year from date of payment',
+        coveragePeriod: coveragePeriod || '—',
       });
     } finally {
       setIsGenerating(false);
     }
-  }, [coverNote, businessInfo, fullAddress, premium]);
+  }, [coverNote, businessInfo, fullAddress, premium, coveragePeriod]);
 
   return (
     <div className="space-y-12">
@@ -199,14 +211,15 @@ export default function CoverNoteStep() {
         </div>
       </fieldset>
 
-      {/* ── Coverage ────────────────────────────────────────── */}
+       {/* ── Coverage ────────────────────────────────────────── */}
       <fieldset>
         <SectionLegend>COVERAGE</SectionLegend>
         <div className="space-y-3">
           <Row label="Nature of Business" value={businessInfo.natureOfBusiness || '—'} />
           <Row label="Floor Area" value={businessInfo.floorArea ? `${businessInfo.floorArea} sqm` : '—'} />
+          <Row label="Effective Date" value={businessInfo.effectiveDate ? new Date(businessInfo.effectiveDate + 'T00:00:00').toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' }) : '—'} />
           <Row label="Limit of Liability" value={premium ? formatPHP(premium.limitOfLiability) : '—'} />
-          <Row label="Coverage Period" value="1 year from payment" />
+          <Row label="Coverage Period" value={coveragePeriod || '—'} />
         </div>
       </fieldset>
 

@@ -90,6 +90,7 @@ export default function BusinessInfoStep() {
     register,
     handleSubmit,
     setValue,
+    getValues,
     watch,
     formState: { errors },
     trigger,
@@ -101,6 +102,7 @@ export default function BusinessInfoStep() {
       tin: businessInfo.tin,
       natureOfBusiness: businessInfo.natureOfBusiness,
       floorArea: businessInfo.floorArea,
+      effectiveDate: businessInfo.effectiveDate || new Date().toISOString().split('T')[0],
       streetAddress: businessInfo.streetAddress,
       phone: businessInfo.phone,
       email: businessInfo.email,
@@ -119,6 +121,7 @@ export default function BusinessInfoStep() {
       if (scanData.businessName) setValue('businessName', scanData.businessName);
       if (scanData.tin) setValue('tin', scanData.tin);
       if (scanData.streetAddress) setValue('streetAddress', scanData.streetAddress);
+      if (scanData.effectiveDate) setValue('effectiveDate', scanData.effectiveDate);
       if (scanData.regionName) setLocation({ regionName: scanData.regionName });
       if (scanData.provinceName) setLocation({ provinceName: scanData.provinceName });
       if (scanData.cityName) setLocation({ cityName: scanData.cityName });
@@ -312,16 +315,33 @@ export default function BusinessInfoStep() {
               <FieldError message={errors.tin?.message} />
             </div>
             <div className="group">
-              <UnderlineLabel htmlFor="floorArea">Floor Area (sqm)</UnderlineLabel>
+              <UnderlineLabel htmlFor="effectiveDate">Effective Date</UnderlineLabel>
               <input
-                id="floorArea"
+                id="effectiveDate"
                 className="input-underline"
-                placeholder="120"
-                type="text"
-                {...register('floorArea')}
+                type="date"
+                min={new Date().toISOString().split('T')[0]}
+                max={(() => {
+                  const d = new Date();
+                  d.setDate(d.getDate() + 30);
+                  return d.toISOString().split('T')[0];
+                })()}
+                {...register('effectiveDate')}
               />
-              <FieldError message={errors.floorArea?.message} />
+              <FieldError message={errors.effectiveDate?.message} />
             </div>
+          </div>
+
+          <div className="group">
+            <UnderlineLabel htmlFor="floorArea">Floor Area (sqm)</UnderlineLabel>
+            <input
+              id="floorArea"
+              className="input-underline"
+              placeholder="120"
+              type="text"
+              {...register('floorArea')}
+            />
+            <FieldError message={errors.floorArea?.message} />
           </div>
 
           <div className="group">
@@ -576,7 +596,10 @@ export default function BusinessInfoStep() {
         <div className="max-w-md mx-auto">
           <Button
             type="button"
-            onClick={nextStep}
+            onClick={() => {
+              setBusinessInfo(getValues());
+              nextStep();
+            }}
             className="w-full bg-primary text-primary-foreground font-bold py-4 rounded-md"
           >
             Continue

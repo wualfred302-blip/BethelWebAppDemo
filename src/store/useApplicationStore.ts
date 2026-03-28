@@ -15,6 +15,7 @@ interface BusinessInfoData {
   tin: string;
   floorArea: string;
   natureOfBusiness: string;
+  effectiveDate: string;
   streetAddress: string;
   phone: string;
   email: string;
@@ -96,6 +97,7 @@ const initialBusinessInfo: BusinessInfoData = {
   tin: '',
   floorArea: '',
   natureOfBusiness: '',
+  effectiveDate: new Date().toISOString().split('T')[0],
   streetAddress: '',
   phone: '',
   email: '',

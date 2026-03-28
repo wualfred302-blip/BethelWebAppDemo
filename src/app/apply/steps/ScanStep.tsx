@@ -93,6 +93,7 @@ export default function ScanStep() {
           ref={fileInputRef}
           type="file"
           accept="image/*,.pdf"
+          capture="environment"
           onChange={handleFileSelect}
           className="hidden"
         />

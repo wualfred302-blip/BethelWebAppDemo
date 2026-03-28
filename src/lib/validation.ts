@@ -26,6 +26,9 @@ export const businessInfoSchema = z.object({
       /^\d+(\.\d{1,2})?$/,
       'Floor area must be a valid number'
     ),
+  effectiveDate: z
+    .string()
+    .min(1, 'Effective date is required'),
   streetAddress: z
     .string()
     .min(1, 'Street address is required'),

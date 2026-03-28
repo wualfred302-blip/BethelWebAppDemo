@@ -42,6 +42,9 @@ export const businessPermitOcrSchema = z.object({
     .string()
     .min(1, 'Barangay is required')
     .describe('Barangay name (e.g., SAN ANDRES)'),
+  effectiveDate: z
+    .string()
+    .describe('Permit issue date or effective date in YYYY-MM-DD format (e.g., 2024-01-15). If no date is found, return empty string.'),
 });
 
 // ── Type exports ─────────────────────────────────────────────

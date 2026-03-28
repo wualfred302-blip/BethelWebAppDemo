@@ -29,6 +29,7 @@ Look for:
 - Business Name - the registered name of the business
 - Owner's Full Name - the person or entity owning the business
 - Complete address including street, barangay, city, province, region
+- Permit Issue Date or Effective Date - the date the permit was issued or becomes effective. Return in YYYY-MM-DD format. If no date is found, return empty string.
 
 If a field cannot be found or is unclear, return an empty string for that field.`;
 
