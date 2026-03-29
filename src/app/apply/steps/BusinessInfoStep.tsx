@@ -81,7 +81,7 @@ function SectionLegend({ children }: { children: React.ReactNode }) {
 // ── Component ─────────────────────────────────────────────────
 
 export default function BusinessInfoStep() {
-  const { businessInfo, location, scanData, setBusinessInfo, setLocation, nextStep } =
+  const { businessInfo, location, scanData, policyData, setBusinessInfo, setLocation, nextStep } =
     useApplicationStore();
 
   // ── Business form (react-hook-form + zod) ───────────────────
@@ -113,7 +113,7 @@ export default function BusinessInfoStep() {
     mode: 'onBlur',
   });
 
-  // ── Pre-fill form from OCR scan data ───────────────────────
+  // ── Pre-fill form from OCR scan data (permit) ───────────
 
   useEffect(() => {
     if (scanData) {
@@ -128,6 +128,15 @@ export default function BusinessInfoStep() {
       if (scanData.barangayName) setLocation({ barangayName: scanData.barangayName });
     }
   }, [scanData, setValue, setLocation]);
+
+  // ── Pre-fill form from policy scan data (renewal) ───────
+
+  useEffect(() => {
+    if (policyData) {
+      if (policyData.namedInsured) setValue('fullName', policyData.namedInsured);
+      if (policyData.businessAddress) setValue('streetAddress', policyData.businessAddress);
+    }
+  }, [policyData, setValue]);
 
   // ── PSGC data loading ──────────────────────────────────────
 

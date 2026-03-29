@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import { useApplicationStore, TOTAL_STEPS } from '@/store/useApplicationStore';
+import type { ScanType } from '@/store/useApplicationStore';
 import BusinessInfoStep from './steps/BusinessInfoStep';
 import CoverNoteStep from './steps/CoverNoteStep';
 import PaymentStep from './steps/PaymentStep';
@@ -13,15 +14,35 @@ import ScanSelectionStep from './steps/ScanSelectionStep';
 import ScanStep from './steps/ScanStep';
 import PolicyScanStep from './steps/PolicyScanStep';
 
-// ── Step definitions ──────────────────────────────────────
+// ── Step definitions (dynamic per scan type) ────────────────
 
-const STEPS = [
-  { label: 'Select', name: 'Choose Action', component: ScanSelectionStep },
-  { label: 'Scan Permit', name: 'Scan & OCR', component: ScanStep },
-  { label: 'Business Info', name: 'Business Details', component: BusinessInfoStep },
-  { label: 'Cover Note', name: 'Cover Note', component: CoverNoteStep },
-  { label: 'Payment', name: 'Payment', component: PaymentStep },
-] as const;
+interface StepDef {
+  label: string;
+  name: string;
+  component: React.ComponentType;
+}
+
+function getSteps(scanType: ScanType): StepDef[] {
+  const scanComponent =
+    scanType === 'policy' ? PolicyScanStep
+    : ScanStep; // 'permit' or 'manual' both use ScanStep
+
+  const scanLabel =
+    scanType === 'policy' ? 'Scan Policy'
+    : 'Scan Permit';
+
+  const scanName =
+    scanType === 'policy' ? 'Scan Policy'
+    : 'Scan & OCR';
+
+  return [
+    { label: 'Select', name: 'Choose Action', component: ScanSelectionStep },
+    { label: scanLabel, name: scanName, component: scanComponent },
+    { label: 'Business Info', name: 'Business Details', component: BusinessInfoStep },
+    { label: 'Cover Note', name: 'Cover Note', component: CoverNoteStep },
+    { label: 'Payment', name: 'Payment', component: PaymentStep },
+  ];
+}
 
 // ── Slide transition variants ─────────────────────────────
 
@@ -68,14 +89,23 @@ function SegmentedProgressBar({
 // ── Page component ────────────────────────────────────────
 
 export default function ApplyPage() {
-  const { currentStep, nextStep, prevStep, goToStep } = useApplicationStore();
+  const { currentStep, nextStep, prevStep, goToStep, scanType } = useApplicationStore();
   const [direction, setDirection] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
 
+  const STEPS = useMemo(() => getSteps(scanType), [scanType]);
+
   const handleGetStarted = useCallback(() => {
     setShowSplash(false);
   }, []);
+
+  // ── Auto-advance past scan step for manual flow ──────────
+  useEffect(() => {
+    if (scanType === 'manual' && currentStep === 2) {
+      nextStep();
+    }
+  }, [scanType, currentStep, nextStep]);
 
   const handleNext = useCallback(() => {
     if (currentStep === TOTAL_STEPS) {
@@ -88,8 +118,13 @@ export default function ApplyPage() {
 
   const handleBack = useCallback(() => {
     setDirection(-1);
-    prevStep();
-  }, [prevStep]);
+    // Skip back past the auto-advancing scan step in manual flow
+    if (scanType === 'manual' && currentStep === 3) {
+      goToStep(1);
+    } else {
+      prevStep();
+    }
+  }, [prevStep, scanType, currentStep, goToStep]);
 
   // ── Browser back button support ─────────────────────────
   useEffect(() => {
@@ -98,14 +133,18 @@ export default function ApplyPage() {
 
   useEffect(() => {
     const handlePopState = (e: PopStateEvent) => {
-      const step = e.state?.step;
+      let step = e.state?.step;
       if (step && step >= 1 && step <= TOTAL_STEPS) {
+        // Skip step 2 in manual flow
+        if (scanType === 'manual' && step === 2) {
+          step = 1;
+        }
         goToStep(step);
       }
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [goToStep]);
+  }, [goToStep, scanType]);
 
   // ── Enter key submission for placeholder steps ──────────
   useEffect(() => {
@@ -145,7 +184,7 @@ export default function ApplyPage() {
             <div className="w-6" />
           )}
           <span className="font-bold text-[0.625rem] tracking-[0.1rem] uppercase text-primary">
-            STEP {currentStep} OF {TOTAL_STEPS}
+            STEP {currentStep} OF {TOTAL_STEPS} &middot; {STEPS[currentStep - 1]?.name}
           </span>
         </div>
         <div className="text-primary font-bold tracking-tighter">

@@ -1,5 +1,4 @@
-import { generateText, Output } from 'ai';
-import { google } from '@ai-sdk/google';
+import OpenAI from 'openai';
 import { policyOcrSchema, type PolicyOcrData } from '@/lib/policy-ocr-schema';
 
 export const maxDuration = 60;
@@ -20,47 +19,49 @@ export async function POST(request: Request) {
       );
     }
 
+    const openai = new OpenAI();
     const dataUri = `data:${mimeType};base64,${imageBase64}`;
 
-    const textPrompt = `Extract the following information from this CGL (Commercial General Liability) or liability insurance policy document.
-
-Look for:
-- Policy Number - the unique policy or certificate number
-- Expiry Date - when the policy expires (convert to YYYY-MM-DD format)
-- Coverage Limit - the total coverage amount
-- Prior Insurer - the name of the insurance company
-- Named Insured - the business or person named on the policy
-- Business Address - the address of the insured business
-
-If a field cannot be found or is unclear, return an empty string for that field.`;
-
-    const { output } = await generateText({
-      model: google('gemini-2.0-flash'),
-      temperature: 0,
-      maxOutputTokens: 512,
-      maxRetries: 2,
-      prompt: [
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4.1-mini',
+      max_tokens: 512,
+      messages: [
         {
           role: 'user',
           content: [
-            { type: 'text', text: textPrompt },
-            { type: 'image', image: dataUri },
+            {
+              type: 'text',
+              text: `Extract the following information from this CGL (Commercial General Liability) insurance policy document.
+
+Return JSON with these exact keys:
+- policyNumber - the unique policy or certificate number
+- expiryDate - when the policy expires in YYYY-MM-DD format
+- coverageLimit - the total coverage amount (as string)
+- priorInsurer - the name of the previous insurance company
+- namedInsured - the business or person named on the policy
+- businessAddress - the address of the insured business
+
+Return ONLY valid JSON. If a field cannot be found, use an empty string.`
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: dataUri,
+                detail: 'high',
+              },
+            },
           ],
         },
       ],
-      output: Output.object({
-        schema: policyOcrSchema,
-      }),
+      response_format: { type: 'json_object' },
     });
 
-    if (!output) {
-      return Response.json(
-        { error: 'Failed to extract policy data - no output' },
-        { status: 500 }
-      );
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('No response content');
     }
 
-    const extracted: PolicyOcrData = output as PolicyOcrData;
+    const extracted: PolicyOcrData = JSON.parse(content);
 
     return Response.json({
       success: true,

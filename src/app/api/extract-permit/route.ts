@@ -1,5 +1,4 @@
-import { generateText, Output } from 'ai';
-import { google } from '@ai-sdk/google';
+import OpenAI from 'openai';
 import { businessPermitOcrSchema, type BusinessPermitOcrData } from '@/lib/ocr-schema';
 
 export const maxDuration = 60;
@@ -20,46 +19,52 @@ export async function POST(request: Request) {
       );
     }
 
+    const openai = new OpenAI();
     const dataUri = `data:${mimeType};base64,${imageBase64}`;
 
-    const textPrompt = `Extract the following information from this business permit image. The image shows a Philippines business permit/registration document.
-
-Look for:
-- TIN (Tax Identification Number) - typically 13 digits in format XXX-XXX-XXX-XXX
-- Business Name - the registered name of the business
-- Owner's Full Name - the person or entity owning the business
-- Complete address including street, barangay, city, province, region
-- Permit Issue Date or Effective Date - the date the permit was issued or becomes effective. Return in YYYY-MM-DD format. If no date is found, return empty string.
-
-If a field cannot be found or is unclear, return an empty string for that field.`;
-
-    const { output } = await generateText({
-      model: google('gemini-2.0-flash'),
-      temperature: 0,
-      maxOutputTokens: 512,
-      maxRetries: 2,
-      prompt: [
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4.1-mini',
+      max_tokens: 512,
+      messages: [
         {
           role: 'user',
           content: [
-            { type: 'text', text: textPrompt },
-            { type: 'image', image: dataUri },
+            {
+              type: 'text',
+              text: `Extract the following information from this Philippines business permit image.
+
+Return JSON with these exact keys:
+- tin (Tax Identification Number) - format XXX-XXX-XXX-XXX
+- businessName - the registered name of the business
+- fullName - the owner's full name
+- streetAddress - street address
+- regionName - region (e.g., "NCR", "CALABARZON")
+- provinceName - province
+- cityName - city or municipality
+- barangayName - barangay
+- effectiveDate - permit issue date in YYYY-MM-DD format, or empty string if not found
+
+Return ONLY valid JSON. If a field cannot be found, use an empty string.`
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: dataUri,
+                detail: 'high',
+              },
+            },
           ],
         },
       ],
-      output: Output.object({
-        schema: businessPermitOcrSchema,
-      }),
+      response_format: { type: 'json_object' },
     });
 
-    if (!output) {
-      return Response.json(
-        { error: 'Failed to extract permit data - no output' },
-        { status: 500 }
-      );
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('No response content');
     }
 
-    const extracted: BusinessPermitOcrData = output as BusinessPermitOcrData;
+    const extracted: BusinessPermitOcrData = JSON.parse(content);
 
     return Response.json({
       success: true,
