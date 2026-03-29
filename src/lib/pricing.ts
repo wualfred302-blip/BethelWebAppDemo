@@ -66,6 +66,9 @@ export const NATURE_TO_CLASS: Record<string, 1 | 2> = {
 };
 
 export function lookupPremium(floorAreaSqM: string, natureOfBusiness: string) {
+  // Return null if either field is missing
+  if (!floorAreaSqM || !natureOfBusiness) return null;
+
   const sqm = parseInt(floorAreaSqM, 10) || 0;
   const row = PRICING_TABLE.find((r) => sqm >= r.minSqm && sqm <= r.maxSqm);
   if (!row) return null;
