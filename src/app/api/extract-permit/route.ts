@@ -1,5 +1,5 @@
 import { generateText, Output } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { google } from '@ai-sdk/google';
 import { businessPermitOcrSchema, type BusinessPermitOcrData } from '@/lib/ocr-schema';
 
 export const maxDuration = 60;
@@ -34,7 +34,10 @@ Look for:
 If a field cannot be found or is unclear, return an empty string for that field.`;
 
     const { output } = await generateText({
-      model: openai('gpt-4o-mini'),
+      model: google('gemini-2.0-flash'),
+      temperature: 0,
+      maxOutputTokens: 512,
+      maxRetries: 2,
       prompt: [
         {
           role: 'user',

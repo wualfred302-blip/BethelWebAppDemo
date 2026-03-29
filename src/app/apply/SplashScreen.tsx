@@ -1,19 +1,16 @@
 'use client';
 
-import Image from 'next/image';
-
 export default function SplashScreen({ onGetStarted }: { onGetStarted: () => void }) {
   return (
     <div className="flex flex-col min-h-screen bg-white text-[#1a1a2e] overflow-hidden">
       {/* Top — logo + descriptions grouped together */}
       <main className="flex flex-col items-center text-center px-6 pt-[28vh]">
         {/* Bethel shield logo */}
-        <Image
+        <img
           src="/bethel-shield.png"
           alt="Bethel General Insurance and Surety Corporation"
           width={196}
           height={196}
-          priority
         />
 
         {/* Brand name — slightly spaced from logo */}
@@ -42,7 +39,8 @@ export default function SplashScreen({ onGetStarted }: { onGetStarted: () => voi
       <footer className="mt-auto px-6 pb-10">
         <button
           onClick={onGetStarted}
-          className="w-full h-[40px] bg-[#384888] text-white text-[13px] font-medium rounded transition-colors hover:bg-[#2d3a6d]"
+          style={{ cursor: 'pointer', WebkitTapHighlightColor: 'transparent' }}
+          className="w-full h-[40px] bg-[#384888] text-white text-[13px] font-medium rounded transition-colors active:bg-[#2d3a6d]"
         >
           Get Started
         </button>
