@@ -3,10 +3,10 @@
 import { useRef } from 'react';
 import { useApplicationStore } from '@/store/useApplicationStore';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Camera, SkipForward } from 'lucide-react';
+import { Camera, ChevronRight } from 'lucide-react';
 
 export default function MotorScanStep() {
-  const { nextStep, prevStep, currentStep } = useApplicationStore();
+  const { nextStep, prevStep } = useApplicationStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSkip = () => {
@@ -14,20 +14,22 @@ export default function MotorScanStep() {
   };
 
   return (
-    <div className="max-w-md mx-auto space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-xl font-bold" style={{ color: '#4868a8' }}>
+    <div className="max-w-md mx-auto min-h-[calc(100dvh-10rem)] flex flex-col text-center">
+      <section className="flex flex-col gap-2 pt-8">
+        <h1 className="text-2xl font-bold leading-tight text-primary">
           Scan Vehicle Documents
-        </h2>
-        <p className="text-sm text-zinc-500">
+        </h1>
+        <p className="text-sm leading-6 text-on-surface-variant max-w-[280px] mx-auto">
           Upload your OR/CR or existing motor policy to help fill the form
         </p>
-      </div>
+      </section>
 
-      <div
-        onClick={() => fileInputRef.current?.click()}
-        className="border-2 border-dashed border-zinc-300 rounded-xl p-8 text-center cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-colors"
-      >
+      <section className="w-full mt-12 flex flex-col items-center gap-6">
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="w-full min-h-[240px] border-2 border-dashed border-outline-variant rounded-xl p-12 flex flex-col items-center justify-center gap-4 cursor-pointer hover:bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors group"
+        >
         <input
           ref={fileInputRef}
           type="file"
@@ -36,48 +38,49 @@ export default function MotorScanStep() {
           className="hidden"
         />
 
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-14 h-14 rounded-full bg-zinc-100 flex items-center justify-center">
-            <Camera className="w-7 h-7 text-zinc-400" />
+          <div className="rounded-full bg-surface-container-low p-4 group-hover:bg-surface-container-high transition-colors">
+            <Camera className="w-9 h-9 text-primary" strokeWidth={1.75} />
           </div>
-          <div>
-            <p className="text-sm font-medium text-on-surface">Tap to capture or upload</p>
-            <p className="text-xs text-zinc-400">
+
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-semibold tracking-[0.02em] text-primary">
+              Tap to capture or upload
+            </span>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.1em] leading-4 text-on-surface-variant">
               OR/CR, policy document, JPG, PNG, or PDF up to 5MB
-            </p>
+            </span>
           </div>
-        </div>
-      </div>
+        </button>
 
-      <button
-        onClick={handleSkip}
-        className="w-full flex items-center justify-center gap-2 py-3 text-sm text-zinc-500 hover:text-zinc-700 transition-colors"
-      >
-        <SkipForward className="w-4 h-4" />
-        <span>Skip, fill vehicle details manually</span>
-      </button>
-
-      <div className="flex gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={prevStep}
-          disabled={currentStep <= 1}
-          className="flex-1"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back
-        </Button>
-
-        <Button
+        <button
           type="button"
           onClick={handleSkip}
-          className="flex-1"
-          style={{ backgroundColor: '#384888' }}
+          className="flex items-center justify-center gap-1 text-sm font-semibold tracking-[0.02em] text-primary hover:opacity-80 focus:outline-none transition-opacity"
         >
-          Skip
-          <ArrowRight className="w-4 h-4 ml-2" />
-        </Button>
+          <span>Skip, fill vehicle details manually</span>
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </section>
+
+      <div className="fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant px-6 py-4 z-50">
+        <div className="max-w-md mx-auto flex items-center justify-between gap-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={prevStep}
+            className="min-w-[100px] border-primary text-primary font-semibold rounded-sm bg-transparent hover:bg-surface-container-low"
+          >
+            Back
+          </Button>
+
+          <Button
+            type="button"
+            onClick={handleSkip}
+            className="min-w-[100px] bg-[#384888] text-primary-foreground font-semibold rounded-sm hover:opacity-90"
+          >
+            Skip
+          </Button>
+        </div>
       </div>
     </div>
   );
