@@ -6,7 +6,7 @@ export const TOTAL_STEPS = 5;
 
 // ── Scan Type ───────────────────────────────────────────────
 
-export type ScanType = 'permit' | 'policy' | 'manual' | null;
+export type ScanType = 'permit' | 'policy' | 'manual' | 'vehicle' | null;
 
 // ── Data interfaces ──────────────────────────────────────────
 
@@ -23,6 +23,33 @@ interface BusinessInfoData {
   buildingFloors: string;
   buildingType: string;
   constructionType: string;
+}
+
+interface MotorVehicleInfoData {
+  fullName: string;
+  address: string;
+  phone: string;
+  email: string;
+  plateNumber: string;
+  mvFileNumber: string;
+  make: string;
+  model: string;
+  yearModel: string;
+  bodyType: string;
+  color: string;
+  seatingCapacity: string;
+  vehicleUse: string;
+  chassisNumber: string;
+  engineNumber: string;
+  conductionSticker: string;
+  vehicleCondition: string;
+  estimatedMarketValue: string;
+  effectiveDate: string;
+  coverageType: string;
+  actsOfNature: string;
+  thirdPartyPropertyDamageLimit: string;
+  autoPersonalAccident: string;
+  deductibleParticipation: string;
 }
 
 interface LocationData {
@@ -62,6 +89,7 @@ interface CoverNoteData {
 interface WizardState {
   currentStep: number;
   businessInfo: BusinessInfoData;
+  motorVehicleInfo: MotorVehicleInfoData;
   location: LocationData;
   contactCoverage: ContactData;
   documents: DocumentsData;
@@ -79,6 +107,7 @@ interface WizardState {
 
   // Data setters
   setBusinessInfo: (data: Partial<BusinessInfoData>) => void;
+  setMotorVehicleInfo: (data: Partial<MotorVehicleInfoData>) => void;
   setLocation: (data: Partial<LocationData>) => void;
   setContactCoverage: (data: Partial<ContactData>) => void;
   setDocuments: (data: Partial<DocumentsData>) => void;
@@ -107,6 +136,33 @@ const initialBusinessInfo: BusinessInfoData = {
   buildingFloors: '',
   buildingType: '',
   constructionType: '',
+};
+
+const initialMotorVehicleInfo: MotorVehicleInfoData = {
+  fullName: '',
+  address: '',
+  phone: '',
+  email: '',
+  plateNumber: '',
+  mvFileNumber: '',
+  make: '',
+  model: '',
+  yearModel: '',
+  bodyType: '',
+  color: '',
+  seatingCapacity: '',
+  vehicleUse: '',
+  chassisNumber: '',
+  engineNumber: '',
+  conductionSticker: '',
+  vehicleCondition: '',
+  estimatedMarketValue: '',
+  effectiveDate: new Date().toISOString().split('T')[0],
+  coverageType: '',
+  actsOfNature: '',
+  thirdPartyPropertyDamageLimit: '',
+  autoPersonalAccident: '',
+  deductibleParticipation: '',
 };
 
 const initialLocation: LocationData = {
@@ -146,6 +202,7 @@ const initialCoverNote: CoverNoteData = {
 export const useApplicationStore = create<WizardState>()((set) => ({
   currentStep: 1,
   businessInfo: initialBusinessInfo,
+  motorVehicleInfo: initialMotorVehicleInfo,
   location: initialLocation,
   contactCoverage: initialContactCoverage,
   documents: initialDocuments,
@@ -180,6 +237,11 @@ export const useApplicationStore = create<WizardState>()((set) => ({
   setBusinessInfo: (data) =>
     set((state) => ({
       businessInfo: { ...state.businessInfo, ...data },
+    })),
+
+  setMotorVehicleInfo: (data) =>
+    set((state) => ({
+      motorVehicleInfo: { ...state.motorVehicleInfo, ...data },
     })),
 
   setLocation: (data) =>
@@ -227,6 +289,7 @@ export const useApplicationStore = create<WizardState>()((set) => ({
     set({
       currentStep: 1,
       businessInfo: initialBusinessInfo,
+      motorVehicleInfo: initialMotorVehicleInfo,
       location: initialLocation,
       contactCoverage: initialContactCoverage,
       documents: initialDocuments,
@@ -241,6 +304,7 @@ export const useApplicationStore = create<WizardState>()((set) => ({
 // ── Type exports ────────────────────────────────────────────
 
 export type BusinessInfo = BusinessInfoData;
+export type MotorVehicleInfo = MotorVehicleInfoData;
 export type Location = LocationData;
 export type Contact = ContactData;
 export type { CoverNoteData };

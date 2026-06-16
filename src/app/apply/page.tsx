@@ -13,6 +13,8 @@ import SplashScreen from './SplashScreen';
 import ScanSelectionStep from './steps/ScanSelectionStep';
 import ScanStep from './steps/ScanStep';
 import PolicyScanStep from './steps/PolicyScanStep';
+import MotorScanStep from './steps/MotorScanStep';
+import MotorVehicleDetailsStep from './steps/MotorVehicleDetailsStep';
 
 // ── Step definitions (dynamic per scan type) ────────────────
 
@@ -24,21 +26,28 @@ interface StepDef {
 
 function getSteps(scanType: ScanType): StepDef[] {
   const scanComponent =
-    scanType === 'policy' ? PolicyScanStep
+    scanType === 'vehicle' ? MotorScanStep
+    : scanType === 'policy' ? PolicyScanStep
     : ScanStep; // 'permit' or 'manual' both use ScanStep
 
+  const detailsComponent =
+    scanType === 'vehicle' ? MotorVehicleDetailsStep
+    : BusinessInfoStep;
+
   const scanLabel =
-    scanType === 'policy' ? 'Scan Policy'
+    scanType === 'vehicle' ? 'Scan Vehicle'
+    : scanType === 'policy' ? 'Scan Policy'
     : 'Scan Permit';
 
   const scanName =
-    scanType === 'policy' ? 'Scan Policy'
+    scanType === 'vehicle' ? 'Vehicle Documents'
+    : scanType === 'policy' ? 'Scan Policy'
     : 'Scan & OCR';
 
   return [
-    { label: 'Select', name: 'Choose Action', component: ScanSelectionStep },
+    { label: 'Select', name: 'Choose Product', component: ScanSelectionStep },
     { label: scanLabel, name: scanName, component: scanComponent },
-    { label: 'Business Info', name: 'Business Details', component: BusinessInfoStep },
+    { label: 'Details', name: scanType === 'vehicle' ? 'Vehicle Details' : 'Business Details', component: detailsComponent },
     { label: 'Cover Note', name: 'Cover Note', component: CoverNoteStep },
     { label: 'Payment', name: 'Payment', component: PaymentStep },
   ];

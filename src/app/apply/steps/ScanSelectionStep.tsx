@@ -1,9 +1,8 @@
 'use client';
 
 import { useApplicationStore } from '@/store/useApplicationStore';
-import { Scan, FileText, PenLine, ChevronRight } from 'lucide-react';
-
-type ScanType = 'permit' | 'policy' | 'manual' | null;
+import { Building2, Car, FileText, ChevronRight } from 'lucide-react';
+import type { ScanType } from '@/store/useApplicationStore';
 
 const SCAN_OPTIONS: {
   type: ScanType;
@@ -12,22 +11,22 @@ const SCAN_OPTIONS: {
   subtitle: string;
 }[] = [
   {
+    type: 'vehicle',
+    icon: <Car className="w-5 h-5" />,
+    title: 'Insure a Vehicle',
+    subtitle: 'Motor car insurance for private vehicles',
+  },
+  {
     type: 'permit',
-    icon: <Scan className="w-5 h-5" />,
-    title: 'Scan Business Permit',
-    subtitle: 'New CGL Application',
+    icon: <Building2 className="w-5 h-5" />,
+    title: 'Insure a Business Property',
+    subtitle: 'CGL/property cover for business premises',
   },
   {
     type: 'policy',
     icon: <FileText className="w-5 h-5" />,
-    title: 'Scan Existing Policy',
-    subtitle: 'Renewal / Transfer',
-  },
-  {
-    type: 'manual',
-    icon: <PenLine className="w-5 h-5" />,
-    title: 'Skip, Fill Manually',
-    subtitle: 'No documents available',
+    title: 'Renew an Existing Policy',
+    subtitle: 'Scan your current policy to continue',
   },
 ];
 
@@ -47,14 +46,14 @@ export default function ScanSelectionStep() {
           What would you like to do?
         </h1>
         <p className="text-sm text-outline">
-          Choose how you&apos;d like to proceed
+          Choose the insurance journey you&apos;d like to start
         </p>
       </section>
 
       {/* Options — fieldset/legend pattern matching Stitch form */}
       <fieldset>
         <legend className="font-bold text-[0.75rem] tracking-[0.1rem] uppercase text-outline mb-6">
-          SELECT OPTION
+          SELECT INSURANCE TYPE
         </legend>
 
         <div className="space-y-0">
