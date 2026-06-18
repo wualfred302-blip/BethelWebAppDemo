@@ -214,14 +214,19 @@ export default function CoverNoteStep() {
                   .join(' ') || '—',
             },
             { label: 'Plate Number', value: motorVehicleInfo.plateNumber || motorVehicleInfo.conductionSticker || '—' },
+            { label: 'MV File Number', value: motorVehicleInfo.mvFileNumber || '—' },
+            { label: 'Engine Number', value: motorVehicleInfo.engineNumber || '—' },
+            { label: 'Chassis Number', value: motorVehicleInfo.chassisNumber || '—' },
             { label: 'Color', value: motorVehicleInfo.color || '—' },
             { label: 'Body Type', value: motorVehicleInfo.bodyType || '—' },
+            { label: 'Seating Capacity', value: motorVehicleInfo.seatingCapacity || '—' },
             { label: 'Vehicle Use', value: motorVehicleInfo.vehicleUse || '—' },
           ], 'Vehicle details pending'),
         },
         {
           title: 'Coverage Limits',
           rows: compactRows([
+            { label: 'Effective Date', value: motorVehicleInfo.effectiveDate || '—' },
             { label: 'Coverage Type', value: motorVehicleInfo.coverageType || '—' },
             {
               label: 'Sum Insured / FMV',

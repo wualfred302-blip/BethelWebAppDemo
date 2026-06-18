@@ -1,15 +1,82 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useApplicationStore } from '@/store/useApplicationStore';
 import { Button } from '@/components/ui/button';
-import { Camera, ChevronRight } from 'lucide-react';
+import { Camera, CheckCircle2, ChevronRight, Loader2, AlertTriangle } from 'lucide-react';
+import { mapMotorOcrToVehicleInfo, type MotorOcrMappingResult } from '@/lib/motor-ocr/mapping';
+import type { MotorDocumentOcrResult } from '@/lib/motor-ocr/schema';
+
+type ScanStatus = 'idle' | 'scanning' | 'success' | 'error';
 
 export default function MotorScanStep() {
-  const { nextStep, prevStep } = useApplicationStore();
+  const { nextStep, prevStep, setMotorVehicleInfo, setMotorOcrData } = useApplicationStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [status, setStatus] = useState<ScanStatus>('idle');
+  const [error, setError] = useState('');
+  const [mapping, setMapping] = useState<MotorOcrMappingResult | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        const base64 = result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const processDocument = async (file: File) => {
+    setStatus('scanning');
+    setError('');
+    setMapping(null);
+
+    try {
+      const imageBase64 = await fileToBase64(file);
+      const mimeType = file.type || 'image/jpeg';
+
+      const response = await fetch('/api/extract-motor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64, mimeType }),
+      });
+
+      const result: {
+        success?: boolean;
+        data?: MotorDocumentOcrResult;
+        error?: string;
+        details?: string;
+      } = await response.json();
+
+      if (result.success && result.data) {
+        const mapped = mapMotorOcrToVehicleInfo(result.data);
+        setMotorOcrData(result.data);
+        setMotorVehicleInfo(mapped.values);
+        setMapping(mapped);
+        setStatus('success');
+      } else {
+        setError(result.details || result.error || 'Failed to extract vehicle data');
+        setStatus('error');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error occurred');
+      setStatus('error');
+    }
+  };
+
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setSelectedFile(file);
+    await processDocument(file);
+  };
 
   const handleSkip = () => {
+    setMotorOcrData(null);
     nextStep();
   };
 
@@ -30,26 +97,73 @@ export default function MotorScanStep() {
           onClick={() => fileInputRef.current?.click()}
           className="w-full min-h-[240px] border-2 border-dashed border-outline-variant rounded-xl p-12 flex flex-col items-center justify-center gap-4 cursor-pointer hover:bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors group"
         >
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*,.pdf"
-          capture="environment"
-          className="hidden"
-        />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,.pdf"
+            capture="environment"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
 
-          <div className="rounded-full bg-surface-container-low p-4 group-hover:bg-surface-container-high transition-colors">
-            <Camera className="w-9 h-9 text-primary" strokeWidth={1.75} />
-          </div>
+          {status === 'scanning' ? (
+            <>
+              <div className="rounded-full bg-surface-container-low p-4">
+                <Loader2 className="w-9 h-9 animate-spin text-primary" strokeWidth={1.75} />
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-semibold tracking-[0.02em] text-primary">
+                  Reading vehicle document
+                </span>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.1em] leading-4 text-on-surface-variant">
+                  Extracting OR/CR, policy, and coverage fields
+                </span>
+              </div>
+            </>
+          ) : selectedFile && status === 'success' ? (
+            <>
+              <div className="rounded-full bg-green-50 p-4">
+                <CheckCircle2 className="w-9 h-9 text-green-600" strokeWidth={1.75} />
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-semibold tracking-[0.02em] text-green-700">
+                  Vehicle data extracted
+                </span>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.1em] leading-4 text-on-surface-variant">
+                  Continue to review and correct the form
+                </span>
+              </div>
+            </>
+          ) : selectedFile && status === 'error' ? (
+            <>
+              <div className="rounded-full bg-red-50 p-4">
+                <AlertTriangle className="w-9 h-9 text-red-600" strokeWidth={1.75} />
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-semibold tracking-[0.02em] text-red-600">
+                  Extraction failed
+                </span>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.1em] leading-4 text-on-surface-variant">
+                  {error || 'Try again or continue manually'}
+                </span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="rounded-full bg-surface-container-low p-4 group-hover:bg-surface-container-high transition-colors">
+                <Camera className="w-9 h-9 text-primary" strokeWidth={1.75} />
+              </div>
 
-          <div className="flex flex-col gap-1">
-            <span className="text-sm font-semibold tracking-[0.02em] text-primary">
-              Tap to capture or upload
-            </span>
-            <span className="text-[11px] font-semibold uppercase tracking-[0.1em] leading-4 text-on-surface-variant">
-              OR/CR, policy document, JPG, PNG, or PDF up to 5MB
-            </span>
-          </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-semibold tracking-[0.02em] text-primary">
+                  Tap to capture or upload
+                </span>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.1em] leading-4 text-on-surface-variant">
+                  OR/CR, policy document, JPG, PNG, or PDF up to 5MB
+                </span>
+              </div>
+            </>
+          )}
         </button>
 
         <button
@@ -60,6 +174,36 @@ export default function MotorScanStep() {
           <span>Skip, fill vehicle details manually</span>
           <ChevronRight className="w-4 h-4" />
         </button>
+
+        {status === 'success' && mapping && (
+          <div className="w-full border border-outline-variant bg-white px-4 py-4 text-left">
+            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-outline">
+              Applied to Vehicle Form
+            </p>
+            <div className="mt-3 space-y-2">
+              {mapping.appliedFields.length > 0 ? (
+                mapping.appliedFields.slice(0, 6).map((field) => (
+                  <div key={field.formKey} className="flex items-start justify-between gap-4 text-sm">
+                    <span className="text-outline">{field.label}</span>
+                    <span className="max-w-[58%] text-right font-medium text-on-surface">
+                      {field.value}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-on-surface-variant">
+                  OCR completed, but no high-confidence fields were applied automatically.
+                </p>
+              )}
+            </div>
+            {mapping.suggestions.length > 0 && (
+              <p className="mt-3 text-[11px] leading-relaxed text-on-surface-variant">
+                {mapping.suggestions.length} lower-confidence field
+                {mapping.suggestions.length === 1 ? '' : 's'} will need manual review.
+              </p>
+            )}
+          </div>
+        )}
       </section>
 
       <div className="fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant px-6 py-4 z-50">
@@ -75,10 +219,10 @@ export default function MotorScanStep() {
 
           <Button
             type="button"
-            onClick={handleSkip}
+            onClick={status === 'success' ? nextStep : handleSkip}
             className="min-w-[100px] bg-[#384888] text-primary-foreground font-semibold rounded-sm hover:opacity-90"
           >
-            Skip
+            {status === 'success' ? 'Review' : 'Skip'}
           </Button>
         </div>
       </div>

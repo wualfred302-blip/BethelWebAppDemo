@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { BusinessPermitOcrData } from '@/lib/ocr-schema';
 import type { PolicyOcrData } from '@/lib/policy-ocr-schema';
+import type { MotorDocumentOcrResult } from '@/lib/motor-ocr/schema';
 
 export const TOTAL_STEPS = 5;
 
@@ -97,6 +98,7 @@ interface WizardState {
   coverNote: CoverNoteData;
   scanData: BusinessPermitOcrData | null;
   policyData: PolicyOcrData | null;
+  motorOcrData: MotorDocumentOcrResult | null;
   scanType: ScanType;
 
   // Navigation
@@ -115,6 +117,7 @@ interface WizardState {
   setCoverNote: (data: Partial<CoverNoteData>) => void;
   setScanData: (data: BusinessPermitOcrData | null) => void;
   setPolicyData: (data: PolicyOcrData | null) => void;
+  setMotorOcrData: (data: MotorDocumentOcrResult | null) => void;
   setScanType: (type: ScanType) => void;
 
   // Reset
@@ -210,6 +213,7 @@ export const useApplicationStore = create<WizardState>()((set) => ({
   coverNote: initialCoverNote,
   scanData: null,
   policyData: null,
+  motorOcrData: null,
   scanType: null,
 
   // Navigation
@@ -279,6 +283,11 @@ export const useApplicationStore = create<WizardState>()((set) => ({
       policyData: data,
     }),
 
+  setMotorOcrData: (data) =>
+    set({
+      motorOcrData: data,
+    }),
+
   setScanType: (type: ScanType) =>
     set({
       scanType: type,
@@ -297,6 +306,7 @@ export const useApplicationStore = create<WizardState>()((set) => ({
       coverNote: initialCoverNote,
       scanData: null,
       policyData: null,
+      motorOcrData: null,
       scanType: null,
     }),
 }));

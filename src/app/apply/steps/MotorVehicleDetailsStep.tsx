@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useApplicationStore, type MotorVehicleInfo } from '@/store/useApplicationStore';
+import { CheckCircle2 } from 'lucide-react';
 
 function UnderlineLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
   return (
@@ -32,7 +33,7 @@ const INCLUDED_OPTIONS = ['Included', 'Not Included'];
 type FieldName = keyof MotorVehicleInfo;
 
 export default function MotorVehicleDetailsStep() {
-  const { motorVehicleInfo, setMotorVehicleInfo, nextStep } = useApplicationStore();
+  const { motorVehicleInfo, motorOcrData, setMotorVehicleInfo, nextStep } = useApplicationStore();
   const [form, setForm] = useState<MotorVehicleInfo>(motorVehicleInfo);
 
   const updateField = (field: FieldName, value: string) => {
@@ -87,6 +88,23 @@ export default function MotorVehicleDetailsStep() {
           Please provide the vehicle and coverage details for the motor car policy.
         </p>
       </section>
+
+      {motorOcrData && (
+        <section className="border border-outline-variant bg-white px-4 py-4">
+          <div className="flex items-start gap-3">
+            <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-600" />
+            <div>
+              <p className="text-sm font-semibold text-on-surface">
+                OCR-filled fields are ready for review.
+              </p>
+              <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-outline">
+                {motorOcrData.documentType.replace('_', ' ')} · {Math.round(motorOcrData.confidence * 100)}%
+                confidence
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
 
       <fieldset>
         <SectionLegend>ASSURED DETAILS</SectionLegend>
