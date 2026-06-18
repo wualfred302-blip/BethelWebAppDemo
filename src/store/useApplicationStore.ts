@@ -311,11 +311,11 @@ export type { CoverNoteData };
 
 // ── Helper functions ────────────────────────────────────────
 
-export function generateControlNumber(): string {
+export function generateControlNumber(prefix: 'CGL' | 'MOTOR' = 'CGL'): string {
   const now = new Date();
   const date = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
   const suffix = String(Math.floor(1000 + Math.random() * 9000));
-  return `CGL-${date}-${suffix}`;
+  return `${prefix}-${date}-${suffix}`;
 }
 
 export function generateExpiryTime(hours: number = 6): string {

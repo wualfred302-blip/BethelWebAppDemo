@@ -8,28 +8,8 @@ import {
   generateExpiryTime,
 } from '@/store/useApplicationStore';
 import { lookupPremium, formatPHP } from '@/lib/pricing';
-import { FileDown } from 'lucide-react';
-
-// ── Section legend ────────────────────────────────────────────
-
-function SectionLegend({ children }: { children: React.ReactNode }) {
-  return (
-    <legend className="font-bold text-[0.75rem] tracking-[0.1rem] uppercase text-on-surface-variant mb-6">
-      {children}
-    </legend>
-  );
-}
-
-// ── Row ───────────────────────────────────────────────────────
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between text-sm">
-      <span className="text-outline">{label}</span>
-      <span className="text-on-surface font-medium">{value}</span>
-    </div>
-  );
-}
+import QuoteReceiptCard from './components/QuoteReceiptCard';
+import type { QuoteReceiptRow, QuoteReceiptSection } from './components/QuoteReceiptCard';
 
 // ── PDF generation ────────────────────────────────────────────
 
@@ -119,21 +99,28 @@ async function generateCoverNotePDF(data: {
 
 export default function CoverNoteStep() {
   const businessInfo = useApplicationStore((s) => s.businessInfo);
+  const motorVehicleInfo = useApplicationStore((s) => s.motorVehicleInfo);
   const location = useApplicationStore((s) => s.location);
   const coverNote = useApplicationStore((s) => s.coverNote);
   const setCoverNote = useApplicationStore((s) => s.setCoverNote);
   const nextStep = useApplicationStore((s) => s.nextStep);
+  const scanType = useApplicationStore((s) => s.scanType);
+
   const [isGenerating, setIsGenerating] = useState(false);
+
+  const isMotor = scanType === 'vehicle';
+  const controlPrefix = isMotor ? 'MOTOR' : 'CGL';
 
   useEffect(() => {
     if (!coverNote.controlNumber) {
       setCoverNote({
-        controlNumber: generateControlNumber(),
+        controlNumber: generateControlNumber(controlPrefix),
         expiryTime: generateExpiryTime(),
       });
     }
-  }, [coverNote.controlNumber, setCoverNote]);
+  }, [coverNote.controlNumber, setCoverNote, controlPrefix]);
 
+  // ── CGL premium calculation ──────────────────────────────
   const premium = useMemo(
     () => lookupPremium(businessInfo.floorArea, businessInfo.natureOfBusiness),
     [businessInfo.floorArea, businessInfo.natureOfBusiness],
@@ -144,7 +131,8 @@ export default function CoverNoteStep() {
     const start = new Date(businessInfo.effectiveDate + 'T00:00:00');
     const end = new Date(start);
     end.setFullYear(end.getFullYear() + 1);
-    const fmt = (d: Date) => d.toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' });
+    const fmt = (d: Date) =>
+      d.toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' });
     return `${fmt(start)} — ${fmt(end)}`;
   }, [businessInfo.effectiveDate]);
 
@@ -158,6 +146,7 @@ export default function CoverNoteStep() {
     return parts.join(', ');
   }, [businessInfo.streetAddress, location.barangayName, location.cityName, location.provinceName]);
 
+  // ── PDF download (CGL only) ──────────────────────────────
   const handleDownloadPDF = useCallback(async () => {
     if (!coverNote.controlNumber) return;
     setIsGenerating(true);
@@ -170,7 +159,13 @@ export default function CoverNoteStep() {
         fullAddress,
         natureOfBusiness: businessInfo.natureOfBusiness,
         floorArea: businessInfo.floorArea,
-        effectiveDate: businessInfo.effectiveDate ? new Date(businessInfo.effectiveDate + 'T00:00:00').toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' }) : '—',
+        effectiveDate: businessInfo.effectiveDate
+          ? new Date(businessInfo.effectiveDate + 'T00:00:00').toLocaleDateString('en-PH', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
+            })
+          : '—',
         limitOfLiability: premium ? formatPHP(premium.limitOfLiability) : '—',
         netPremium: premium ? formatPHP(premium.netPremium) : '—',
         dst: premium ? formatPHP(premium.dst) : '—',
@@ -184,95 +179,165 @@ export default function CoverNoteStep() {
     }
   }, [coverNote, businessInfo, fullAddress, premium, coveragePeriod]);
 
+  // ── Build receipt data ──────────────────────────────────
+  const receiptData = useMemo(() => {
+    if (isMotor) {
+      // ── Motor Car receipt ───────────────────────────────
+      const compactRows = (rows: QuoteReceiptRow[], fallback: string): QuoteReceiptRow[] => {
+        const visible = rows.filter((row) => row.value && row.value !== '—');
+        return visible.length ? visible : [{ label: 'Status', value: fallback }];
+      };
+
+      const formatOptionalPHP = (value: string) => {
+        const amount = Number(String(value).replace(/[^0-9.]/g, ''));
+        return amount > 0 ? formatPHP(amount) : '—';
+      };
+
+      const sections: QuoteReceiptSection[] = [
+        {
+          title: 'Insured Details',
+          rows: compactRows([
+            { label: 'Name', value: motorVehicleInfo.fullName || '—' },
+            { label: 'Address', value: motorVehicleInfo.address || '—' },
+            { label: 'Email', value: motorVehicleInfo.email || '—' },
+            { label: 'Phone', value: motorVehicleInfo.phone || '—' },
+          ], 'Applicant details pending'),
+        },
+        {
+          title: 'Vehicle Details',
+          rows: compactRows([
+            {
+              label: 'Make & Model',
+              value:
+                [motorVehicleInfo.yearModel, motorVehicleInfo.make, motorVehicleInfo.model]
+                  .filter(Boolean)
+                  .join(' ') || '—',
+            },
+            { label: 'Plate Number', value: motorVehicleInfo.plateNumber || motorVehicleInfo.conductionSticker || '—' },
+            { label: 'Color', value: motorVehicleInfo.color || '—' },
+            { label: 'Body Type', value: motorVehicleInfo.bodyType || '—' },
+            { label: 'Vehicle Use', value: motorVehicleInfo.vehicleUse || '—' },
+          ], 'Vehicle details pending'),
+        },
+        {
+          title: 'Coverage Limits',
+          rows: compactRows([
+            { label: 'Coverage Type', value: motorVehicleInfo.coverageType || '—' },
+            {
+              label: 'Sum Insured / FMV',
+              value: formatOptionalPHP(motorVehicleInfo.estimatedMarketValue),
+            },
+            { label: 'Acts of Nature', value: motorVehicleInfo.actsOfNature || '—' },
+            {
+              label: 'TPPD Limit',
+              value: formatOptionalPHP(motorVehicleInfo.thirdPartyPropertyDamageLimit),
+            },
+            { label: 'Auto Personal Accident', value: motorVehicleInfo.autoPersonalAccident || '—' },
+            { label: 'Deductible', value: motorVehicleInfo.deductibleParticipation || '—' },
+          ], 'Coverage details pending'),
+        },
+      ];
+
+      return {
+        eyebrow: 'Bethel General',
+        title: 'Motor Car Insurance',
+        subtitle: undefined,
+        totalLabel: 'Premium',
+        totalAmount: 'Pending Assessment',
+        insuredName: motorVehicleInfo.fullName || 'Applicant',
+        controlNumber: coverNote.controlNumber,
+        expiryTime: coverNote.expiryTime,
+        sections,
+        billingRows: [],
+        finalTotal: 'Pending Assessment',
+        transactionLabel: 'Control No.',
+        transactionValue: coverNote.controlNumber,
+        disclaimer: 'Estimated premium only. Subject to Bethel final underwriting assessment.',
+      };
+    }
+
+    // ── CGL receipt ───────────────────────────────────────
+    const sections: QuoteReceiptSection[] = [
+      {
+        title: 'Insured Details',
+        rows: [
+          { label: 'Business Name', value: businessInfo.businessName || '—' },
+          { label: 'Address', value: fullAddress || '—' },
+          { label: 'Email', value: businessInfo.email || '—' },
+        ],
+      },
+      {
+        title: 'Coverage Details',
+        rows: [
+          { label: 'Nature of Business', value: businessInfo.natureOfBusiness || '—' },
+          { label: 'Floor Area', value: businessInfo.floorArea ? `${businessInfo.floorArea} sqm` : '—' },
+          {
+            label: 'Limit of Liability',
+            value: premium ? formatPHP(premium.limitOfLiability) : '—',
+            emphasized: true,
+          },
+          { label: 'Coverage Period', value: coveragePeriod || '—' },
+        ],
+      },
+    ];
+
+    const billingRows: QuoteReceiptRow[] = premium
+      ? [
+          { label: 'Net Premium', value: formatPHP(premium.netPremium) },
+          { label: 'Documentary Stamp Tax (DST) 25%', value: formatPHP(premium.dst) },
+          { label: 'Value Added Tax (VAT) 12%', value: formatPHP(premium.vat) },
+          { label: 'Local Government Tax (LGT) 2%', value: formatPHP(premium.lgTax) },
+        ]
+      : [{ label: 'Billing', value: 'Awaiting premium calculation' }];
+
+    return {
+      eyebrow: 'Bethel General',
+      title: 'CGL Insurance',
+      subtitle: undefined,
+      totalLabel: 'Gross Premium',
+      totalAmount: premium ? formatPHP(premium.grossPremium) : '—',
+      insuredName: businessInfo.fullName || 'Applicant',
+      controlNumber: coverNote.controlNumber,
+      expiryTime: coverNote.expiryTime,
+      sections,
+      billingRows,
+      finalTotal: premium ? formatPHP(premium.grossPremium) : '—',
+      transactionLabel: 'Control No.',
+      transactionValue: coverNote.controlNumber,
+      disclaimer: 'Estimated premium only. Subject to Bethel final underwriting assessment.',
+    };
+  }, [isMotor, motorVehicleInfo, businessInfo, fullAddress, premium, coveragePeriod, coverNote]);
+
   return (
-    <div className="space-y-12">
-      {/* ── Title ───────────────────────────────────────────── */}
-      <section className="mb-10">
-        <h1 className="text-3xl font-bold tracking-tight text-primary mb-2">Cover Note</h1>
-        <p className="text-sm text-on-surface-variant">
-          Review your quotation before proceeding to payment.
-        </p>
-      </section>
+    <div className="pb-12">
+      {/* ── Quote Receipt Card ─────────────────────────────── */}
+      <QuoteReceiptCard
+        eyebrow={receiptData.eyebrow}
+        title={receiptData.title}
+        subtitle={receiptData.subtitle}
+        totalLabel={receiptData.totalLabel}
+        totalAmount={receiptData.totalAmount}
+        insuredName={receiptData.insuredName}
+        controlNumber={receiptData.controlNumber}
+        expiryTime={receiptData.expiryTime}
+        sections={receiptData.sections}
+        billingRows={receiptData.billingRows}
+        finalTotal={receiptData.finalTotal}
+        transactionLabel={receiptData.transactionLabel}
+        transactionValue={receiptData.transactionValue}
+        disclaimer={receiptData.disclaimer}
+        isGenerating={isGenerating}
+        onDownloadPDF={handleDownloadPDF}
+      />
 
-      {/* ── Header Info ─────────────────────────────────────── */}
-      <div className="flex justify-between text-[11px] text-outline">
-        <span className="font-medium">{coverNote.controlNumber}</span>
-        <span>Valid until {coverNote.expiryTime}</span>
-      </div>
-
-      {/* ── Applicant ───────────────────────────────────────── */}
-      <fieldset>
-        <SectionLegend>INSURED</SectionLegend>
-        <div className="space-y-3">
-          <p className="text-base font-semibold text-on-surface">{businessInfo.fullName}</p>
-          <p className="text-sm text-on-surface-variant">{businessInfo.businessName}</p>
-          {fullAddress && <p className="text-sm text-outline">{fullAddress}</p>}
-          {businessInfo.email && <p className="text-sm text-outline">{businessInfo.email}</p>}
-        </div>
-      </fieldset>
-
-       {/* ── Coverage ────────────────────────────────────────── */}
-      <fieldset>
-        <SectionLegend>COVERAGE</SectionLegend>
-        <div className="space-y-3">
-          <Row label="Nature of Business" value={businessInfo.natureOfBusiness || '—'} />
-          <Row label="Floor Area" value={businessInfo.floorArea ? `${businessInfo.floorArea} sqm` : '—'} />
-          <Row label="Effective Date" value={businessInfo.effectiveDate ? new Date(businessInfo.effectiveDate + 'T00:00:00').toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' }) : '—'} />
-          <Row label="Limit of Liability" value={premium ? formatPHP(premium.limitOfLiability) : '—'} />
-          <Row label="Coverage Period" value={coveragePeriod || '—'} />
-        </div>
-      </fieldset>
-
-       {/* ── Billing ─────────────────────────────────────────── */}
-      <fieldset>
-        <SectionLegend>BILLING</SectionLegend>
-        {premium ? (
-          <div className="space-y-3">
-            <Row label="Net Premium" value={formatPHP(premium.netPremium)} />
-            <div className="border-t border-outline-variant pt-3 space-y-3">
-              <Row label="Documentary Stamp Tax (DST) 25%" value={formatPHP(premium.dst)} />
-              <Row label="Value Added Tax (VAT) 12%" value={formatPHP(premium.vat)} />
-              <Row label="Local Government Tax (LGT) 2%" value={formatPHP(premium.lgTax)} />
-            </div>
-            <div className="border-t border-outline-variant pt-3 flex justify-between items-baseline">
-              <span className="text-sm font-bold text-on-surface uppercase tracking-wide">
-                Total
-              </span>
-              <span className="text-xl font-bold text-primary">
-                {formatPHP(premium.grossPremium)}
-              </span>
-            </div>
-            <p className="text-[11px] text-outline">Amount subject to final assessment</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <p className="text-sm text-outline">
-              Floor area is required to calculate your premium.
-            </p>
-          </div>
-        )}
-      </fieldset>
-
-      {/* ── Disclaimer ──────────────────────────────────────── */}
-      <p className="text-[10px] text-outline-variant leading-relaxed">
-        Any person who knowingly and with intent to defraud any insurance company or other person
-        files a statement of claim containing any false information, or conceals for the purpose of
-        misleading, information thereto, commits a fraudulent act, which is a crime and subjects
-        such person to criminal and civil penalties.
+      {/* ── Footer note ────────────────────────────────────── */}
+      <p className="mx-auto mt-6 max-w-sm text-center text-xs leading-relaxed text-on-surface-variant">
+        A digital copy has been sent to your registered email address.
+        <br />
+        <span className="font-semibold text-primary">support@bethelgeneral.com</span>
       </p>
 
-      {/* ── Download PDF ────────────────────────────────────── */}
-      <button
-        type="button"
-        onClick={handleDownloadPDF}
-        disabled={isGenerating}
-        className="flex items-center justify-center gap-2 w-full py-3 text-sm text-outline hover:text-primary transition-colors"
-      >
-        <FileDown className="w-4 h-4" />
-        <span>{isGenerating ? 'Generating...' : 'Download Cover Note PDF'}</span>
-      </button>
-
-      {/* ── Fixed Bottom Continue ───────────────────────────── */}
+      {/* ── Fixed Bottom Continue ──────────────────────────── */}
       <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-100 px-6 pt-4 pb-8 z-50">
         <div className="max-w-md mx-auto">
           <Button

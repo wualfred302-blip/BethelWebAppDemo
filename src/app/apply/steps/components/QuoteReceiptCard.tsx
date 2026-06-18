@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { Download, Shield, Car, ReceiptText, UserRound } from 'lucide-react';
 
 // ── Types ─────────────────────────────────────────────────
@@ -17,7 +16,6 @@ export type QuoteReceiptSection = {
 };
 
 export type QuoteReceiptCardProps = {
-  logoSrc?: string;
   eyebrow: string;
   title: string;
   subtitle?: string;
@@ -40,9 +38,15 @@ export type QuoteReceiptCardProps = {
 
 function ReceiptRow({ label, value, emphasized }: QuoteReceiptRow) {
   return (
-    <div className="flex items-start justify-between gap-4 py-1.5">
-      <span className="text-sm text-outline">{label}</span>
-      <span className={`max-w-[55%] text-right text-sm text-on-surface ${emphasized ? 'font-semibold text-primary' : ''}`}>
+    <div className="py-2">
+      <span className="block text-[10px] font-bold uppercase tracking-[0.14em] text-outline">
+        {label}
+      </span>
+      <span
+        className={`mt-1 block text-sm leading-snug text-on-surface ${
+          emphasized ? 'font-semibold text-primary' : ''
+        }`}
+      >
         {value}
       </span>
     </div>
@@ -58,12 +62,30 @@ function SectionHeader({ icon, title }: { icon?: React.ReactNode; title: string 
   );
 }
 
-function TicketDivider() {
+function SummaryPanel({
+  label,
+  value,
+  helper,
+  emphasis,
+}: {
+  label: string;
+  value: string;
+  helper?: string;
+  emphasis?: boolean;
+}) {
   return (
-    <div className="relative h-6 w-full overflow-hidden bg-white">
-      <div className="absolute inset-x-6 top-1/2 border-t border-dashed border-outline-variant" />
-      <div className="absolute left-0 top-1/2 -ml-3 h-6 w-6 -translate-y-1/2 rounded-full border-r border-outline-variant bg-background" />
-      <div className="absolute right-0 top-1/2 -mr-3 h-6 w-6 -translate-y-1/2 rounded-full border-l border-outline-variant bg-background" />
+    <div className="border-y border-outline-variant/60 px-5 py-4">
+      <span className="block text-[10px] font-bold uppercase tracking-[0.14em] text-outline">
+        {label}
+      </span>
+      <span
+        className={`mt-1 block ${
+          emphasis ? 'text-[20px] font-semibold text-primary' : 'text-[16px] font-semibold text-on-surface'
+        }`}
+      >
+        {value}
+      </span>
+      {helper && <p className="mt-1 text-[11px] leading-snug text-on-surface-variant">{helper}</p>}
     </div>
   );
 }
@@ -71,7 +93,6 @@ function TicketDivider() {
 // ── Main Component ─────────────────────────────────────────
 
 export default function QuoteReceiptCard({
-  logoSrc = '/bethel-shield.png',
   eyebrow,
   title,
   subtitle,
@@ -90,6 +111,7 @@ export default function QuoteReceiptCard({
   onDownloadPDF,
 }: QuoteReceiptCardProps) {
   const isAssessmentTotal = /assessment|pending|review/i.test(totalAmount);
+  const isAssessmentFinalTotal = /assessment|pending|review/i.test(finalTotal);
   const displayedTransactionValue = transactionValue || controlNumber;
 
   const sectionIcon = (title: string) => {
@@ -101,23 +123,13 @@ export default function QuoteReceiptCard({
   };
 
   return (
-    <div className="mx-auto w-full max-w-[420px] overflow-hidden rounded-2xl border border-outline-variant/60 bg-surface-container-lowest shadow-[0_10px_30px_rgba(56,72,136,0.08)]">
-      {/* ── Header / Logo Section ─────────────────────── */}
-      <div className="bg-gradient-to-b from-surface-container-low to-white px-6 py-7 text-center border-b border-outline-variant/30">
-        <div className="mx-auto mb-4 flex h-18 w-18 items-center justify-center rounded-full border border-outline-variant/45 bg-surface shadow-[0_8px_20px_rgba(56,72,136,0.08)]">
-          <Image
-            src={logoSrc}
-            alt="Bethel General Logo"
-            width={44}
-            height={44}
-            className="h-11 w-11 object-contain"
-            priority
-          />
-        </div>
+    <div className="mx-auto w-full max-w-[420px] overflow-hidden border border-outline-variant/60 bg-white shadow-none">
+      {/* ── Header Section ─────────────────────────────── */}
+      <div className="border-b border-outline-variant/30 px-5 py-6 text-center">
         <span className="block text-[10px] font-bold uppercase tracking-[0.1em] text-brand-gold mb-1">
           {eyebrow}
         </span>
-        <h2 className="text-[28px] font-bold leading-tight tracking-tight text-primary">{title}</h2>
+        <h2 className="text-[26px] font-semibold leading-tight tracking-tight text-primary">{title}</h2>
         {subtitle && (
           <p className="mt-1 text-sm text-on-surface-variant">{subtitle}</p>
         )}
@@ -128,67 +140,75 @@ export default function QuoteReceiptCard({
         )}
       </div>
 
-      {/* ── Hero Amount ───────────────────────────────── */}
-      <div className="px-6 py-7 text-center">
-        <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-outline">
-          {totalLabel}
-        </span>
-        {isAssessmentTotal ? (
-          <div className="mx-auto mt-3 inline-flex items-center rounded-full border border-primary/15 bg-primary/8 px-4 py-1.5 shadow-[0_4px_10px_rgba(56,72,136,0.06)]">
-            <span className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-primary/75">
-              {totalAmount}
-            </span>
-          </div>
-        ) : (
-          <div className="mt-1 text-[42px] font-extrabold leading-tight tracking-tight text-primary">
-            {totalAmount}
-          </div>
-        )}
-        <p className="mt-2 text-sm text-on-surface-variant">{insuredName}</p>
-      </div>
+      {/* ── Premium Summary ────────────────────────────── */}
+      {isAssessmentTotal ? (
+        <SummaryPanel
+          label="Premium"
+          value={totalAmount}
+          helper="Final premium will be confirmed after underwriting review."
+        />
+      ) : (
+        <SummaryPanel
+          label={totalLabel}
+          value={totalAmount}
+          helper={insuredName}
+          emphasis
+        />
+      )}
 
       {/* ── Sections ──────────────────────────────────── */}
-      {sections.map((section, idx) => (
-        <div key={idx} className={`px-6 py-4 ${idx % 2 === 0 ? '' : 'bg-surface-container-low/50'}`}>
-          <SectionHeader icon={sectionIcon(section.title)} title={section.title} />
-          <div className="space-y-0.5">
-            {section.rows.map((row, ridx) => (
-              <ReceiptRow key={ridx} {...row} />
-            ))}
+      <div className="divide-y divide-outline-variant/35">
+        {sections.map((section, idx) => (
+          <div key={idx} className="px-5 py-4">
+            <SectionHeader icon={sectionIcon(section.title)} title={section.title} />
+            <div className="space-y-1">
+              {section.rows.map((row, ridx) => (
+                <ReceiptRow key={ridx} {...row} />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-
-      {/* ── Ticket Divider ────────────────────────────── */}
-      <TicketDivider />
+        ))}
+      </div>
 
       {/* ── Billing Summary ───────────────────────────── */}
-      <div className="px-6 pt-4 pb-5">
-        <SectionHeader icon={<ReceiptText className="h-4 w-4" />} title="Billing Summary" />
-        <div className="space-y-1">
-          {billingRows.map((row, idx) => (
-            <div key={idx} className="flex justify-between">
-              <span className="text-sm text-outline">{row.label}</span>
-              <span className="text-sm text-on-surface">{row.value}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-4 flex items-end justify-between border-t border-primary/20 pt-4">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-outline">Final Total</p>
-            <p className="text-[20px] font-bold tracking-tight text-primary">{finalTotal}</p>
+      {isAssessmentFinalTotal ? (
+        displayedTransactionValue && (
+          <div className="border-t border-outline-variant/35 px-5 py-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-on-surface-variant">
+              {transactionLabel || 'Control No.'}
+            </p>
+            <p className="mt-1 break-all font-mono text-[12px] font-medium tracking-[0.08em] text-on-surface">
+              {displayedTransactionValue}
+            </p>
           </div>
-          {displayedTransactionValue && (
-            <div className="text-right">
-              <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-on-surface-variant">
-                {transactionLabel || 'Transaction ID'}
-              </p>
-              <p className="text-[12px] text-on-surface">{displayedTransactionValue}</p>
+        )
+      ) : (
+        <div className="border-t border-outline-variant/35 px-5 py-4">
+          <SectionHeader icon={<ReceiptText className="h-4 w-4" />} title="Billing Summary" />
+          <div className="space-y-1">
+            {billingRows.map((row, idx) => (
+              <div key={idx} className="flex justify-between">
+                <span className="text-sm text-outline">{row.label}</span>
+                <span className="text-sm text-on-surface">{row.value}</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 flex items-end justify-between border-t border-primary/20 pt-4">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-outline">Final Total</p>
+              <p className="text-[20px] font-bold tracking-tight text-primary">{finalTotal}</p>
             </div>
-          )}
+            {displayedTransactionValue && (
+              <div className="text-right">
+                <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-on-surface-variant">
+                  {transactionLabel || 'Transaction ID'}
+                </p>
+                <p className="text-[12px] text-on-surface">{displayedTransactionValue}</p>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ── Dislaimer ─────────────────────────────────── */}
       {disclaimer && (
@@ -198,12 +218,12 @@ export default function QuoteReceiptCard({
       )}
 
       {/* ── Download Button ───────────────────────────── */}
-      <div className="px-6 pb-6 pt-0">
+      <div className="px-5 pb-5 pt-0">
         <button
           type="button"
           onClick={onDownloadPDF}
           disabled={isGenerating}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-4 text-sm font-bold uppercase tracking-[0.04em] text-primary-foreground shadow-md transition active:scale-[0.98] hover:shadow-lg disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 border border-primary/20 bg-transparent px-4 py-4 text-sm font-bold uppercase tracking-[0.04em] text-primary transition active:scale-[0.98] hover:bg-primary/5 disabled:opacity-60"
         >
           <Download className="h-4 w-4" />
           <span>{isGenerating ? 'Generating...' : 'Download Cover Note PDF'}</span>
