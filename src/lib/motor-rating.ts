@@ -60,7 +60,9 @@ function parseMoney(value: string) {
 }
 
 function isIncluded(value: string) {
-  return /included|yes|with/i.test(cleanValue(value));
+  const normalized = cleanValue(value);
+  if (/not included|excluded|no\b|none/i.test(normalized)) return false;
+  return /included|yes|with/i.test(normalized);
 }
 
 function isPrivateVehicle(input: MotorVehicleInfo) {
@@ -83,9 +85,9 @@ function resolveRatingBucket(input: MotorVehicleInfo): MotorRatingBucket | null 
   if (bodyType && /motorcycle/i.test(bodyType)) return 'motorcycle_tricycle_trailer';
   if (bodyType && /bus/i.test(bodyType)) return 'heavy_truck_private_bus';
 
+  if (catalogBucket) return catalogBucket;
   if (isPrivateVehicle(input)) return 'private_car';
   if (isCommercialVehicle(input)) return 'light_medium_truck';
-  if (catalogBucket) return catalogBucket;
 
   if (PASSENGER_BODY_TYPES.has(bodyType)) return 'private_car';
   return null;
@@ -171,10 +173,6 @@ export function validateMotorQuoteInput(input: MotorVehicleInfo) {
     referralReasons.push('TPPD is selected, but the voluntary property damage table is not yet wired.');
   }
 
-  if (comprehensive && cleanValue(input.actsOfNature) && !isIncluded(input.actsOfNature)) {
-    referralReasons.push('Acts of Nature is explicitly excluded.');
-  }
-
   return { missingFields, referralReasons };
 }
 
@@ -255,7 +253,16 @@ export function calculateIndicativeMotorQuote(input: MotorVehicleInfo): MotorQuo
     const aonPremium = roundCurrency((sumInsured * aonRate) / 100);
     lineItems.push(buildQuoteLineItem('acts_of_nature', 'Acts of Nature', aonPremium, 'selected', aonRate));
   } else if (comprehensive && cleanValue(input.actsOfNature)) {
-    lineItems.push(buildQuoteLineItem('acts_of_nature', 'Acts of Nature', undefined, 'missing'));
+    lineItems.push(
+      buildQuoteLineItem(
+        'acts_of_nature',
+        'Acts of Nature',
+        undefined,
+        'selected',
+        undefined,
+        ['Not Included'],
+      ),
+    );
   }
 
   const deductibleNotes = RATE.privateCar.deductible.notes ?? [];

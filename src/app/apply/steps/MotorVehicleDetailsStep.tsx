@@ -183,7 +183,12 @@ export default function MotorVehicleDetailsStep() {
 
   const handleContinue = () => {
     if (!selectedEntry) return;
-    setMotorVehicleInfo(form);
+    setMotorVehicleInfo({
+      ...form,
+      variant: selectedEntry.variant,
+      bodyType: selectedEntry.bodyType,
+      seatingCapacity: String(selectedEntry.seatingCapacity),
+    });
     nextStep();
   };
 

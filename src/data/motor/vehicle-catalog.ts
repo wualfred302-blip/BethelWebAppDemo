@@ -69,6 +69,7 @@ type VehicleProfileOverride = {
   bodyType: VehicleCatalogBodyType;
   seatingCapacity: number;
   ratingClass: VehicleCatalogRatingClass;
+  variantOverrides?: Record<string, Partial<Pick<VehicleProfileOverride, 'bodyType' | 'seatingCapacity' | 'ratingClass'>>>;
 };
 
 const vehicleCatalog = catalogData as VehicleCatalogFile;
@@ -135,6 +136,11 @@ const MODEL_PROFILE_OVERRIDES: Record<string, VehicleProfileOverride> = {
     bodyType: 'Hatchback',
     seatingCapacity: 5,
     ratingClass: 'private_car',
+    variantOverrides: {
+      [normalizeMotorVariant('G4 GLX CVT')]: {
+        bodyType: 'Sedan',
+      },
+    },
   },
   [profileKey('Mitsubishi', 'Montero Sport')]: {
     variants: ['GLX 2WD', 'GT 4WD'],
@@ -426,24 +432,32 @@ function expandSeedEntry(entry: VehicleCatalogSeedEntry): VehicleCatalogEntry[] 
   const normalizedMake = normalizeMotorMake(entry.make);
   const normalizedModel = normalizeMotorModel(entry.model);
   const profile = MODEL_PROFILE_OVERRIDES[profileKey(normalizedMake, normalizedModel)];
-  const bodyType = profile?.bodyType ?? entry.bodyType ?? inferBodyType(normalizedMake, normalizedModel);
-  const seatingCapacity = profile?.seatingCapacity ?? entry.seatingCapacity ?? inferSeatingCapacity(bodyType, normalizedMake, normalizedModel);
-  const ratingClass = profile?.ratingClass ?? entry.ratingClass ?? inferRatingClass(bodyType);
   const variants = uniqueSorted(
     profile?.variants?.length ? profile.variants.map((variant) => normalizeMotorVariant(variant)) : [entry.variant ?? DEFAULT_VARIANT],
   );
 
-  return variants.map((variant) => ({
-    ...entry,
-    make: normalizedMake,
-    model: normalizedModel,
-    yearStart: clampYear(entry.yearStart),
-    yearEnd: clampYear(entry.yearEnd),
-    variant: variant || DEFAULT_VARIANT,
-    bodyType,
-    seatingCapacity,
-    ratingClass,
-  }));
+  return variants.map((variant) => {
+    const variantOverride = profile?.variantOverrides?.[variant];
+    const bodyType = variantOverride?.bodyType ?? profile?.bodyType ?? entry.bodyType ?? inferBodyType(normalizedMake, normalizedModel);
+    const seatingCapacity =
+      variantOverride?.seatingCapacity ??
+      profile?.seatingCapacity ??
+      entry.seatingCapacity ??
+      inferSeatingCapacity(bodyType, normalizedMake, normalizedModel);
+    const ratingClass = variantOverride?.ratingClass ?? profile?.ratingClass ?? entry.ratingClass ?? inferRatingClass(bodyType);
+
+    return {
+      ...entry,
+      make: normalizedMake,
+      model: normalizedModel,
+      yearStart: clampYear(entry.yearStart),
+      yearEnd: clampYear(entry.yearEnd),
+      variant: variant || DEFAULT_VARIANT,
+      bodyType,
+      seatingCapacity,
+      ratingClass,
+    };
+  });
 }
 
 function allCandidatesForMake(make: string) {
