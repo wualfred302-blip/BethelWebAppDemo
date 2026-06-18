@@ -170,6 +170,12 @@ export default function ApplyPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleNext]);
 
+  useEffect(() => {
+    const handleSubmitted = () => setSubmitted(true);
+    window.addEventListener('bethel:application-submitted', handleSubmitted);
+    return () => window.removeEventListener('bethel:application-submitted', handleSubmitted);
+  }, []);
+
   const CurrentStepComponent = STEPS[currentStep - 1].component;
   const isFirstStep = currentStep === 1;
   const isLastStep = currentStep === TOTAL_STEPS;

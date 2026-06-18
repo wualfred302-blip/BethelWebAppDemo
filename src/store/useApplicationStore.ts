@@ -36,6 +36,7 @@ interface MotorVehicleInfoData {
   make: string;
   model: string;
   yearModel: string;
+  variant: string;
   bodyType: string;
   color: string;
   seatingCapacity: string;
@@ -151,6 +152,7 @@ const initialMotorVehicleInfo: MotorVehicleInfoData = {
   make: '',
   model: '',
   yearModel: '',
+  variant: '',
   bodyType: '',
   color: '',
   seatingCapacity: '',

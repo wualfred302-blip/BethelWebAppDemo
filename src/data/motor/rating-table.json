@@ -1,0 +1,215 @@
+{
+  "source": {
+    "title": "Schedule-Rates-for-Motorcar",
+    "url": "https://www.insurance.gov.ph/wp-content/uploads/2022/05/Schedule-Rates-for-Motorcar.pdf",
+    "effectiveDate": "2015-01-01",
+    "extractedAt": "2026-06-18T04:56:04Z",
+    "notes": [
+      "Official Insurance Commission motorcar tariff schedule.",
+      "CTPL premiums include taxes as indicated in the source.",
+      "Voluntary third-party liability tables are present in the PDF but are not encoded yet because the OCR text dump is too noisy to trust without visual verification."
+    ]
+  },
+  "privateCar": {
+    "ownDamageAndTheft": {
+      "ratePercent": 1.25,
+      "sourceText": "Private car own damage and theft"
+    },
+    "theftOnly": {
+      "ratePercent": 3.75,
+      "sourceText": "Private car theft only"
+    },
+    "fireOnly": {
+      "ratePercent": 0.5,
+      "sourceText": "Private car fire only"
+    },
+    "deductible": {
+      "basis": "greater_of",
+      "percentOfSumInsured": 0.5,
+      "fixedMinimumPHP": 2000,
+      "notes": [
+        "Min of PHP 2,000 or 0.5% of sum insured, whichever is higher."
+      ]
+    },
+    "deductibleDiscounts": [
+      {
+        "deductiblePercentOfSI": 0.75,
+        "minimumDeductiblePHP": 3000,
+        "discountPercent": 6
+      },
+      {
+        "deductiblePercentOfSI": 1,
+        "minimumDeductiblePHP": 4000,
+        "discountPercent": 12
+      }
+    ],
+    "surcharges": [
+      "20% surcharge for racing, pacemaking, reliability trial, or speed testing."
+    ],
+    "notes": [
+      "Vehicles with dual-purpose bodies should be rated under the private car tariff with a private car policy added."
+    ]
+  },
+  "commercialVehicles": {
+    "ownDamageAndTheft": [
+      {
+        "label": "goods carrying vehicle / hire cars",
+        "ratePercent": 1.25
+      },
+      {
+        "label": "buses",
+        "ratePercent": 1.3
+      }
+    ],
+    "theftOnly": {
+      "ratePercent": 0.3
+    },
+    "fireOnly": {
+      "ratePercent": 0.5
+    },
+    "deductible": {
+      "basis": "greater_of",
+      "percentOfSumInsured": 1,
+      "fixedMinimumPHP": 3000,
+      "notes": [
+        "Min of PHP 3,000 or 1.0% of sum insured, whichever is higher."
+      ]
+    },
+    "deductibleDiscounts": [
+      {
+        "deductiblePercentOfSI": 1.5,
+        "minimumDeductiblePHP": 4500,
+        "discountPercent": 7
+      },
+      {
+        "deductiblePercentOfSI": 2,
+        "minimumDeductiblePHP": 6000,
+        "discountPercent": 14
+      }
+    ],
+    "loadingRules": [
+      "20% surcharge for hauling logs, lumber, sand, gravel, bottled beverages, gasoline products, and/or other inflammable articles or materials.",
+      "Loading can be up to 100% for vehicles over 3 years old and 125% for vehicles 1 to 3 years old.",
+      "Dual-purpose bodies should be rated under the private car tariff with a private car policy added."
+    ]
+  },
+  "landTransportationOperators": {
+    "ownDamageAndTheft": [
+      {
+        "label": "AC, PUJ, taxi, and tourist car",
+        "ratePercent": 1.5
+      },
+      {
+        "label": "mini bus and PUB",
+        "ratePercent": 2
+      },
+      {
+        "label": "tourist bus",
+        "ratePercent": 1.75
+      },
+      {
+        "label": "tricycle",
+        "ratePercent": 1.25
+      }
+    ],
+    "theftOnly": {
+      "ratePercent": 0.3
+    },
+    "fireOnly": {
+      "ratePercent": 0.5
+    },
+    "deductible": {
+      "basis": "greater_of",
+      "percentOfSumInsured": 1.25,
+      "fixedMinimumPHP": 4000,
+      "notes": [
+        "Min of PHP 4,000 or 1.25% of sum insured, whichever is higher."
+      ]
+    }
+  },
+  "motorcycles": {
+    "ownDamageAndTheft": {
+      "ratePercent": 1.4
+    },
+    "theftOnly": {
+      "ratePercent": 0.3
+    },
+    "fireOnly": {
+      "ratePercent": 0.4
+    },
+    "deductible": {
+      "basis": "greater_of",
+      "percentOfSumInsured": 1,
+      "fixedMinimumPHP": 500,
+      "notes": [
+        "Min of PHP 500 or 1.0% of sum insured, whichever is higher."
+      ]
+    }
+  },
+  "ctpl": [
+    {
+      "vehicleClass": "private_car",
+      "label": "Private Cars (including jeeps and utility vehicles)",
+      "liabilityLimitPHP": 100000,
+      "oneYearTotalPremiumPHP": 560,
+      "threeYearTotalPremiumPHP": 1670
+    },
+    {
+      "vehicleClass": "light_medium_truck",
+      "label": "Light/medium trucks (own goods) not over 3,930 kgs",
+      "liabilityLimitPHP": 100000,
+      "oneYearTotalPremiumPHP": 610,
+      "threeYearTotalPremiumPHP": 1754
+    },
+    {
+      "vehicleClass": "heavy_truck_private_bus",
+      "label": "Heavy trucks (own goods) and private buses over 3,930 kgs",
+      "liabilityLimitPHP": 100000,
+      "oneYearTotalPremiumPHP": 1200,
+      "threeYearTotalPremiumPHP": 3440
+    },
+    {
+      "vehicleClass": "ac_tourist_car",
+      "label": "AC and tourist cars",
+      "liabilityLimitPHP": 100000,
+      "oneYearTotalPremiumPHP": 740,
+      "threeYearTotalPremiumPHP": 2120
+    },
+    {
+      "vehicleClass": "taxi_puj_mini_bus",
+      "label": "Taxi, PUJ and mini bus",
+      "liabilityLimitPHP": 100000,
+      "oneYearTotalPremiumPHP": 1100,
+      "threeYearTotalPremiumPHP": 3150
+    },
+    {
+      "vehicleClass": "pub_tourist_bus",
+      "label": "PUB and tourist bus",
+      "liabilityLimitPHP": 100000,
+      "oneYearTotalPremiumPHP": 1450,
+      "threeYearTotalPremiumPHP": 4150
+    },
+    {
+      "vehicleClass": "motorcycle_tricycle_trailer",
+      "label": "Motorcycles, tricycles and trailers",
+      "liabilityLimitPHP": 100000,
+      "oneYearTotalPremiumPHP": 250,
+      "threeYearTotalPremiumPHP": 720
+    }
+  ],
+  "voluntaryThirdPartyLiability": {
+    "bodilyInjury": {
+      "status": "needs_verification",
+      "note": "The source PDF includes a bodily injury premium table, but the OCR text dump is not reliable enough to encode the exact premiums without visual verification."
+    },
+    "propertyDamage": {
+      "status": "needs_verification",
+      "note": "The source PDF includes a property damage premium table, but the OCR text dump is not reliable enough to encode the exact premiums without visual verification."
+    }
+  },
+  "actsOfNature": {
+    "ratePercent": 0.5,
+    "minimum": true,
+    "sourceText": "Acts of Nature (AON) coverage - 0.50% minimum rate"
+  }
+}

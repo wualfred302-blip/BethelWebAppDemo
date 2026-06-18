@@ -9,6 +9,9 @@ import type { MotorDocumentOcrResult } from '@/lib/motor-ocr/schema';
 
 type ScanStatus = 'idle' | 'scanning' | 'success' | 'error';
 
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+const SUPPORTED_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']);
+
 export default function MotorScanStep() {
   const { nextStep, prevStep, setMotorVehicleInfo, setMotorOcrData } = useApplicationStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -36,13 +39,21 @@ export default function MotorScanStep() {
     setMapping(null);
 
     try {
-      const imageBase64 = await fileToBase64(file);
+      if (file.size > MAX_UPLOAD_BYTES) {
+        throw new Error('Upload a JPG, PNG, WebP, or PDF that is 5MB or smaller.');
+      }
+
       const mimeType = file.type || 'image/jpeg';
+      if (!SUPPORTED_MIME_TYPES.has(mimeType)) {
+        throw new Error('Upload a supported document: JPG, PNG, WebP, or PDF.');
+      }
+
+      const imageBase64 = await fileToBase64(file);
 
       const response = await fetch('/api/extract-motor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64, mimeType }),
+        body: JSON.stringify({ imageBase64, mimeType, filename: file.name }),
       });
 
       const result: {
@@ -144,7 +155,7 @@ export default function MotorScanStep() {
                   Extraction failed
                 </span>
                 <span className="text-[11px] font-semibold uppercase tracking-[0.1em] leading-4 text-on-surface-variant">
-                  {error || 'Try again or continue manually'}
+                  {error || 'Try again or continue without scan'}
                 </span>
               </div>
             </>
@@ -171,7 +182,7 @@ export default function MotorScanStep() {
           onClick={handleSkip}
           className="flex items-center justify-center gap-1 text-sm font-semibold tracking-[0.02em] text-primary hover:opacity-80 focus:outline-none transition-opacity"
         >
-          <span>Skip, fill vehicle details manually</span>
+          <span>Skip scan</span>
           <ChevronRight className="w-4 h-4" />
         </button>
 

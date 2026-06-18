@@ -24,6 +24,7 @@ export const motorOcrFieldsSchema = z.object({
   make: extractedMotorFieldSchema.optional(),
   model: extractedMotorFieldSchema.optional(),
   yearModel: extractedMotorFieldSchema.optional(),
+  variant: extractedMotorFieldSchema.optional(),
   bodyType: extractedMotorFieldSchema.optional(),
   color: extractedMotorFieldSchema.optional(),
   seatingCapacity: extractedMotorFieldSchema.optional(),

@@ -1,5 +1,11 @@
 import type { MotorVehicleInfo } from '@/store/useApplicationStore';
 import type { ExtractedMotorField, MotorDocumentOcrResult, MotorOcrFieldKey } from './schema';
+import {
+  normalizeMotorMake,
+  normalizeMotorModel,
+  normalizeMotorVariant,
+  normalizeMotorYearModel,
+} from '@/data/motor/normalization-aliases';
 
 type MotorFormField = keyof MotorVehicleInfo;
 
@@ -76,6 +82,11 @@ const normalizeBodyType = (value: string) => {
   return trimmed;
 };
 
+const normalizeMake = (value: string) => normalizeMotorMake(clean(value));
+const normalizeModel = (value: string) => normalizeMotorModel(clean(value));
+const normalizeYearModel = (value: string) => normalizeMotorYearModel(clean(value));
+const normalizeVariant = (value: string) => normalizeMotorVariant(clean(value));
+
 const normalizeCondition = (value: string) => {
   const trimmed = clean(value);
   if (/brand.?new|new/i.test(trimmed)) return 'Brand New';
@@ -90,9 +101,10 @@ export const MOTOR_OCR_FIELD_MAPPINGS: FieldMapping[] = [
   { ocrKey: 'email', formKey: 'email', label: 'Email' },
   { ocrKey: 'plateNumber', formKey: 'plateNumber', label: 'Plate Number' },
   { ocrKey: 'mvFileNumber', formKey: 'mvFileNumber', label: 'MV File Number' },
-  { ocrKey: 'make', formKey: 'make', label: 'Make' },
-  { ocrKey: 'model', formKey: 'model', label: 'Model' },
-  { ocrKey: 'yearModel', formKey: 'yearModel', label: 'Year Model' },
+  { ocrKey: 'make', formKey: 'make', label: 'Make', normalize: normalizeMake },
+  { ocrKey: 'model', formKey: 'model', label: 'Model', normalize: normalizeModel },
+  { ocrKey: 'yearModel', formKey: 'yearModel', label: 'Year Model', normalize: normalizeYearModel },
+  { ocrKey: 'variant', formKey: 'variant', label: 'Variant', normalize: normalizeVariant },
   { ocrKey: 'bodyType', formKey: 'bodyType', label: 'Body Type', normalize: normalizeBodyType },
   { ocrKey: 'color', formKey: 'color', label: 'Color' },
   { ocrKey: 'seatingCapacity', formKey: 'seatingCapacity', label: 'Seating Capacity' },

@@ -21,6 +21,7 @@ export type QuoteReceiptCardProps = {
   subtitle?: string;
   totalLabel: string;
   totalAmount: string;
+  finalTotalLabel?: string;
   insuredName: string;
   controlNumber: string;
   expiryTime?: string;
@@ -31,6 +32,7 @@ export type QuoteReceiptCardProps = {
   transactionValue?: string;
   disclaimer?: string;
   isGenerating?: boolean;
+  downloadLabel?: string;
   onDownloadPDF: () => void;
 };
 
@@ -98,6 +100,7 @@ export default function QuoteReceiptCard({
   subtitle,
   totalLabel,
   totalAmount,
+  finalTotalLabel = 'Final Total',
   insuredName,
   controlNumber,
   expiryTime,
@@ -108,6 +111,7 @@ export default function QuoteReceiptCard({
   transactionValue,
   disclaimer,
   isGenerating,
+  downloadLabel = 'Download Cover Note PDF',
   onDownloadPDF,
 }: QuoteReceiptCardProps) {
   const isAssessmentTotal = /assessment|pending|review/i.test(totalAmount);
@@ -195,7 +199,9 @@ export default function QuoteReceiptCard({
           </div>
           <div className="mt-4 flex items-end justify-between border-t border-primary/20 pt-4">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-outline">Final Total</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-outline">
+                {finalTotalLabel}
+              </p>
               <p className="text-[20px] font-bold tracking-tight text-primary">{finalTotal}</p>
             </div>
             {displayedTransactionValue && (
@@ -226,7 +232,7 @@ export default function QuoteReceiptCard({
           className="flex w-full items-center justify-center gap-2 border border-primary/20 bg-transparent px-4 py-4 text-sm font-bold uppercase tracking-[0.04em] text-primary transition active:scale-[0.98] hover:bg-primary/5 disabled:opacity-60"
         >
           <Download className="h-4 w-4" />
-          <span>{isGenerating ? 'Generating...' : 'Download Cover Note PDF'}</span>
+          <span>{isGenerating ? 'Generating...' : downloadLabel}</span>
         </button>
       </div>
     </div>

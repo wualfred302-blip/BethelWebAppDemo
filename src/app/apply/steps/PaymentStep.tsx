@@ -2,8 +2,9 @@
 
 import { useMemo, useState, useRef, useCallback, type DragEvent, type ChangeEvent } from 'react';
 import { Button } from '@/components/ui/button';
-import { useApplicationStore, TOTAL_STEPS } from '@/store/useApplicationStore';
+import { useApplicationStore } from '@/store/useApplicationStore';
 import { lookupPremium, formatPHP } from '@/lib/pricing';
+import { calculateIndicativeMotorQuote, formatMotorQuoteSummary } from '@/lib/motor-rating';
 import { cn } from '@/lib/utils';
 import { ShieldCheck, Smartphone, Building2, Store, X } from 'lucide-react';
 
@@ -38,9 +39,10 @@ function formatSize(bytes: number): string {
 
 export default function PaymentStep() {
   const businessInfo = useApplicationStore((s) => s.businessInfo);
+  const motorVehicleInfo = useApplicationStore((s) => s.motorVehicleInfo);
   const coverNote = useApplicationStore((s) => s.coverNote);
+  const scanType = useApplicationStore((s) => s.scanType);
   const setPayment = useApplicationStore((s) => s.setPayment);
-  const nextStep = useApplicationStore((s) => s.nextStep);
 
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [proofError, setProofError] = useState<string | null>(null);
@@ -51,6 +53,14 @@ export default function PaymentStep() {
     () => lookupPremium(businessInfo.floorArea, businessInfo.natureOfBusiness),
     [businessInfo.floorArea, businessInfo.natureOfBusiness],
   );
+  const amountDue = useMemo(() => {
+    if (scanType === 'vehicle') {
+      const summary = formatMotorQuoteSummary(calculateIndicativeMotorQuote(motorVehicleInfo));
+      return summary.value;
+    }
+
+    return premium ? formatPHP(premium.grossPremium) : '—';
+  }, [motorVehicleInfo, premium, scanType]);
 
   const handleProofSelect = useCallback((file: File) => {
     const err = validateFile(file);
@@ -102,8 +112,8 @@ export default function PaymentStep() {
     if (proofFile) {
       setPayment({ proofOfPayment: proofFile.name });
     }
-    nextStep();
-  }, [proofFile, setPayment, nextStep]);
+    window.dispatchEvent(new Event('bethel:application-submitted'));
+  }, [proofFile, setPayment]);
 
   const isImage = proofFile && proofFile.type.startsWith('image/');
   const isPdf = proofFile && proofFile.type === 'application/pdf';
@@ -122,7 +132,7 @@ export default function PaymentStep() {
       <div className="text-center space-y-1">
         <p className="text-[10px] font-bold uppercase tracking-widest text-outline">Amount Due</p>
         <p className="text-3xl font-bold text-primary">
-          {premium ? formatPHP(premium.grossPremium) : '—'}
+          {amountDue}
         </p>
         <p className="text-[11px] text-outline">Ref: {coverNote.controlNumber}</p>
       </div>

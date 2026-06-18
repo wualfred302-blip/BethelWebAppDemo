@@ -1,0 +1,1015 @@
+{
+  "source": {
+    "title": "vehicle-make-model-data (prototype fallback)",
+    "url": "https://github.com/arthurkao/vehicle-make-model-data",
+    "license": "MIT",
+    "extractedAt": "2026-06-18T04:56:04Z",
+    "notes": [
+      "Curated starter catalog for the motor form.",
+      "Use a Bethel-approved vehicle list when available.",
+      "Year ranges are taken from the open dataset when an exact make/model match exists; otherwise the range defaults to the current seed window."
+    ]
+  },
+  "entries": [
+    {
+      "make": "Chevrolet",
+      "model": "Aveo",
+      "yearStart": 2004,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Chevrolet",
+      "model": "Captiva",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Chevrolet",
+      "model": "Colorado",
+      "yearStart": 2004,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Chevrolet",
+      "model": "Cruze",
+      "yearStart": 2010,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Chevrolet",
+      "model": "Equinox",
+      "yearStart": 2005,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Chevrolet",
+      "model": "Malibu",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Chevrolet",
+      "model": "Spark",
+      "yearStart": 2012,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Chevrolet",
+      "model": "Suburban",
+      "yearStart": 2014,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Chevrolet",
+      "model": "Tahoe",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Chevrolet",
+      "model": "Trailblazer",
+      "yearStart": 2002,
+      "yearEnd": 2009,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Chevrolet",
+      "model": "Traverse",
+      "yearStart": 2009,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Ford",
+      "model": "EcoSport",
+      "yearStart": 2004,
+      "yearEnd": 2014,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Ford",
+      "model": "Escape",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Ford",
+      "model": "Everest",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Ford",
+      "model": "Expedition",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Ford",
+      "model": "Explorer",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Ford",
+      "model": "Fiesta",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Ford",
+      "model": "Focus",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Ford",
+      "model": "Mustang",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Ford",
+      "model": "Ranger",
+      "yearStart": 2001,
+      "yearEnd": 2012,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Ford",
+      "model": "Territory",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Honda",
+      "model": "Accord",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Honda",
+      "model": "City",
+      "yearStart": 2010,
+      "yearEnd": 2013,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Honda",
+      "model": "Civic",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Honda",
+      "model": "CR-V",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Honda",
+      "model": "Insight",
+      "yearStart": 2001,
+      "yearEnd": 2014,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Honda",
+      "model": "Odyssey",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Honda",
+      "model": "Pilot",
+      "yearStart": 2003,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Accent",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Creta",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Elantra",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Genesis",
+      "yearStart": 2009,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Santa Fe",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Sonata",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Starex",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Tucson",
+      "yearStart": 2005,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Veloster",
+      "yearStart": 2012,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Veracruz",
+      "yearStart": 2007,
+      "yearEnd": 2012,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Isuzu",
+      "model": "Ascender",
+      "yearStart": 2003,
+      "yearEnd": 2008,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Isuzu",
+      "model": "Axiom",
+      "yearStart": 2002,
+      "yearEnd": 2004,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Isuzu",
+      "model": "Crosswind",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Isuzu",
+      "model": "D-Max",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Isuzu",
+      "model": "mu-X",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Isuzu",
+      "model": "Rodeo",
+      "yearStart": 2001,
+      "yearEnd": 2004,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Isuzu",
+      "model": "Trooper",
+      "yearStart": 2001,
+      "yearEnd": 2002,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Isuzu",
+      "model": "Vehicross",
+      "yearStart": 2001,
+      "yearEnd": 2001,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Kia",
+      "model": "Carnival",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Kia",
+      "model": "Forte",
+      "yearStart": 2010,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Kia",
+      "model": "Optima",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Kia",
+      "model": "Picanto",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Kia",
+      "model": "Rio",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Kia",
+      "model": "Sedona",
+      "yearStart": 2002,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Kia",
+      "model": "Sorento",
+      "yearStart": 2003,
+      "yearEnd": 2016,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Kia",
+      "model": "Soul",
+      "yearStart": 2010,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Kia",
+      "model": "Sportage",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Mazda",
+      "model": "BT-50",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Mazda",
+      "model": "CX-3",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Mazda",
+      "model": "CX-5",
+      "yearStart": 2013,
+      "yearEnd": 2016,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Mazda",
+      "model": "CX-7",
+      "yearStart": 2007,
+      "yearEnd": 2012,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Mazda",
+      "model": "CX-9",
+      "yearStart": 2007,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Mazda",
+      "model": "Mazda2",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Mazda",
+      "model": "Mazda3",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Mazda",
+      "model": "Mazda6",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Mazda",
+      "model": "MPV",
+      "yearStart": 2001,
+      "yearEnd": 2006,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Mazda",
+      "model": "MX-5 Miata",
+      "yearStart": 2006,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Mitsubishi",
+      "model": "Adventure",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Mitsubishi",
+      "model": "Eclipse",
+      "yearStart": 2001,
+      "yearEnd": 2012,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Mitsubishi",
+      "model": "Galant",
+      "yearStart": 2001,
+      "yearEnd": 2012,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Mitsubishi",
+      "model": "Lancer",
+      "yearStart": 2002,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Mitsubishi",
+      "model": "Mirage",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Mitsubishi",
+      "model": "Montero Sport",
+      "yearStart": 2001,
+      "yearEnd": 2010,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Mitsubishi",
+      "model": "Outlander",
+      "yearStart": 2003,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Mitsubishi",
+      "model": "Pajero",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Mitsubishi",
+      "model": "RVR",
+      "yearStart": 2011,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Mitsubishi",
+      "model": "Space Star",
+      "yearStart": 2003,
+      "yearEnd": 2004,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Mitsubishi",
+      "model": "Strada",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Mitsubishi",
+      "model": "Xpander",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Nissan",
+      "model": "Almera",
+      "yearStart": 2001,
+      "yearEnd": 2005,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Nissan",
+      "model": "Altima",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Nissan",
+      "model": "Frontier",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Nissan",
+      "model": "Murano",
+      "yearStart": 2003,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Nissan",
+      "model": "Navara",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Nissan",
+      "model": "Pathfinder",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Nissan",
+      "model": "Rogue",
+      "yearStart": 2008,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Nissan",
+      "model": "Sentra",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Nissan",
+      "model": "Urvan",
+      "yearStart": 2001,
+      "yearEnd": 2012,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Nissan",
+      "model": "Versa",
+      "yearStart": 2007,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Nissan",
+      "model": "X-Trail",
+      "yearStart": 2002,
+      "yearEnd": 2013,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Subaru",
+      "model": "BRZ",
+      "yearStart": 2013,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Subaru",
+      "model": "Forester",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Subaru",
+      "model": "Impreza",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Subaru",
+      "model": "Legacy",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Subaru",
+      "model": "Outback",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Subaru",
+      "model": "WRX",
+      "yearStart": 2012,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Subaru",
+      "model": "XV",
+      "yearStart": 2013,
+      "yearEnd": 2014,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Suzuki",
+      "model": "APV",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Suzuki",
+      "model": "Celerio",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Suzuki",
+      "model": "Ertiga",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Suzuki",
+      "model": "Grand Vitara",
+      "yearStart": 2001,
+      "yearEnd": 2014,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Suzuki",
+      "model": "Jimny",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Suzuki",
+      "model": "Swift",
+      "yearStart": 2001,
+      "yearEnd": 2014,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Suzuki",
+      "model": "SX4",
+      "yearStart": 2007,
+      "yearEnd": 2014,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Suzuki",
+      "model": "Vitara",
+      "yearStart": 2001,
+      "yearEnd": 2004,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Toyota",
+      "model": "Avanza",
+      "yearStart": 2007,
+      "yearEnd": 2014,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Toyota",
+      "model": "Camry",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Toyota",
+      "model": "Corolla",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Toyota",
+      "model": "FJ Cruiser",
+      "yearStart": 2007,
+      "yearEnd": 2014,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Toyota",
+      "model": "Fortuner",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Toyota",
+      "model": "Hiace",
+      "yearStart": 2006,
+      "yearEnd": 2012,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Toyota",
+      "model": "Hilux",
+      "yearStart": 2004,
+      "yearEnd": 2012,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Toyota",
+      "model": "Innova",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Toyota",
+      "model": "Land Cruiser",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Toyota",
+      "model": "Prius",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Toyota",
+      "model": "RAV4",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Toyota",
+      "model": "Sienna",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Toyota",
+      "model": "Tacoma",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Toyota",
+      "model": "Vios",
+      "yearStart": 2001,
+      "yearEnd": 2026,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "manual_seed"
+    },
+    {
+      "make": "Toyota",
+      "model": "Yaris",
+      "yearStart": 2004,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Beetle",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Golf",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Jetta",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Passat",
+      "yearStart": 2001,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Polo",
+      "yearStart": 2003,
+      "yearEnd": 2014,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Tiguan",
+      "yearStart": 2009,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    },
+    {
+      "make": "Volkswagen",
+      "model": "Touareg",
+      "yearStart": 2004,
+      "yearEnd": 2015,
+      "source": "prototype fallback curated from vehicle-make-model-data",
+      "sourceConfidence": "open_source"
+    }
+  ]
+}

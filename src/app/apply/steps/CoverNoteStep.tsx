@@ -8,6 +8,7 @@ import {
   generateExpiryTime,
 } from '@/store/useApplicationStore';
 import { lookupPremium, formatPHP } from '@/lib/pricing';
+import { calculateIndicativeMotorQuote, formatMotorQuoteSummary } from '@/lib/motor-rating';
 import QuoteReceiptCard from './components/QuoteReceiptCard';
 import type { QuoteReceiptRow, QuoteReceiptSection } from './components/QuoteReceiptCard';
 
@@ -35,9 +36,15 @@ async function generateCoverNotePDF(data: {
   const page = pdfDoc.addPage([595, 842]);
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  const pdfText = (text: string) =>
+    String(text)
+      .replace(/₱/g, 'PHP ')
+      .replace(/—/g, '-')
+      .replace(/•/g, '-')
+      .replace(/·/g, '/');
 
   const drawText = (text: string, x: number, y: number, size = 10, isBold = false) => {
-    page.drawText(text, { x, y, size, font: isBold ? boldFont : font, color: rgb(0, 0, 0) });
+    page.drawText(pdfText(text), { x, y, size, font: isBold ? boldFont : font, color: rgb(0, 0, 0) });
   };
 
   drawText('COVER NOTE', 240, 790, 16, true);
@@ -92,7 +99,117 @@ async function generateCoverNotePDF(data: {
   a.href = url;
   a.download = `CoverNote-${data.controlNumber}.pdf`;
   a.click();
-  URL.revokeObjectURL(url);
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function generateMotorQuotePDF(data: {
+  controlNumber: string;
+  expiryTime: string;
+  insuredName: string;
+  subtitle: string;
+  totalLabel: string;
+  totalAmount: string;
+  sections: QuoteReceiptSection[];
+  billingRows: QuoteReceiptRow[];
+  finalTotalLabel: string;
+  finalTotal: string;
+  disclaimer: string;
+}) {
+  const { PDFDocument, StandardFonts, rgb } = await import('pdf-lib');
+  const pdfDoc = await PDFDocument.create();
+  const page = pdfDoc.addPage([595, 842]);
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  const pdfText = (text: string) =>
+    String(text)
+      .replace(/₱/g, 'PHP ')
+      .replace(/—/g, '-')
+      .replace(/•/g, '-')
+      .replace(/·/g, '/');
+
+  const drawText = (text: string, x: number, y: number, size = 10, isBold = false) => {
+    page.drawText(pdfText(text), { x, y, size, font: isBold ? boldFont : font, color: rgb(0, 0, 0) });
+  };
+
+  const wrapLines = (text: string, size: number, maxWidth: number) => {
+    const safeText = pdfText(text);
+    const words = safeText.trim().split(/\s+/).filter(Boolean);
+    if (!words.length) return [''];
+
+    const lines: string[] = [];
+    let current = words[0];
+    for (const word of words.slice(1)) {
+      const candidate = `${current} ${word}`;
+      if (font.widthOfTextAtSize(candidate, size) > maxWidth) {
+        lines.push(current);
+        current = word;
+      } else {
+        current = candidate;
+      }
+    }
+    lines.push(current);
+    return lines;
+  };
+
+  const drawWrappedText = (text: string, x: number, y: number, size: number, maxWidth: number, isBold = false) => {
+    let nextY = y;
+    for (const line of wrapLines(text, size, maxWidth)) {
+      drawText(line, x, nextY, size, isBold);
+      nextY -= size + 3;
+    }
+    return nextY;
+  };
+
+  drawText('MOTOR CAR QUOTATION', 205, 792, 16, true);
+  drawText('Bethel General Insurance and Surety Corporation', 142, 772, 9);
+  drawText('Indicative motor quote subject to underwriting review', 178, 760, 7);
+
+  drawText(`Control No: ${data.controlNumber}`, 50, 734, 10, true);
+  drawText(`Valid until: ${data.expiryTime}`, 405, 734, 10);
+
+  drawText(data.totalLabel.toUpperCase(), 50, 699, 9, true);
+  drawText(data.totalAmount, 50, 675, 24, true);
+  drawText(data.insuredName || 'Applicant', 50, 660, 10);
+  if (data.subtitle) {
+    drawWrappedText(data.subtitle, 50, 645, 8, 495);
+  }
+
+  let y = 618;
+  for (const section of data.sections) {
+    drawText(section.title.toUpperCase(), 50, y, 9, true);
+    y -= 12;
+    for (const row of section.rows) {
+      drawText(row.label, 50, y, 8);
+      const valueStartY = drawWrappedText(row.value, 235, y, 8, 300, row.emphasized);
+      y = Math.min(y - 11, valueStartY - 2);
+    }
+    y -= 12;
+  }
+
+  drawText('BILLING SUMMARY', 50, y, 9, true);
+  y -= 12;
+  for (const row of data.billingRows) {
+    drawText(row.label, 50, y, 8);
+    const value = row.value || '—';
+    y = drawWrappedText(value, 300, y, 8, 220, row.emphasized) - 3;
+  }
+
+  y -= 8;
+  drawText(data.finalTotalLabel.toUpperCase(), 50, y, 9, true);
+  drawText(data.finalTotal, 50, y - 22, 18, true);
+  if (data.disclaimer) {
+    y -= 44;
+    drawWrappedText(data.disclaimer, 50, y, 7, 495);
+  }
+
+  const pdfBytes = await pdfDoc.save();
+  const blob = new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `MotorQuote-${data.controlNumber}.pdf`;
+  a.click();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 // ── Component ─────────────────────────────────────────────────
@@ -146,122 +263,121 @@ export default function CoverNoteStep() {
     return parts.join(', ');
   }, [businessInfo.streetAddress, location.barangayName, location.cityName, location.provinceName]);
 
-  // ── PDF download (CGL only) ──────────────────────────────
-  const handleDownloadPDF = useCallback(async () => {
-    if (!coverNote.controlNumber) return;
-    setIsGenerating(true);
-    try {
-      await generateCoverNotePDF({
-        controlNumber: coverNote.controlNumber,
-        expiryTime: coverNote.expiryTime,
-        fullName: businessInfo.fullName,
-        businessName: businessInfo.businessName,
-        fullAddress,
-        natureOfBusiness: businessInfo.natureOfBusiness,
-        floorArea: businessInfo.floorArea,
-        effectiveDate: businessInfo.effectiveDate
-          ? new Date(businessInfo.effectiveDate + 'T00:00:00').toLocaleDateString('en-PH', {
-              month: 'long',
-              day: 'numeric',
-              year: 'numeric',
-            })
-          : '—',
-        limitOfLiability: premium ? formatPHP(premium.limitOfLiability) : '—',
-        netPremium: premium ? formatPHP(premium.netPremium) : '—',
-        dst: premium ? formatPHP(premium.dst) : '—',
-        vat: premium ? formatPHP(premium.vat) : '—',
-        lgTax: premium ? formatPHP(premium.lgTax) : '—',
-        grossPremium: premium ? formatPHP(premium.grossPremium) : '—',
-        coveragePeriod: coveragePeriod || '—',
-      });
-    } finally {
-      setIsGenerating(false);
-    }
-  }, [coverNote, businessInfo, fullAddress, premium, coveragePeriod]);
+  const motorQuote = useMemo(
+    () => calculateIndicativeMotorQuote(motorVehicleInfo),
+    [motorVehicleInfo],
+  );
+  const motorQuoteSummary = useMemo(
+    () => formatMotorQuoteSummary(motorQuote),
+    [motorQuote],
+  );
 
   // ── Build receipt data ──────────────────────────────────
-  const receiptData = useMemo(() => {
-    if (isMotor) {
-      // ── Motor Car receipt ───────────────────────────────
-      const compactRows = (rows: QuoteReceiptRow[], fallback: string): QuoteReceiptRow[] => {
-        const visible = rows.filter((row) => row.value && row.value !== '—');
-        return visible.length ? visible : [{ label: 'Status', value: fallback }];
-      };
+  const motorReceiptData = useMemo(() => {
+    const compactRows = (rows: QuoteReceiptRow[], fallback: string): QuoteReceiptRow[] => {
+      const visible = rows.filter((row) => row.value && row.value !== '—');
+      return visible.length ? visible : [{ label: 'Status', value: fallback }];
+    };
 
-      const formatOptionalPHP = (value: string) => {
-        const amount = Number(String(value).replace(/[^0-9.]/g, ''));
-        return amount > 0 ? formatPHP(amount) : '—';
-      };
+    const formatOptionalPHP = (value: string) => {
+      const amount = Number(String(value).replace(/[^0-9.]/g, ''));
+      return amount > 0 ? formatPHP(amount) : '—';
+    };
 
-      const sections: QuoteReceiptSection[] = [
-        {
-          title: 'Insured Details',
-          rows: compactRows([
-            { label: 'Name', value: motorVehicleInfo.fullName || '—' },
-            { label: 'Address', value: motorVehicleInfo.address || '—' },
-            { label: 'Email', value: motorVehicleInfo.email || '—' },
-            { label: 'Phone', value: motorVehicleInfo.phone || '—' },
-          ], 'Applicant details pending'),
-        },
-        {
-          title: 'Vehicle Details',
-          rows: compactRows([
-            {
-              label: 'Make & Model',
-              value:
-                [motorVehicleInfo.yearModel, motorVehicleInfo.make, motorVehicleInfo.model]
-                  .filter(Boolean)
-                  .join(' ') || '—',
-            },
-            { label: 'Plate Number', value: motorVehicleInfo.plateNumber || motorVehicleInfo.conductionSticker || '—' },
-            { label: 'MV File Number', value: motorVehicleInfo.mvFileNumber || '—' },
-            { label: 'Engine Number', value: motorVehicleInfo.engineNumber || '—' },
-            { label: 'Chassis Number', value: motorVehicleInfo.chassisNumber || '—' },
-            { label: 'Color', value: motorVehicleInfo.color || '—' },
-            { label: 'Body Type', value: motorVehicleInfo.bodyType || '—' },
-            { label: 'Seating Capacity', value: motorVehicleInfo.seatingCapacity || '—' },
-            { label: 'Vehicle Use', value: motorVehicleInfo.vehicleUse || '—' },
-          ], 'Vehicle details pending'),
-        },
-        {
-          title: 'Coverage Limits',
-          rows: compactRows([
-            { label: 'Effective Date', value: motorVehicleInfo.effectiveDate || '—' },
-            { label: 'Coverage Type', value: motorVehicleInfo.coverageType || '—' },
-            {
-              label: 'Sum Insured / FMV',
-              value: formatOptionalPHP(motorVehicleInfo.estimatedMarketValue),
-            },
-            { label: 'Acts of Nature', value: motorVehicleInfo.actsOfNature || '—' },
-            {
-              label: 'TPPD Limit',
-              value: formatOptionalPHP(motorVehicleInfo.thirdPartyPropertyDamageLimit),
-            },
-            { label: 'Auto Personal Accident', value: motorVehicleInfo.autoPersonalAccident || '—' },
-            { label: 'Deductible', value: motorVehicleInfo.deductibleParticipation || '—' },
-          ], 'Coverage details pending'),
-        },
-      ];
+    const formatMotorLineItem = (item: (typeof motorQuote.lineItems)[number]) => {
+      if (typeof item.amountPHP === 'number') {
+        return item.ratePercent
+          ? `${formatPHP(item.amountPHP)} (${item.ratePercent}%)`
+          : formatPHP(item.amountPHP);
+      }
+      if (item.notes && item.notes.length > 0) {
+        return item.notes[0];
+      }
+      return item.status === 'missing' ? 'Pending assessment' : 'Included';
+    };
+    const displayVariant =
+      motorVehicleInfo.variant && motorVehicleInfo.variant !== 'Standard' ? motorVehicleInfo.variant : '';
 
-      return {
-        eyebrow: 'Bethel General',
-        title: 'Motor Car Insurance',
-        subtitle: undefined,
-        totalLabel: 'Premium',
-        totalAmount: 'Pending Assessment',
-        insuredName: motorVehicleInfo.fullName || 'Applicant',
-        controlNumber: coverNote.controlNumber,
-        expiryTime: coverNote.expiryTime,
-        sections,
-        billingRows: [],
-        finalTotal: 'Pending Assessment',
-        transactionLabel: 'Control No.',
-        transactionValue: coverNote.controlNumber,
-        disclaimer: 'Estimated premium only. Subject to Bethel final underwriting assessment.',
-      };
-    }
+    const sections: QuoteReceiptSection[] = [
+      {
+        title: 'Insured Details',
+        rows: compactRows([
+          { label: 'Name', value: motorVehicleInfo.fullName || '—' },
+          { label: 'Address', value: motorVehicleInfo.address || '—' },
+          { label: 'Email', value: motorVehicleInfo.email || '—' },
+          { label: 'Phone', value: motorVehicleInfo.phone || '—' },
+        ], 'Applicant details pending'),
+      },
+      {
+        title: 'Vehicle Details',
+        rows: compactRows([
+          {
+            label: 'Make & Model',
+            value:
+              [motorVehicleInfo.yearModel, motorVehicleInfo.make, motorVehicleInfo.model, displayVariant]
+                .filter(Boolean)
+                .join(' ') || '—',
+          },
+          { label: 'Variant', value: displayVariant || 'Standard' },
+          { label: 'Plate Number', value: motorVehicleInfo.plateNumber || motorVehicleInfo.conductionSticker || '—' },
+          { label: 'MV File Number', value: motorVehicleInfo.mvFileNumber || '—' },
+          { label: 'Engine Number', value: motorVehicleInfo.engineNumber || '—' },
+          { label: 'Chassis Number', value: motorVehicleInfo.chassisNumber || '—' },
+          { label: 'Color', value: motorVehicleInfo.color || '—' },
+          { label: 'Body Type', value: motorVehicleInfo.bodyType || '—' },
+          { label: 'Seating Capacity', value: motorVehicleInfo.seatingCapacity || '—' },
+          { label: 'Vehicle Use', value: motorVehicleInfo.vehicleUse || '—' },
+        ], 'Vehicle details pending'),
+      },
+      {
+        title: 'Coverage Limits',
+        rows: compactRows([
+          { label: 'Effective Date', value: motorVehicleInfo.effectiveDate || '—' },
+          { label: 'Coverage Type', value: motorVehicleInfo.coverageType || '—' },
+          {
+            label: 'Sum Insured / FMV',
+            value: formatOptionalPHP(motorVehicleInfo.estimatedMarketValue),
+          },
+          { label: 'Acts of Nature', value: motorVehicleInfo.actsOfNature || '—' },
+          {
+            label: 'TPPD Limit',
+            value: formatOptionalPHP(motorVehicleInfo.thirdPartyPropertyDamageLimit),
+          },
+          { label: 'Auto Personal Accident', value: motorVehicleInfo.autoPersonalAccident || '—' },
+          { label: 'Deductible', value: motorVehicleInfo.deductibleParticipation || '—' },
+        ], 'Coverage details pending'),
+      },
+    ];
 
-    // ── CGL receipt ───────────────────────────────────────
+    const billingRows: QuoteReceiptRow[] = motorQuote.lineItems.map((item) => ({
+      label: item.label,
+      value: formatMotorLineItem(item),
+      emphasized: item.status === 'calculated' || item.status === 'selected',
+    }));
+
+    return {
+      eyebrow: 'Bethel General',
+      title: 'Motor Car Insurance',
+      subtitle:
+        motorQuote.status === 'pending_assessment' || motorQuote.status === 'not_enough_data'
+          ? 'Complete the vehicle fields to calculate an indicative quote.'
+          : 'Tariff-based estimate subject to underwriting review.',
+      totalLabel: motorQuoteSummary.label,
+      totalAmount: motorQuoteSummary.value,
+      finalTotalLabel: 'Indicative Total',
+      insuredName: motorVehicleInfo.fullName || 'Applicant',
+      controlNumber: coverNote.controlNumber,
+      expiryTime: coverNote.expiryTime,
+      sections,
+      billingRows,
+      finalTotal: motorQuoteSummary.value,
+      transactionLabel: 'Control No.',
+      transactionValue: coverNote.controlNumber,
+      disclaimer: motorQuoteSummary.note,
+    };
+  }, [motorQuote, motorQuoteSummary, motorVehicleInfo, coverNote]);
+
+  const cglReceiptData = useMemo(() => {
     const sections: QuoteReceiptSection[] = [
       {
         title: 'Insured Details',
@@ -307,11 +423,81 @@ export default function CoverNoteStep() {
       sections,
       billingRows,
       finalTotal: premium ? formatPHP(premium.grossPremium) : '—',
+      finalTotalLabel: undefined,
       transactionLabel: 'Control No.',
       transactionValue: coverNote.controlNumber,
       disclaimer: 'Estimated premium only. Subject to Bethel final underwriting assessment.',
     };
-  }, [isMotor, motorVehicleInfo, businessInfo, fullAddress, premium, coveragePeriod, coverNote]);
+  }, [businessInfo, fullAddress, premium, coveragePeriod, coverNote]);
+
+  const receiptData = isMotor ? motorReceiptData : cglReceiptData;
+
+  // ── PDF download ────────────────────────────────────────
+  const handleDownloadPDF = useCallback(async () => {
+    if (!coverNote.controlNumber) return;
+    setIsGenerating(true);
+    try {
+      if (isMotor) {
+        await generateMotorQuotePDF({
+          controlNumber: coverNote.controlNumber,
+          expiryTime: coverNote.expiryTime,
+          insuredName: motorVehicleInfo.fullName || 'Applicant',
+          subtitle: motorReceiptData.subtitle || motorQuoteSummary.note,
+          totalLabel: motorQuoteSummary.label,
+          totalAmount: motorQuoteSummary.value,
+          sections: motorReceiptData.sections,
+          billingRows: motorReceiptData.billingRows,
+          finalTotalLabel: motorReceiptData.finalTotalLabel || 'Indicative Total',
+          finalTotal: motorReceiptData.finalTotal,
+          disclaimer: motorReceiptData.disclaimer || motorQuoteSummary.note,
+        });
+        return;
+      }
+
+      await generateCoverNotePDF({
+        controlNumber: coverNote.controlNumber,
+        expiryTime: coverNote.expiryTime,
+        fullName: businessInfo.fullName,
+        businessName: businessInfo.businessName,
+        fullAddress,
+        natureOfBusiness: businessInfo.natureOfBusiness,
+        floorArea: businessInfo.floorArea,
+        effectiveDate: businessInfo.effectiveDate
+          ? new Date(businessInfo.effectiveDate + 'T00:00:00').toLocaleDateString('en-PH', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
+            })
+          : '—',
+        limitOfLiability: premium ? formatPHP(premium.limitOfLiability) : '—',
+        netPremium: premium ? formatPHP(premium.netPremium) : '—',
+        dst: premium ? formatPHP(premium.dst) : '—',
+        vat: premium ? formatPHP(premium.vat) : '—',
+        lgTax: premium ? formatPHP(premium.lgTax) : '—',
+        grossPremium: premium ? formatPHP(premium.grossPremium) : '—',
+        coveragePeriod: coveragePeriod || '—',
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [
+    businessInfo,
+    coverNote,
+    coveragePeriod,
+    fullAddress,
+    isMotor,
+    motorVehicleInfo.fullName,
+    motorQuoteSummary.label,
+    motorQuoteSummary.note,
+    motorQuoteSummary.value,
+    motorReceiptData.billingRows,
+    motorReceiptData.disclaimer,
+    motorReceiptData.finalTotal,
+    motorReceiptData.finalTotalLabel,
+    motorReceiptData.sections,
+    motorReceiptData.subtitle,
+    premium,
+  ]);
 
   return (
     <div className="pb-12">
@@ -328,10 +514,12 @@ export default function CoverNoteStep() {
         sections={receiptData.sections}
         billingRows={receiptData.billingRows}
         finalTotal={receiptData.finalTotal}
+        finalTotalLabel={receiptData.finalTotalLabel}
         transactionLabel={receiptData.transactionLabel}
         transactionValue={receiptData.transactionValue}
         disclaimer={receiptData.disclaimer}
         isGenerating={isGenerating}
+        downloadLabel={isMotor ? 'Download Motor Quote PDF' : 'Download Cover Note PDF'}
         onDownloadPDF={handleDownloadPDF}
       />
 
