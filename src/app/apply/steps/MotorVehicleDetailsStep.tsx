@@ -59,9 +59,16 @@ const VEHICLE_USES = ['Private', 'Commercial'];
 const VEHICLE_CONDITIONS = ['Brand New', 'Used'];
 const COVERAGE_TYPES = ['CTPL Only', 'Comprehensive'];
 const INCLUDED_OPTIONS = ['Included', 'Not Included'];
+const THIRD_PARTY_PROPERTY_DAMAGE_LIMITS = ['100000', '200000', '300000', '400000', '500000'];
+const ROADSIDE_ASSISTANCE_OPTIONS = ['Not Included', 'Included'];
 
 type FieldName = keyof MotorVehicleInfo;
 type CatalogueField = 'make' | 'model' | 'yearModel' | 'variant';
+
+function formatCoverageLimit(value: string) {
+  const amount = Number(value);
+  return Number.isFinite(amount) ? `PHP ${amount.toLocaleString('en-PH')}` : value;
+}
 
 export default function MotorVehicleDetailsStep() {
   const { motorVehicleInfo, motorOcrData, setMotorVehicleInfo, nextStep } = useApplicationStore();
@@ -221,6 +228,7 @@ export default function MotorVehicleDetailsStep() {
     options: readonly string[],
     placeholder = 'Select option',
     disabled = false,
+    formatOptionLabel?: (option: string) => string,
   ) => (
     <div className="group">
       <UnderlineLabel htmlFor={field}>{label}</UnderlineLabel>
@@ -240,7 +248,7 @@ export default function MotorVehicleDetailsStep() {
         </option>
         {options.map((option) => (
           <option key={option} value={option}>
-            {option}
+            {formatOptionLabel ? formatOptionLabel(option) : option}
           </option>
         ))}
       </select>
@@ -403,10 +411,16 @@ export default function MotorVehicleDetailsStep() {
             {input('effectiveDate', 'Effective Date', '', { type: 'date' })}
             {select('coverageType', 'Coverage Type', COVERAGE_TYPES)}
           </div>
-          {select('actsOfNature', 'Acts of Nature / AOG', INCLUDED_OPTIONS)}
-          {input('thirdPartyPropertyDamageLimit', 'Third Party Property Damage Limit', '100000')}
+          {select(
+            'thirdPartyPropertyDamageLimit',
+            'Third Party Property Damage Limit',
+            THIRD_PARTY_PROPERTY_DAMAGE_LIMITS,
+            'Select coverage limit',
+            false,
+            formatCoverageLimit,
+          )}
           {select('autoPersonalAccident', 'Auto Personal Accident', INCLUDED_OPTIONS)}
-          {input('deductibleParticipation', 'Deductible / Participation', '3000')}
+          {select('roadsideAssistance', 'Roadside Assistance', ROADSIDE_ASSISTANCE_OPTIONS)}
         </div>
       </fieldset>
 

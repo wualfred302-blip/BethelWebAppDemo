@@ -27,6 +27,7 @@ export interface MotorQuoteLineItem {
   ratePercent?: number;
   status: MotorQuoteLineItemStatus;
   notes?: string[];
+  contributesToTotal?: boolean;
 }
 
 export interface MotorQuoteResult {
@@ -35,6 +36,7 @@ export interface MotorQuoteResult {
   sumInsuredPHP?: number;
   lineItems: MotorQuoteLineItem[];
   estimatedGrossPremiumPHP?: number;
+  estimatedSubtotalPremiumPHP?: number;
   estimatedPremiumRangePHP?: {
     min: number;
     max: number;
@@ -43,11 +45,38 @@ export interface MotorQuoteResult {
   missingFields: string[];
 }
 
-type RatingTable = typeof ratingTable;
+type VoluntaryPropertyDamageTableEntry = {
+  limitPHP: number;
+  premiumPHP: number;
+};
+
+type VoluntaryPropertyDamageTable = {
+  vehicleClass: MotorRatingBucket;
+  label: string;
+  entries: VoluntaryPropertyDamageTableEntry[];
+};
+
+type RatingTable = Omit<typeof ratingTable, 'voluntaryThirdPartyLiability'> & {
+  voluntaryThirdPartyLiability?: {
+    bodilyInjury?: {
+      status?: string;
+      note?: string;
+    };
+    propertyDamage?: {
+      status?: string;
+      note?: string;
+      tables?: VoluntaryPropertyDamageTable[];
+    };
+  };
+};
 
 const RATE = ratingTable as RatingTable;
-
 const PASSENGER_BODY_TYPES = new Set(['Sedan', 'SUV', 'Van', 'Pickup', 'Hatchback']);
+const MOTOR_TAX_RATES = {
+  dst: 0.125,
+  vat: 0.12,
+  lgt: 0.005,
+};
 
 function cleanValue(value: string) {
   return String(value ?? '').trim();
@@ -57,12 +86,6 @@ function parseMoney(value: string) {
   const cleaned = cleanValue(value).replace(/[^0-9.]/g, '');
   const parsed = Number(cleaned);
   return Number.isFinite(parsed) ? parsed : null;
-}
-
-function isIncluded(value: string) {
-  const normalized = cleanValue(value);
-  if (/not included|excluded|no\b|none/i.test(normalized)) return false;
-  return /included|yes|with/i.test(normalized);
 }
 
 function isPrivateVehicle(input: MotorVehicleInfo) {
@@ -139,6 +162,7 @@ function buildQuoteLineItem(
   status: MotorQuoteLineItemStatus,
   ratePercent?: number,
   notes?: string[],
+  contributesToTotal = true,
 ): MotorQuoteLineItem {
   return {
     key,
@@ -147,6 +171,7 @@ function buildQuoteLineItem(
     ratePercent,
     status,
     notes,
+    contributesToTotal,
   };
 }
 
@@ -156,8 +181,17 @@ function ratingNoteForBucket(bucket: MotorRatingBucket | null) {
   return row ? row.label : 'Unable to map vehicle to a known CTPL tariff class.';
 }
 
+function lookupThirdPartyPropertyDamagePremium(bucket: MotorRatingBucket | null, limitPHP: number | null) {
+  if (!bucket || !limitPHP) return null;
+  const tables = RATE.voluntaryThirdPartyLiability?.propertyDamage?.tables ?? [];
+  const table = tables.find((entry) => entry.vehicleClass === bucket);
+  const premium = table?.entries.find((entry) => entry.limitPHP === limitPHP);
+  return premium ? { premiumPHP: premium.premiumPHP } : null;
+}
+
 export function validateMotorQuoteInput(input: MotorVehicleInfo) {
   const comprehensive = cleanValue(input.coverageType) === 'Comprehensive';
+  const ctplBucket = resolveRatingBucket(input);
   const missingFields = buildMissingFields(input, comprehensive);
   const referralReasons: string[] = [];
 
@@ -170,10 +204,27 @@ export function validateMotorQuoteInput(input: MotorVehicleInfo) {
   }
 
   if (comprehensive && cleanValue(input.thirdPartyPropertyDamageLimit)) {
-    referralReasons.push('TPPD is selected, but the voluntary property damage table is not yet wired.');
+    const tppdLimit = parseMoney(input.thirdPartyPropertyDamageLimit);
+    if (tppdLimit === null) {
+      referralReasons.push('TPPD limit could not be parsed.');
+    } else if (!lookupThirdPartyPropertyDamagePremium(ctplBucket, tppdLimit)) {
+      referralReasons.push('TPPD premium rate is not available for the selected vehicle class and limit.');
+    }
   }
-
   return { missingFields, referralReasons };
+}
+
+function deductibleForSumInsured(sumInsured: number | null) {
+  if (sumInsured === null || sumInsured <= 0) return 3000;
+  return roundCurrency(Math.max(3000, sumInsured * 0.005));
+}
+
+function taxLineItems(subtotalPHP: number) {
+  return [
+    buildQuoteLineItem('dst', 'Documentary Stamp Tax (DST) 12.5%', roundCurrency(subtotalPHP * MOTOR_TAX_RATES.dst), 'calculated'),
+    buildQuoteLineItem('vat', 'Value Added Tax (VAT) 12%', roundCurrency(subtotalPHP * MOTOR_TAX_RATES.vat), 'calculated'),
+    buildQuoteLineItem('lgt', 'Local Government Tax (LGT) 0.5%', roundCurrency(subtotalPHP * MOTOR_TAX_RATES.lgt), 'calculated'),
+  ];
 }
 
 export function calculateIndicativeMotorQuote(input: MotorVehicleInfo): MotorQuoteResult {
@@ -218,64 +269,81 @@ export function calculateIndicativeMotorQuote(input: MotorVehicleInfo): MotorQuo
   }
 
   const sumInsured = parseMoney(input.estimatedMarketValue);
+  const deductibleParticipation = deductibleForSumInsured(sumInsured);
 
-  if (coverageType === 'CTPL Only') {
-    const ready = missingFields.length === 0 && ctplPremium !== null;
-    return {
-      status: ready ? (referralReasons.length ? 'needs_review' : 'quote_ready') : missingFields.length ? 'not_enough_data' : 'needs_review',
-      displayLabel: ready ? 'Indicative Quote' : 'Pending Assessment',
-      lineItems,
-      estimatedGrossPremiumPHP: ctplPremium ?? undefined,
-      referralReasons,
-      missingFields,
-    };
-  }
-
-  if (sumInsured === null || sumInsured <= 0) {
+  if (comprehensive && (sumInsured === null || sumInsured <= 0) && !missingFields.includes('estimatedMarketValue')) {
     missingFields.push('estimatedMarketValue');
-    return {
-      status: 'pending_assessment',
-      displayLabel: 'Pending Assessment',
-      lineItems,
-      referralReasons,
-      missingFields,
-    };
   }
 
-  const odRate = ownDamageRateForBucket(ctplBucket);
-  const odPremium = roundCurrency((sumInsured * odRate) / 100);
-  lineItems.push(
-    buildQuoteLineItem('own_damage_theft', 'Own Damage & Theft', odPremium, 'calculated', odRate),
-  );
+  if (comprehensive && sumInsured !== null && sumInsured > 0) {
+    const ownDamageRate = ownDamageRateForBucket(ctplBucket);
+    const ownDamagePremium = roundCurrency((sumInsured * ownDamageRate) / 100);
+    const actsOfNatureRate = RATE.actsOfNature.ratePercent;
+    const actsOfNaturePremium = roundCurrency((sumInsured * actsOfNatureRate) / 100);
 
-  if (comprehensive && isIncluded(input.actsOfNature)) {
-    const aonRate = RATE.actsOfNature.ratePercent;
-    const aonPremium = roundCurrency((sumInsured * aonRate) / 100);
-    lineItems.push(buildQuoteLineItem('acts_of_nature', 'Acts of Nature', aonPremium, 'selected', aonRate));
-  } else if (comprehensive && cleanValue(input.actsOfNature)) {
+    lineItems.push(
+      buildQuoteLineItem(
+        'own_damage_theft',
+        'Own Damage & Theft',
+        ownDamagePremium,
+        'calculated',
+        ownDamageRate,
+      ),
+    );
+
     lineItems.push(
       buildQuoteLineItem(
         'acts_of_nature',
         'Acts of Nature',
-        undefined,
-        'selected',
-        undefined,
-        ['Not Included'],
+        actsOfNaturePremium,
+        'calculated',
+        actsOfNatureRate,
       ),
     );
   }
 
-  const deductibleNotes = RATE.privateCar.deductible.notes ?? [];
+  const tppdLimit = parseMoney(input.thirdPartyPropertyDamageLimit);
+  if (comprehensive && tppdLimit !== null) {
+    const tppdPremium = lookupThirdPartyPropertyDamagePremium(ctplBucket, tppdLimit);
+    if (tppdPremium) {
+      lineItems.push(
+        buildQuoteLineItem(
+          'third_party_property_damage',
+          'Third Party Property Damage',
+          tppdPremium.premiumPHP,
+          'calculated',
+          undefined,
+          [`${formatPHP(tppdLimit)} limit`],
+        ),
+      );
+    } else {
+      lineItems.push(
+        buildQuoteLineItem(
+          'third_party_property_damage',
+          'Third Party Property Damage',
+          undefined,
+          'referral',
+          undefined,
+          [`${formatPHP(tppdLimit)} limit`, 'Pending assessment.'],
+          false,
+        ),
+      );
+      referralReasons.push('TPPD premium rate is not available for the selected vehicle class and limit.');
+    }
+  }
+
   lineItems.push(
     buildQuoteLineItem(
       'deductible',
-      'Deductible',
+      'Deductible / Participation',
+      deductibleParticipation,
+      'calculated',
       undefined,
-      'referral',
-      undefined,
-      deductibleNotes.length ? deductibleNotes : ['Subject to underwriting confirmation.'],
+      ['Not charged upfront.'],
+      false,
     ),
   );
+
 
   if (comprehensive && cleanValue(input.autoPersonalAccident) === 'Included') {
     lineItems.push(
@@ -290,29 +358,37 @@ export function calculateIndicativeMotorQuote(input: MotorVehicleInfo): MotorQuo
     );
   }
 
-  if (comprehensive && cleanValue(input.thirdPartyPropertyDamageLimit)) {
+  if (cleanValue(input.roadsideAssistance) === 'Included') {
     lineItems.push(
       buildQuoteLineItem(
-        'third_party_property_damage',
-        'Third Party Property Damage',
+        'roadside_assistance',
+        'Roadside Assistance',
         undefined,
-        'referral',
+        'selected',
         undefined,
-        ['Voluntary property damage table is pending verification.'],
+        ['Selected'],
+        false,
       ),
     );
   }
 
+  const estimatedSubtotalPremiumPHP = roundCurrency(
+    lineItems
+      .filter((item) => item.contributesToTotal !== false && typeof item.amountPHP === 'number')
+      .reduce((total, item) => total + (item.amountPHP ?? 0), 0),
+  );
+  lineItems.push(...taxLineItems(estimatedSubtotalPremiumPHP));
+
   const estimatedGrossPremiumPHP = roundCurrency(
     lineItems
-      .filter((item) => typeof item.amountPHP === 'number')
+      .filter((item) => item.contributesToTotal !== false && typeof item.amountPHP === 'number')
       .reduce((total, item) => total + (item.amountPHP ?? 0), 0),
   );
 
   const exactEnough =
     missingFields.length === 0 &&
     ctplPremium !== null &&
-    sumInsured > 0 &&
+    (coverageType === 'CTPL Only' || (sumInsured !== null && sumInsured > 0)) &&
     isPrivateVehicle(input) &&
     PASSENGER_BODY_TYPES.has(cleanValue(input.bodyType));
 
@@ -329,9 +405,10 @@ export function calculateIndicativeMotorQuote(input: MotorVehicleInfo): MotorQuo
     displayLabel: status === 'pending_assessment' || status === 'not_enough_data'
       ? 'Pending Assessment'
       : 'Indicative Quote',
-    sumInsuredPHP: sumInsured,
+    sumInsuredPHP: sumInsured ?? undefined,
     lineItems,
     estimatedGrossPremiumPHP,
+    estimatedSubtotalPremiumPHP,
     referralReasons,
     missingFields,
   };

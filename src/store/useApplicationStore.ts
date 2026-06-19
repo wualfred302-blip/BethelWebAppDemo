@@ -52,6 +52,7 @@ interface MotorVehicleInfoData {
   thirdPartyPropertyDamageLimit: string;
   autoPersonalAccident: string;
   deductibleParticipation: string;
+  roadsideAssistance: string;
 }
 
 interface LocationData {
@@ -168,6 +169,7 @@ const initialMotorVehicleInfo: MotorVehicleInfoData = {
   thirdPartyPropertyDamageLimit: '',
   autoPersonalAccident: '',
   deductibleParticipation: '',
+  roadsideAssistance: '',
 };
 
 const initialLocation: LocationData = {

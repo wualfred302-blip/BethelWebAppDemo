@@ -152,7 +152,7 @@
       "label": "Private Cars (including jeeps and utility vehicles)",
       "liabilityLimitPHP": 100000,
       "oneYearTotalPremiumPHP": 560,
-      "threeYearTotalPremiumPHP": 1670
+      "threeYearTotalPremiumPHP": 1610
     },
     {
       "vehicleClass": "light_medium_truck",
@@ -203,8 +203,210 @@
       "note": "The source PDF includes a bodily injury premium table, but the OCR text dump is not reliable enough to encode the exact premiums without visual verification."
     },
     "propertyDamage": {
-      "status": "needs_verification",
-      "note": "The source PDF includes a property damage premium table, but the OCR text dump is not reliable enough to encode the exact premiums without visual verification."
+      "status": "verified",
+      "note": "Property damage premiums were extracted from the official motorcar tariff schedule and visually verified against the source PDF.",
+      "tables": [
+        {
+          "vehicleClass": "private_car",
+          "label": "Private car",
+          "entries": [
+            {
+              "limitPHP": 50000,
+              "premiumPHP": 975
+            },
+            {
+              "limitPHP": 75000,
+              "premiumPHP": 1035
+            },
+            {
+              "limitPHP": 100000,
+              "premiumPHP": 1095
+            },
+            {
+              "limitPHP": 150000,
+              "premiumPHP": 1170
+            },
+            {
+              "limitPHP": 200000,
+              "premiumPHP": 1245
+            },
+            {
+              "limitPHP": 250000,
+              "premiumPHP": 1320
+            },
+            {
+              "limitPHP": 300000,
+              "premiumPHP": 1395
+            },
+            {
+              "limitPHP": 400000,
+              "premiumPHP": 1515
+            },
+            {
+              "limitPHP": 500000,
+              "premiumPHP": 1635
+            },
+            {
+              "limitPHP": 750000,
+              "premiumPHP": 1920
+            },
+            {
+              "limitPHP": 1000000,
+              "premiumPHP": 2235
+            }
+          ]
+        },
+        {
+          "vehicleClass": "light_medium_truck",
+          "label": "CV own goods L/M",
+          "entries": [
+            {
+              "limitPHP": 50000,
+              "premiumPHP": 1050
+            },
+            {
+              "limitPHP": 75000,
+              "premiumPHP": 1110
+            },
+            {
+              "limitPHP": 100000,
+              "premiumPHP": 1170
+            },
+            {
+              "limitPHP": 150000,
+              "premiumPHP": 1245
+            },
+            {
+              "limitPHP": 200000,
+              "premiumPHP": 1320
+            },
+            {
+              "limitPHP": 250000,
+              "premiumPHP": 1395
+            },
+            {
+              "limitPHP": 300000,
+              "premiumPHP": 1485
+            },
+            {
+              "limitPHP": 400000,
+              "premiumPHP": 1575
+            },
+            {
+              "limitPHP": 500000,
+              "premiumPHP": 1680
+            },
+            {
+              "limitPHP": 750000,
+              "premiumPHP": 2100
+            },
+            {
+              "limitPHP": 1000000,
+              "premiumPHP": 2535
+            }
+          ]
+        },
+        {
+          "vehicleClass": "heavy_truck_private_bus",
+          "label": "CV own goods H",
+          "entries": [
+            {
+              "limitPHP": 50000,
+              "premiumPHP": 1200
+            },
+            {
+              "limitPHP": 75000,
+              "premiumPHP": 1245
+            },
+            {
+              "limitPHP": 100000,
+              "premiumPHP": 1290
+            },
+            {
+              "limitPHP": 150000,
+              "premiumPHP": 1335
+            },
+            {
+              "limitPHP": 200000,
+              "premiumPHP": 1395
+            },
+            {
+              "limitPHP": 250000,
+              "premiumPHP": 1455
+            },
+            {
+              "limitPHP": 300000,
+              "premiumPHP": 1515
+            },
+            {
+              "limitPHP": 400000,
+              "premiumPHP": 1590
+            },
+            {
+              "limitPHP": 500000,
+              "premiumPHP": 1680
+            },
+            {
+              "limitPHP": 750000,
+              "premiumPHP": 2205
+            },
+            {
+              "limitPHP": 1000000,
+              "premiumPHP": 2730
+            }
+          ]
+        },
+        {
+          "vehicleClass": "motorcycle_tricycle_trailer",
+          "label": "Motorcycles",
+          "entries": [
+            {
+              "limitPHP": 50000,
+              "premiumPHP": 450
+            },
+            {
+              "limitPHP": 75000,
+              "premiumPHP": 510
+            },
+            {
+              "limitPHP": 100000,
+              "premiumPHP": 555
+            },
+            {
+              "limitPHP": 150000,
+              "premiumPHP": 645
+            },
+            {
+              "limitPHP": 200000,
+              "premiumPHP": 720
+            },
+            {
+              "limitPHP": 250000,
+              "premiumPHP": 795
+            },
+            {
+              "limitPHP": 300000,
+              "premiumPHP": 870
+            },
+            {
+              "limitPHP": 400000,
+              "premiumPHP": 960
+            },
+            {
+              "limitPHP": 500000,
+              "premiumPHP": 1080
+            },
+            {
+              "limitPHP": 750000,
+              "premiumPHP": 1560
+            },
+            {
+              "limitPHP": 1000000,
+              "premiumPHP": 1980
+            }
+          ]
+        }
+      ]
     }
   },
   "actsOfNature": {

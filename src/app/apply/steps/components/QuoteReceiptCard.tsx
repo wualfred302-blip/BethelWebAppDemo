@@ -81,7 +81,7 @@ function SummaryPanel({
         {label}
       </span>
       <span
-        className={`mt-1 block ${
+        className={`mt-1 block break-words ${
           emphasis ? 'text-[20px] font-semibold text-primary' : 'text-[16px] font-semibold text-on-surface'
         }`}
       >
@@ -191,25 +191,31 @@ export default function QuoteReceiptCard({
           <SectionHeader icon={<ReceiptText className="h-4 w-4" />} title="Billing Summary" />
           <div className="space-y-1">
             {billingRows.map((row, idx) => (
-              <div key={idx} className="flex justify-between">
-                <span className="text-sm text-outline">{row.label}</span>
-                <span className="text-sm text-on-surface">{row.value}</span>
+              <div key={idx} className="grid grid-cols-[minmax(0,1fr)_minmax(7.5rem,45%)] gap-4 py-1.5">
+                <span className="min-w-0 text-sm leading-snug text-outline">{row.label}</span>
+                <span
+                  className={`min-w-0 break-words text-right text-sm leading-snug ${
+                    row.emphasized ? 'font-semibold text-primary' : 'text-on-surface'
+                  }`}
+                >
+                  {row.value}
+                </span>
               </div>
             ))}
           </div>
-          <div className="mt-4 flex items-end justify-between border-t border-primary/20 pt-4">
-            <div>
+          <div className="mt-4 grid grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] items-end gap-4 border-t border-primary/20 pt-4">
+            <div className="min-w-0">
               <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-outline">
                 {finalTotalLabel}
               </p>
-              <p className="text-[20px] font-bold tracking-tight text-primary">{finalTotal}</p>
+              <p className="break-words text-[20px] font-bold tracking-tight text-primary">{finalTotal}</p>
             </div>
             {displayedTransactionValue && (
-              <div className="text-right">
+              <div className="min-w-0 text-right">
                 <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-on-surface-variant">
                   {transactionLabel || 'Transaction ID'}
                 </p>
-                <p className="text-[12px] text-on-surface">{displayedTransactionValue}</p>
+                <p className="break-all text-[12px] text-on-surface">{displayedTransactionValue}</p>
               </div>
             )}
           </div>

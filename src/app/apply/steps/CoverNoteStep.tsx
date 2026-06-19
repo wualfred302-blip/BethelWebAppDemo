@@ -274,6 +274,7 @@ export default function CoverNoteStep() {
 
   // ── Build receipt data ──────────────────────────────────
   const motorReceiptData = useMemo(() => {
+    const isPendingAssessment = motorQuote.status === 'pending_assessment' || motorQuote.status === 'not_enough_data';
     const compactRows = (rows: QuoteReceiptRow[], fallback: string): QuoteReceiptRow[] => {
       const visible = rows.filter((row) => row.value && row.value !== '—');
       return visible.length ? visible : [{ label: 'Status', value: fallback }];
@@ -285,13 +286,16 @@ export default function CoverNoteStep() {
     };
 
     const formatMotorLineItem = (item: (typeof motorQuote.lineItems)[number]) => {
-      if (typeof item.amountPHP === 'number') {
-        return item.ratePercent
-          ? `${formatPHP(item.amountPHP)} (${item.ratePercent}%)`
-          : formatPHP(item.amountPHP);
+      const noteText = item.notes?.filter(Boolean).join(' · ');
+      if (typeof item.amountPHP === "number") {
+        const amount = formatPHP(item.amountPHP);
+        if (noteText) {
+          return `${amount} (${noteText})`;
+        }
+        return item.ratePercent ? `${amount} (${item.ratePercent}%)` : amount;
       }
-      if (item.notes && item.notes.length > 0) {
-        return item.notes[0];
+      if (noteText) {
+        return noteText;
       }
       return item.status === 'missing' ? 'Pending assessment' : 'Included';
     };
@@ -338,33 +342,33 @@ export default function CoverNoteStep() {
             label: 'Sum Insured / FMV',
             value: formatOptionalPHP(motorVehicleInfo.estimatedMarketValue),
           },
-          { label: 'Acts of Nature', value: motorVehicleInfo.actsOfNature || '—' },
           {
             label: 'TPPD Limit',
             value: formatOptionalPHP(motorVehicleInfo.thirdPartyPropertyDamageLimit),
           },
           { label: 'Auto Personal Accident', value: motorVehicleInfo.autoPersonalAccident || '—' },
-          { label: 'Deductible', value: motorVehicleInfo.deductibleParticipation || '—' },
+          { label: 'Roadside Assistance', value: motorVehicleInfo.roadsideAssistance || '—' },
         ], 'Coverage details pending'),
       },
     ];
 
-    const billingRows: QuoteReceiptRow[] = motorQuote.lineItems.map((item) => ({
-      label: item.label,
-      value: formatMotorLineItem(item),
-      emphasized: item.status === 'calculated' || item.status === 'selected',
-    }));
+    const billingRows: QuoteReceiptRow[] = motorQuote.lineItems
+      .filter((item) => item.key !== 'own_damage_theft' && item.key !== 'acts_of_nature')
+      .map((item) => ({
+        label: item.label,
+        value: formatMotorLineItem(item),
+        emphasized: item.status === 'calculated' || item.status === 'selected',
+      }));
 
     return {
       eyebrow: 'Bethel General',
       title: 'Motor Car Insurance',
-      subtitle:
-        motorQuote.status === 'pending_assessment' || motorQuote.status === 'not_enough_data'
-          ? 'Complete the vehicle fields to calculate an indicative quote.'
-          : 'Tariff-based estimate subject to underwriting review.',
-      totalLabel: motorQuoteSummary.label,
+      subtitle: isPendingAssessment
+        ? 'Complete the vehicle fields to calculate an indicative annual quote.'
+        : 'Tariff-based annual estimate subject to underwriting review.',
+      totalLabel: isPendingAssessment ? motorQuoteSummary.label : 'Annual Gross Premium',
       totalAmount: motorQuoteSummary.value,
-      finalTotalLabel: 'Indicative Total',
+      finalTotalLabel: 'Annual Gross Premium',
       insuredName: motorVehicleInfo.fullName || 'Applicant',
       controlNumber: coverNote.controlNumber,
       expiryTime: coverNote.expiryTime,
@@ -443,8 +447,8 @@ export default function CoverNoteStep() {
           expiryTime: coverNote.expiryTime,
           insuredName: motorVehicleInfo.fullName || 'Applicant',
           subtitle: motorReceiptData.subtitle || motorQuoteSummary.note,
-          totalLabel: motorQuoteSummary.label,
-          totalAmount: motorQuoteSummary.value,
+          totalLabel: motorReceiptData.totalLabel,
+          totalAmount: motorReceiptData.totalAmount,
           sections: motorReceiptData.sections,
           billingRows: motorReceiptData.billingRows,
           finalTotalLabel: motorReceiptData.finalTotalLabel || 'Indicative Total',
