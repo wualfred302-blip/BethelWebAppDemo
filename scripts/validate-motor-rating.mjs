@@ -42,4 +42,23 @@ assert.equal(
   'Private car TPPD 500k premium should be PHP 1,635',
 );
 
+const privateCarBi = rating.voluntaryThirdPartyLiability.bodilyInjury.tables.find((entry) => entry.vehicleClass === 'private_car');
+assert.ok(privateCarBi, 'Private car bodily injury table should be present');
+
+[
+  [50000, 195],
+  [75000, 225],
+  [100000, 270],
+  [150000, 345],
+  [200000, 420],
+  [250000, 510],
+  [300000, 585],
+  [400000, 675],
+  [500000, 780],
+].forEach(([limitPHP, premiumPHP]) => {
+  const row = privateCarBi.entries.find((entry) => entry.limitPHP === limitPHP);
+  assert.ok(row, `Private car bodily injury ${limitPHP} row should be present`);
+  assert.equal(row.premiumPHP, premiumPHP, `Private car bodily injury ${limitPHP} premium should be PHP ${premiumPHP}`);
+});
+
 console.log('Motor tariff validation passed.');

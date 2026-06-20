@@ -7,7 +7,7 @@
     "notes": [
       "Official Insurance Commission motorcar tariff schedule.",
       "CTPL premiums include taxes as indicated in the source.",
-      "Voluntary third-party liability tables are present in the PDF but are not encoded yet because the OCR text dump is too noisy to trust without visual verification."
+      "Voluntary third-party liability premiums are being encoded from the official schedule; the private-car bodily injury and property damage rows are verified."
     ]
   },
   "privateCar": {
@@ -199,8 +199,52 @@
   ],
   "voluntaryThirdPartyLiability": {
     "bodilyInjury": {
-      "status": "needs_verification",
-      "note": "The source PDF includes a bodily injury premium table, but the OCR text dump is not reliable enough to encode the exact premiums without visual verification."
+      "status": "partial",
+      "note": "Private-car bodily injury premiums were extracted from the official motorcar tariff schedule and visually verified against the source PDF.",
+      "tables": [
+        {
+          "vehicleClass": "private_car",
+          "label": "Private car",
+          "entries": [
+            {
+              "limitPHP": 50000,
+              "premiumPHP": 195
+            },
+            {
+              "limitPHP": 75000,
+              "premiumPHP": 225
+            },
+            {
+              "limitPHP": 100000,
+              "premiumPHP": 270
+            },
+            {
+              "limitPHP": 150000,
+              "premiumPHP": 345
+            },
+            {
+              "limitPHP": 200000,
+              "premiumPHP": 420
+            },
+            {
+              "limitPHP": 250000,
+              "premiumPHP": 510
+            },
+            {
+              "limitPHP": 300000,
+              "premiumPHP": 585
+            },
+            {
+              "limitPHP": 400000,
+              "premiumPHP": 675
+            },
+            {
+              "limitPHP": 500000,
+              "premiumPHP": 780
+            }
+          ]
+        }
+      ]
     },
     "propertyDamage": {
       "status": "verified",

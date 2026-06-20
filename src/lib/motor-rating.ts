@@ -45,15 +45,20 @@ export interface MotorQuoteResult {
   missingFields: string[];
 }
 
-type VoluntaryPropertyDamageTableEntry = {
+type VoluntaryThirdPartyLiabilityTableEntry = {
   limitPHP: number;
   premiumPHP: number;
 };
 
-type VoluntaryPropertyDamageTable = {
+type VoluntaryThirdPartyLiabilityTable = {
   vehicleClass: MotorRatingBucket;
   label: string;
-  entries: VoluntaryPropertyDamageTableEntry[];
+  entries: VoluntaryThirdPartyLiabilityTableEntry[];
+};
+
+type VoluntaryThirdPartyLiabilityPremiums = {
+  bodilyInjuryPremiumPHP: number | null;
+  propertyDamagePremiumPHP: number | null;
 };
 
 type RatingTable = Omit<typeof ratingTable, 'voluntaryThirdPartyLiability'> & {
@@ -61,11 +66,12 @@ type RatingTable = Omit<typeof ratingTable, 'voluntaryThirdPartyLiability'> & {
     bodilyInjury?: {
       status?: string;
       note?: string;
+      tables?: VoluntaryThirdPartyLiabilityTable[];
     };
     propertyDamage?: {
       status?: string;
       note?: string;
-      tables?: VoluntaryPropertyDamageTable[];
+      tables?: VoluntaryThirdPartyLiabilityTable[];
     };
   };
 };
@@ -181,12 +187,23 @@ function ratingNoteForBucket(bucket: MotorRatingBucket | null) {
   return row ? row.label : 'Unable to map vehicle to a known CTPL tariff class.';
 }
 
-function lookupThirdPartyPropertyDamagePremium(bucket: MotorRatingBucket | null, limitPHP: number | null) {
+function lookupThirdPartyLiabilityPremiums(
+  bucket: MotorRatingBucket | null,
+  limitPHP: number | null,
+): VoluntaryThirdPartyLiabilityPremiums | null {
   if (!bucket || !limitPHP) return null;
-  const tables = RATE.voluntaryThirdPartyLiability?.propertyDamage?.tables ?? [];
-  const table = tables.find((entry) => entry.vehicleClass === bucket);
-  const premium = table?.entries.find((entry) => entry.limitPHP === limitPHP);
-  return premium ? { premiumPHP: premium.premiumPHP } : null;
+
+  const bodilyInjuryTables = RATE.voluntaryThirdPartyLiability?.bodilyInjury?.tables ?? [];
+  const propertyDamageTables = RATE.voluntaryThirdPartyLiability?.propertyDamage?.tables ?? [];
+
+  const bodilyInjuryTable = bodilyInjuryTables.find((entry) => entry.vehicleClass === bucket);
+  const propertyDamageTable = propertyDamageTables.find((entry) => entry.vehicleClass === bucket);
+
+  const bodilyInjuryPremiumPHP = bodilyInjuryTable?.entries.find((entry) => entry.limitPHP === limitPHP)?.premiumPHP ?? null;
+  const propertyDamagePremiumPHP = propertyDamageTable?.entries.find((entry) => entry.limitPHP === limitPHP)?.premiumPHP ?? null;
+
+  if (bodilyInjuryPremiumPHP === null && propertyDamagePremiumPHP === null) return null;
+  return { bodilyInjuryPremiumPHP, propertyDamagePremiumPHP };
 }
 
 export function validateMotorQuoteInput(input: MotorVehicleInfo) {
@@ -207,7 +224,7 @@ export function validateMotorQuoteInput(input: MotorVehicleInfo) {
     const tppdLimit = parseMoney(input.thirdPartyPropertyDamageLimit);
     if (tppdLimit === null) {
       referralReasons.push('TPPD limit could not be parsed.');
-    } else if (!lookupThirdPartyPropertyDamagePremium(ctplBucket, tppdLimit)) {
+    } else if (!lookupThirdPartyLiabilityPremiums(ctplBucket, tppdLimit)) {
       referralReasons.push('TPPD premium rate is not available for the selected vehicle class and limit.');
     }
   }
@@ -304,23 +321,40 @@ export function calculateIndicativeMotorQuote(input: MotorVehicleInfo): MotorQuo
 
   const tppdLimit = parseMoney(input.thirdPartyPropertyDamageLimit);
   if (comprehensive && tppdLimit !== null) {
-    const tppdPremium = lookupThirdPartyPropertyDamagePremium(ctplBucket, tppdLimit);
-    if (tppdPremium) {
-      lineItems.push(
-        buildQuoteLineItem(
-          'third_party_property_damage',
-          'Third Party Property Damage',
-          tppdPremium.premiumPHP,
-          'calculated',
-          undefined,
-          [`${formatPHP(tppdLimit)} limit`],
-        ),
-      );
+    const tppdPremiums = lookupThirdPartyLiabilityPremiums(ctplBucket, tppdLimit);
+    if (tppdPremiums) {
+      const tppdNotes = [`${formatPHP(tppdLimit)} limit`];
+
+      if (tppdPremiums.bodilyInjuryPremiumPHP !== null) {
+        lineItems.push(
+          buildQuoteLineItem(
+            'third_party_bodily_injury',
+            'Third Party Bodily Injury',
+            tppdPremiums.bodilyInjuryPremiumPHP,
+            'calculated',
+            undefined,
+            tppdNotes,
+          ),
+        );
+      }
+
+      if (tppdPremiums.propertyDamagePremiumPHP !== null) {
+        lineItems.push(
+          buildQuoteLineItem(
+            'third_party_property_damage',
+            'Third Party Property Damage',
+            tppdPremiums.propertyDamagePremiumPHP,
+            'calculated',
+            undefined,
+            tppdNotes,
+          ),
+        );
+      }
     } else {
       lineItems.push(
         buildQuoteLineItem(
-          'third_party_property_damage',
-          'Third Party Property Damage',
+          'third_party_liability',
+          'Third Party Liability',
           undefined,
           'referral',
           undefined,
