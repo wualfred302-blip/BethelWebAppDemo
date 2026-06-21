@@ -303,6 +303,7 @@ export default function CoverNoteStep() {
       motorVehicleInfo.variant && motorVehicleInfo.variant !== 'Standard' ? motorVehicleInfo.variant : '';
     const coverageTypeLabel =
       motorVehicleInfo.coverageType === 'CTPL Only' ? 'CTPL' : motorVehicleInfo.coverageType || '—';
+    const hideCtplLine = motorVehicleInfo.coverageType === 'Comprehensive';
 
     const sections: QuoteReceiptSection[] = [
       {
@@ -355,7 +356,11 @@ export default function CoverNoteStep() {
     ];
 
     const billingRows: QuoteReceiptRow[] = motorQuote.lineItems
-      .filter((item) => item.key !== 'own_damage_theft' && item.key !== 'acts_of_nature')
+      .filter((item) =>
+        item.key !== 'own_damage_theft' &&
+        item.key !== 'acts_of_nature' &&
+        !(hideCtplLine && item.key === 'ctpl'),
+      )
       .map((item) => ({
         label: item.label,
         value: formatMotorLineItem(item),
