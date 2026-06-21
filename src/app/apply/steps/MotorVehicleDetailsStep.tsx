@@ -141,6 +141,15 @@ export default function MotorVehicleDetailsStep() {
     });
   }, [selectedEntry]);
 
+  useEffect(() => {
+    setForm((current) => {
+      if (current.coverageType === 'Comprehensive' && !current.autoPersonalAccident) {
+        return { ...current, autoPersonalAccident: 'Included' };
+      }
+      return current;
+    });
+  }, [form.coverageType]);
+
   const updateField = (field: FieldName, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
   };
@@ -190,8 +199,13 @@ export default function MotorVehicleDetailsStep() {
 
   const handleContinue = () => {
     if (!selectedEntry) return;
+    const autoPersonalAccident =
+      form.coverageType === 'Comprehensive' && !form.autoPersonalAccident
+        ? 'Included'
+        : form.autoPersonalAccident;
     setMotorVehicleInfo({
       ...form,
+      autoPersonalAccident,
       variant: selectedEntry.variant,
       bodyType: selectedEntry.bodyType,
       seatingCapacity: String(selectedEntry.seatingCapacity),
@@ -420,6 +434,9 @@ export default function MotorVehicleDetailsStep() {
             formatCoverageLimit,
           )}
           {select('autoPersonalAccident', 'Auto Personal Accident', INCLUDED_OPTIONS)}
+          <p className="text-[11px] text-outline">
+            Billed at PHP 50 per seat using the selected vehicle profile.
+          </p>
           {select('roadsideAssistance', 'Roadside Assistance', ROADSIDE_ASSISTANCE_OPTIONS)}
         </div>
       </fieldset>

@@ -83,6 +83,7 @@ const MOTOR_TAX_RATES = {
   vat: 0.12,
   lgt: 0.005,
 };
+const AUTO_PERSONAL_ACCIDENT_RATE_PER_SEAT_PHP = 50;
 
 function cleanValue(value: string) {
   return String(value ?? '').trim();
@@ -120,6 +121,16 @@ function resolveRatingBucket(input: MotorVehicleInfo): MotorRatingBucket | null 
 
   if (PASSENGER_BODY_TYPES.has(bodyType)) return 'private_car';
   return null;
+}
+
+function resolveVehicleSeatCapacity(input: MotorVehicleInfo) {
+  const catalogEntry = getVehicleEntry(input.make, input.model, input.yearModel, input.variant);
+  if (typeof catalogEntry?.seatingCapacity === 'number' && catalogEntry.seatingCapacity > 0) {
+    return catalogEntry.seatingCapacity;
+  }
+
+  const parsedSeatCount = Number(cleanValue(input.seatingCapacity));
+  return Number.isFinite(parsedSeatCount) && parsedSeatCount > 0 ? parsedSeatCount : null;
 }
 
 function ctplPremiumForBucket(bucket: MotorRatingBucket | null) {
@@ -218,7 +229,9 @@ export function validateMotorQuoteInput(input: MotorVehicleInfo) {
   }
 
   if (comprehensive && cleanValue(input.autoPersonalAccident) === 'Included') {
-    referralReasons.push('Auto Personal Accident is selected, but the Bethel rate is not yet installed.');
+    if (resolveVehicleSeatCapacity(input) === null) {
+      referralReasons.push('Auto Personal Accident premium could not be calculated from the selected vehicle profile.');
+    }
   }
 
   if (comprehensive && cleanValue(input.thirdPartyPropertyDamageLimit)) {
@@ -321,6 +334,35 @@ export function calculateIndicativeMotorQuote(input: MotorVehicleInfo): MotorQuo
     );
   }
 
+  if (comprehensive && cleanValue(input.autoPersonalAccident) === 'Included') {
+    const seatCount = resolveVehicleSeatCapacity(input);
+    if (seatCount !== null) {
+      lineItems.push(
+        buildQuoteLineItem(
+          'auto_personal_accident',
+          'Auto Personal Accident',
+          roundCurrency(seatCount * AUTO_PERSONAL_ACCIDENT_RATE_PER_SEAT_PHP),
+          'calculated',
+          undefined,
+          [`${seatCount} seat${seatCount === 1 ? '' : 's'} × PHP ${AUTO_PERSONAL_ACCIDENT_RATE_PER_SEAT_PHP}`],
+        ),
+      );
+    } else {
+      lineItems.push(
+        buildQuoteLineItem(
+          'auto_personal_accident',
+          'Auto Personal Accident',
+          undefined,
+          'referral',
+          undefined,
+          ['Unable to resolve vehicle seating capacity.'],
+          false,
+        ),
+      );
+      referralReasons.push('Auto Personal Accident premium could not be calculated from the selected vehicle profile.');
+    }
+  }
+
   const tppdLimit = parseMoney(input.thirdPartyPropertyDamageLimit);
   if (comprehensive && tppdLimit !== null) {
     const tppdPremiums = lookupThirdPartyLiabilityPremiums(ctplBucket, tppdLimit);
@@ -379,20 +421,6 @@ export function calculateIndicativeMotorQuote(input: MotorVehicleInfo): MotorQuo
       false,
     ),
   );
-
-
-  if (comprehensive && cleanValue(input.autoPersonalAccident) === 'Included') {
-    lineItems.push(
-      buildQuoteLineItem(
-        'auto_personal_accident',
-        'Auto Personal Accident',
-        undefined,
-        'referral',
-        undefined,
-        ['Rate not yet installed.'],
-      ),
-    );
-  }
 
   if (cleanValue(input.roadsideAssistance) === 'Included') {
     lineItems.push(
