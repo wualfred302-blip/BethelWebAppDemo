@@ -61,7 +61,7 @@ const normalizeIncluded = (value: string) => {
 const normalizeCoverageType = (value: string) => {
   const trimmed = clean(value);
   if (/comprehensive|own damage|theft/i.test(trimmed)) return 'Comprehensive';
-  if (/ctpl|compulsory third party/i.test(trimmed)) return 'CTPL Only';
+  if (/ctpl|compulsory third party/i.test(trimmed)) return 'CTPL';
   return trimmed;
 };
 

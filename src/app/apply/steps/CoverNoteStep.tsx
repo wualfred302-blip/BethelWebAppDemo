@@ -301,6 +301,8 @@ export default function CoverNoteStep() {
     };
     const displayVariant =
       motorVehicleInfo.variant && motorVehicleInfo.variant !== 'Standard' ? motorVehicleInfo.variant : '';
+    const coverageTypeLabel =
+      motorVehicleInfo.coverageType === 'CTPL Only' ? 'CTPL' : motorVehicleInfo.coverageType || '—';
 
     const sections: QuoteReceiptSection[] = [
       {
@@ -337,7 +339,7 @@ export default function CoverNoteStep() {
         title: 'Coverage Limits',
         rows: compactRows([
           { label: 'Effective Date', value: motorVehicleInfo.effectiveDate || '—' },
-          { label: 'Coverage Type', value: motorVehicleInfo.coverageType || '—' },
+          { label: 'Coverage Type', value: coverageTypeLabel },
           {
             label: 'Sum Insured / FMV',
             value: formatOptionalPHP(motorVehicleInfo.estimatedMarketValue),

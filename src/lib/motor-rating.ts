@@ -207,7 +207,8 @@ function lookupThirdPartyLiabilityPremiums(
 }
 
 export function validateMotorQuoteInput(input: MotorVehicleInfo) {
-  const comprehensive = cleanValue(input.coverageType) === 'Comprehensive';
+  const coverageType = cleanValue(input.coverageType);
+  const comprehensive = coverageType === 'Comprehensive';
   const ctplBucket = resolveRatingBucket(input);
   const missingFields = buildMissingFields(input, comprehensive);
   const referralReasons: string[] = [];
@@ -246,6 +247,7 @@ function taxLineItems(subtotalPHP: number) {
 
 export function calculateIndicativeMotorQuote(input: MotorVehicleInfo): MotorQuoteResult {
   const coverageType = cleanValue(input.coverageType);
+  const ctplOnly = coverageType === 'CTPL' || coverageType === 'CTPL Only';
   const comprehensive = coverageType === 'Comprehensive';
   const ctplBucket = resolveRatingBucket(input);
   const ctplPremium = ctplPremiumForBucket(ctplBucket);
@@ -422,7 +424,7 @@ export function calculateIndicativeMotorQuote(input: MotorVehicleInfo): MotorQuo
   const exactEnough =
     missingFields.length === 0 &&
     ctplPremium !== null &&
-    (coverageType === 'CTPL Only' || (sumInsured !== null && sumInsured > 0)) &&
+    (ctplOnly || (sumInsured !== null && sumInsured > 0)) &&
     isPrivateVehicle(input) &&
     PASSENGER_BODY_TYPES.has(cleanValue(input.bodyType));
 

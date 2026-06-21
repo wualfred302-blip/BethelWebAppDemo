@@ -57,7 +57,7 @@ function LockedField({
 
 const VEHICLE_USES = ['Private', 'Commercial'];
 const VEHICLE_CONDITIONS = ['Brand New', 'Used'];
-const COVERAGE_TYPES = ['CTPL Only', 'Comprehensive'];
+const COVERAGE_TYPES = ['CTPL', 'Comprehensive'];
 const INCLUDED_OPTIONS = ['Included', 'Not Included'];
 const THIRD_PARTY_PROPERTY_DAMAGE_LIMITS = ['100000', '200000', '300000', '400000', '500000'];
 const ROADSIDE_ASSISTANCE_OPTIONS = ['Not Included', 'Included'];
