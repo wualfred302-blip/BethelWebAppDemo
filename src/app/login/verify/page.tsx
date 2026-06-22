@@ -9,6 +9,17 @@ import { maskEmail } from '@/lib/auth/tokens';
 
 const RESEND_SECONDS = 60;
 
+async function readJsonResponse<T>(response: Response): Promise<T | undefined> {
+  const rawBody = await response.text();
+  if (!rawBody.trim()) return undefined;
+
+  try {
+    return JSON.parse(rawBody) as T;
+  } catch {
+    return undefined;
+  }
+}
+
 export default function VerifyPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -74,14 +85,14 @@ export default function VerifyPage() {
         body: JSON.stringify({ code }),
       });
 
-      const data = (await response.json()) as {
+      const data = (await readJsonResponse<{
         error?: string;
         redirectTo?: string;
         attemptsLeft?: number;
-      };
+      }>(response)) ?? {};
 
       if (!response.ok) {
-        throw new Error(data.error || 'Unable to verify code');
+        throw new Error(data.error || `Unable to verify code (${response.status})`);
       }
 
       router.replace(data.redirectTo || '/apply');
@@ -106,13 +117,13 @@ export default function VerifyPage() {
         body: JSON.stringify({ email, phone }),
       });
 
-      const data = (await response.json()) as {
+      const data = (await readJsonResponse<{
         error?: string;
         retryAfterSeconds?: number;
-      };
+      }>(response)) ?? {};
 
       if (!response.ok) {
-        throw new Error(data.error || 'Unable to resend code');
+        throw new Error(data.error || `Unable to resend code (${response.status})`);
       }
 
       setSecondsLeft(RESEND_SECONDS);
@@ -124,7 +135,7 @@ export default function VerifyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface">
+    <div className="min-h-screen bg-white text-on-surface">
       <header className="flex items-center justify-between px-4 pt-4 sm:px-6 sm:pt-5">
         <button
           type="button"
@@ -145,7 +156,7 @@ export default function VerifyPage() {
       <main className="mx-auto flex w-full max-w-[420px] flex-1 items-start px-3 pb-8 pt-28 sm:px-4 sm:pt-32">
         <form
           onSubmit={handleVerify}
-          className="w-full rounded-[18px] border border-[#e0e3ec] bg-white px-4 py-5 shadow-[0_18px_40px_rgba(56,72,136,0.08)] sm:px-5 sm:py-6"
+          className="w-full rounded-[16px] border border-[#d8ddec] bg-white px-4 py-5 shadow-[0_4px_20px_rgba(56,72,136,0.05)] sm:px-5 sm:py-6"
         >
           <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.24em] text-brand-gold">
             Bethel General
@@ -190,9 +201,9 @@ export default function VerifyPage() {
           <Button
             type="submit"
             disabled={isSubmitting || code.replace(/\D/g, '').length !== 6}
-            className="mt-5 h-12 w-full rounded-lg bg-primary px-5 text-sm font-semibold uppercase tracking-[0.08em] text-white shadow-[0_8px_20px_rgba(56,72,136,0.16)] hover:bg-primary-container"
+            className="mt-5 h-12 w-full rounded-[10px] bg-primary px-5 text-sm font-semibold uppercase tracking-[0.08em] text-white shadow-[0_6px_16px_rgba(56,72,136,0.12)] hover:bg-primary-container"
           >
-            {isSubmitting ? 'Verifying...' : 'Verify code'}
+            {isSubmitting ? 'Verifying...' : 'VERIFY CODE'}
           </Button>
 
           <p className="mt-4 text-center text-[12px] leading-6 text-on-surface-variant">

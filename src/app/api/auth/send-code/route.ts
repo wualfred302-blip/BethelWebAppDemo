@@ -73,17 +73,26 @@ export async function POST(request: Request) {
   });
 
   if (resend) {
-    const { error } = await resend.emails.send({
-      from: resendFrom,
-      to: email,
-      subject: 'Your Bethel verification code',
-      html: emailHtml,
-    });
+    try {
+      const { error } = await resend.emails.send({
+        from: resendFrom,
+        to: email,
+        subject: 'Your Bethel verification code',
+        html: emailHtml,
+      });
 
-    if (error) {
+      if (error) {
+        console.error('[auth] resend returned an error', error);
+        return NextResponse.json(
+          { error: error.message ?? 'Unable to send verification code' },
+          { status: 502 },
+        );
+      }
+    } catch (sendError) {
+      console.error('[auth] resend threw while sending verification code', sendError);
       return NextResponse.json(
-        { error: error.message ?? 'Unable to send verification code' },
-        { status: 400 },
+        { error: 'Unable to send verification code. Please try again.' },
+        { status: 502 },
       );
     }
   } else {

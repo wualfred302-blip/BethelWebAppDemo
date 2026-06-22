@@ -1,11 +1,48 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { normalizePhilippinePhone } from '@/lib/auth/tokens';
+
+function UnderlineField({
+  id,
+  label,
+  type,
+  autoComplete,
+  placeholder,
+  value,
+  onChange,
+  required,
+}: {
+  id: string;
+  label: string;
+  type: string;
+  autoComplete: string;
+  placeholder: string;
+  value: string;
+  onChange: (value: string) => void;
+  required?: boolean;
+}) {
+  return (
+    <label className="block">
+      <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#5f6473]">
+        {label}
+      </span>
+      <input
+        id={id}
+        type={type}
+        autoComplete={autoComplete}
+        placeholder={placeholder}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        required={required}
+        className="mt-2 w-full border-0 border-b border-[#cfd3df] bg-transparent px-0 py-3 text-[14px] leading-5 text-on-surface placeholder:text-[#9fa4b3] focus:border-primary focus:outline-none focus:ring-0"
+      />
+    </label>
+  );
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,37 +51,40 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
     setIsSubmitting(true);
 
     try {
+      const normalizedEmail = email.trim().toLowerCase();
+      const normalizedPhone = normalizePhilippinePhone(phone);
       const response = await fetch('/api/auth/send-code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email,
-          phone: normalizePhilippinePhone(phone),
+          email: normalizedEmail,
+          phone: normalizedPhone,
         }),
       });
 
-      const data = (await response.json()) as {
-        error?: string;
-        maskedEmail?: string;
-        phone?: string;
-      };
+      const rawBody = await response.text();
+      const data = rawBody
+        ? (JSON.parse(rawBody) as {
+            error?: string;
+            maskedEmail?: string;
+            phone?: string;
+          })
+        : {};
 
       if (!response.ok) {
-        throw new Error(data.error || 'Unable to send code');
+        throw new Error(data.error || `Unable to send code (${response.status})`);
       }
 
       router.push(
-        `/login/verify?email=${encodeURIComponent(email.trim().toLowerCase())}&phone=${encodeURIComponent(
-          normalizePhilippinePhone(phone),
-        )}`,
+        `/login/verify?email=${encodeURIComponent(normalizedEmail)}&phone=${encodeURIComponent(normalizedPhone)}`,
       );
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : 'Unable to send code');
@@ -54,52 +94,50 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface">
+    <div className="min-h-screen bg-white text-on-surface">
       <header className="flex flex-col items-center pt-12">
-        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-primary">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-primary">
           STEP 1 OF 2 · SIGN IN
         </p>
-        <h1 className="mt-1 text-[30px] font-bold tracking-[-0.05em] text-primary">
+        <h1 className="mt-2 text-[18px] font-bold tracking-[-0.04em] text-primary">
           BETHEL
         </h1>
       </header>
 
-      <main className="mx-auto flex w-full max-w-[420px] flex-1 items-start px-3 pb-8 pt-20 sm:px-4">
+      <main className="mx-auto flex w-full max-w-[420px] flex-1 items-start px-3 pb-8 pt-20 sm:px-4 sm:pt-24">
         <form
           onSubmit={handleSubmit}
-          className="w-full rounded-[18px] border border-[#d8ddee] bg-white px-4 py-5 shadow-[0_18px_40px_rgba(56,72,136,0.08)] sm:px-5 sm:py-6"
+          className="w-full rounded-[16px] border border-[#d8ddec] bg-white px-4 py-4 shadow-[0_4px_20px_rgba(56,72,136,0.05)] sm:px-5 sm:py-5"
         >
-          <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.24em] text-brand-gold">
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-brand-gold">
             Bethel General
           </p>
-          <h2 className="text-[24px] font-semibold leading-tight tracking-[-0.04em] text-primary sm:text-[26px]">
+          <h2 className="text-[23px] font-semibold leading-tight tracking-[-0.03em] text-primary sm:text-[25px]">
             Sign in to continue
           </h2>
-          <p className="mt-2 max-w-[26ch] text-[14px] leading-6 text-on-surface-variant">
+          <p className="mt-2 max-w-[24ch] text-[14px] leading-6 text-on-surface-variant">
             A 6-digit code will be sent to your email. No password required.
           </p>
 
-          <div className="mt-5 space-y-4">
-            <Input
+          <div className="mt-5 space-y-5">
+            <UnderlineField
+              id="login-email"
               label="Email Address"
               type="email"
               autoComplete="email"
               placeholder="Enter your email"
               value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              filled={false}
-              className="input-underline"
+              onChange={setEmail}
               required
             />
-            <Input
+            <UnderlineField
+              id="login-phone"
               label="Phone Number"
               type="tel"
               autoComplete="tel"
               placeholder="Enter your phone number"
               value={phone}
-              onChange={(event) => setPhone(event.target.value)}
-              filled={false}
-              className="input-underline"
+              onChange={setPhone}
               required
             />
           </div>
@@ -113,7 +151,7 @@ export default function LoginPage() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="mt-5 h-12 w-full rounded-lg bg-primary px-5 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(56,72,136,0.16)] hover:bg-primary-container"
+            className="mt-5 h-12 w-full rounded-[10px] bg-primary px-5 text-sm font-semibold text-white shadow-[0_6px_16px_rgba(56,72,136,0.12)] hover:bg-primary-container"
           >
             {isSubmitting ? (
               <span className="inline-flex items-center gap-2">
@@ -129,7 +167,7 @@ export default function LoginPage() {
           </Button>
 
           <div className="mt-5 border-t border-[#e5e7eb] pt-4">
-            <p className="text-center text-[12px] leading-6 tracking-[0.01em] text-on-surface-variant">
+            <p className="mx-auto max-w-[18ch] text-center text-[12px] leading-6 tracking-[0.01em] text-on-surface-variant">
               This code will be used for verification and
               <br />
               secure account access.
