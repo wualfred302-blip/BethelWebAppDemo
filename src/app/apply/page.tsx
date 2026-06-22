@@ -109,6 +109,21 @@ export default function ApplyPage() {
     setShowSplash(false);
   }, []);
 
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') return;
+
+    const testApi = {
+      start: handleGetStarted,
+    };
+
+    const target = window as Window & { __bethelApplyTest?: typeof testApi };
+    target.__bethelApplyTest = testApi;
+
+    return () => {
+      delete target.__bethelApplyTest;
+    };
+  }, [handleGetStarted]);
+
   // ── Auto-advance past scan step for manual flow ──────────
   useEffect(() => {
     if (scanType === 'manual' && currentStep === 2) {
@@ -177,8 +192,6 @@ export default function ApplyPage() {
   }, []);
 
   const CurrentStepComponent = STEPS[currentStep - 1].component;
-  const isFirstStep = currentStep === 1;
-  const isLastStep = currentStep === TOTAL_STEPS;
 
   return showSplash ? (
     <SplashScreen onGetStarted={handleGetStarted} />

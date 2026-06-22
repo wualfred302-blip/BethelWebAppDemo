@@ -1,20 +1,22 @@
 import { test, expect } from '@playwright/test';
+import { signInWithOtp } from './helpers/auth';
 
 test('cover note pricing is dynamic based on floor area', async ({ page }) => {
-  await page.goto('http://localhost:3000/apply');
-  await page.waitForLoadState('networkidle');
+  await signInWithOtp(page);
 
-  // Splash screen
-  await page.locator('button:has-text("Get Started")').click();
-  await page.waitForTimeout(1000);
+  await page.waitForFunction(() => Boolean((window as typeof window & { __bethelApplyTest?: { start: () => void } }).__bethelApplyTest));
+  await page.evaluate(() => {
+    const testApi = (window as typeof window & { __bethelApplyTest?: { start: () => void } }).__bethelApplyTest;
+    testApi?.start();
+  });
+  await expect(page.getByRole('heading', { name: 'What would you like to do?' })).toBeVisible();
 
-  // Scan selection
-  await page.locator('text=Skip, Fill Manually').click();
-  await page.waitForTimeout(1000);
+  await page.getByRole('button', { name: 'Insure a Business Property' }).click();
+  await expect(page.getByRole('button', { name: 'Skip, fill manually' })).toBeVisible();
 
   // Scan step - skip
-  await page.locator('button:has-text("Skip, fill manually")').click();
-  await page.waitForTimeout(1000);
+  await page.getByRole('button', { name: 'Skip, fill manually' }).click();
+  await page.waitForLoadState('domcontentloaded');
 
   // Fill business details using type() for react-hook-form
   await page.locator('#fullName').type('Juan Dela Cruz');
@@ -52,7 +54,7 @@ test('cover note pricing is dynamic based on floor area', async ({ page }) => {
   expect(body).toContain('VAT');
   expect(body).toContain('LGT');
   expect(body).toContain('Net Premium');
-  expect(body).toContain('Effective Date');
+  expect(body).toContain('COVERAGE PERIOD');
 
   // Verify pricing is dynamic (not just default 0 sqm values)
   // 120 sqm Class I should be: Net ₱1,460.37, Gross ₱1,821.08

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AUTH_SESSION_COOKIE, parseAuthSession } from '@/lib/auth/otp';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionToken = request.cookies.get(AUTH_SESSION_COOKIE)?.value;
   const session = await parseAuthSession(sessionToken);
