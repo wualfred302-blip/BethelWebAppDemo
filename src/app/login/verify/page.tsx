@@ -32,6 +32,7 @@ export default function VerifyPage() {
   const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS);
   const [canResend, setCanResend] = useState(false);
   const [resendMessage, setResendMessage] = useState('');
+  const [attemptsLeft, setAttemptsLeft] = useState<number | null>(null);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -75,6 +76,7 @@ export default function VerifyPage() {
     event.preventDefault();
     setError('');
     setIsSubmitting(true);
+    setAttemptsLeft(null);
 
     try {
       const response = await fetch('/api/auth/verify-code', {
@@ -92,6 +94,9 @@ export default function VerifyPage() {
       }>(response)) ?? {};
 
       if (!response.ok) {
+        if (data.attemptsLeft !== undefined) {
+          setAttemptsLeft(data.attemptsLeft);
+        }
         throw new Error(data.error || `Unable to verify code (${response.status})`);
       }
 
@@ -107,6 +112,7 @@ export default function VerifyPage() {
     if (!canResend || !email) return;
     setResendMessage('');
     setError('');
+    setAttemptsLeft(null);
 
     try {
       const response = await fetch('/api/auth/send-code', {
@@ -126,12 +132,17 @@ export default function VerifyPage() {
         throw new Error(data.error || `Unable to resend code (${response.status})`);
       }
 
+      setCode('');
       setSecondsLeft(RESEND_SECONDS);
       setCanResend(false);
       setResendMessage('New code sent.');
     } catch (resendError) {
       setError(resendError instanceof Error ? resendError.message : 'Unable to resend code');
     }
+  };
+
+  const handleChangeEmail = () => {
+    router.push('/login');
   };
 
   return (
@@ -173,14 +184,24 @@ export default function VerifyPage() {
             <p className="text-[13px] text-on-surface-variant">
               {canResend ? 'You can resend a new code now.' : `Resend code in ${formatTime(secondsLeft)}`}
             </p>
-            <button
-              type="button"
-              onClick={handleResend}
-              disabled={!canResend}
-              className="text-left text-[13px] font-semibold text-primary disabled:cursor-not-allowed disabled:text-slate-400"
-            >
-              Change email
-            </button>
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={!canResend}
+                className="text-left text-[13px] font-semibold text-primary underline underline-offset-2 disabled:cursor-not-allowed disabled:text-slate-400 disabled:no-underline"
+              >
+                Resend code
+              </button>
+              <span className="text-[12px] text-slate-300">·</span>
+              <button
+                type="button"
+                onClick={handleChangeEmail}
+                className="text-left text-[13px] text-on-surface-variant underline underline-offset-2 hover:text-primary"
+              >
+                Change email
+              </button>
+            </div>
           </div>
 
           {resendMessage && (
@@ -190,9 +211,15 @@ export default function VerifyPage() {
           )}
 
           {error && (
-            <p className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
-              {error}
-            </p>
+            <div className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2">
+              <p className="text-sm text-red-600">{error}</p>
+              {attemptsLeft !== null && attemptsLeft > 0 && (
+                <p className="mt-1 text-[12px] text-red-500">{attemptsLeft} attempt{attemptsLeft !== 1 ? 's' : ''} remaining.</p>
+              )}
+              {attemptsLeft !== null && attemptsLeft === 0 && (
+                <p className="mt-1 text-[12px] font-semibold text-red-600">Please request a new code.</p>
+              )}
+            </div>
           )}
 
           <Button
