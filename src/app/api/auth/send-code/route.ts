@@ -16,6 +16,26 @@ const sendCodeSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  if (isProduction && !process.env.BETHEL_AUTH_SECRET?.trim()) {
+    return NextResponse.json(
+      {
+        error: 'Authentication service is not configured. Please contact support.',
+      },
+      { status: 503 },
+    );
+  }
+
+  if (isProduction && !process.env.RESEND_API_KEY?.trim()) {
+    return NextResponse.json(
+      {
+        error: 'Email verification is not configured. Please contact support.',
+      },
+      { status: 503 },
+    );
+  }
+
   let body: unknown;
   try {
     body = await request.json();
@@ -116,7 +136,7 @@ export async function POST(request: Request) {
     maxAge: Math.max(1, Math.floor(OTP_TTL_MS / 1000)),
   });
 
-  if (process.env.NODE_ENV !== 'production' && !resend) {
+  if (!isProduction && !resend) {
     response.headers.set('x-bethel-dev-otp', challenge.code);
   }
 
