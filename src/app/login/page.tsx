@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { type FormEvent, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { normalizePhilippinePhone } from '@/lib/auth/tokens';
 
-function UnderlineField({
+function BottomBorderField({
   id,
   label,
   type,
@@ -27,7 +28,7 @@ function UnderlineField({
 }) {
   return (
     <label className="block">
-      <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#5f6473]">
+      <span className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#747781]">
         {label}
       </span>
       <input
@@ -38,10 +39,21 @@ function UnderlineField({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         required={required}
-        className="mt-2 w-full border-0 border-b border-[#cfd3df] bg-transparent px-0 py-3 text-[14px] leading-5 text-on-surface placeholder:text-[#9fa4b3] focus:border-primary focus:outline-none focus:ring-0"
+        className="w-full border-0 border-b border-outline-variant bg-transparent px-0 py-3 text-[14px] leading-5 text-on-surface placeholder:text-outline focus:border-[#4868a8] focus:outline-none focus:ring-0"
       />
     </label>
   );
+}
+
+async function readJsonSafely(response: Response) {
+  const text = await response.text();
+  if (!text.trim()) return {};
+
+  try {
+    return JSON.parse(text) as { error?: string };
+  } catch {
+    return {};
+  }
 }
 
 export default function LoginPage() {
@@ -70,14 +82,7 @@ export default function LoginPage() {
         }),
       });
 
-      const rawBody = await response.text();
-      const data = rawBody
-        ? (JSON.parse(rawBody) as {
-            error?: string;
-            maskedEmail?: string;
-            phone?: string;
-          })
-        : {};
+      const data = (await readJsonSafely(response)) as { error?: string };
 
       if (!response.ok) {
         throw new Error(data.error || `Unable to send code (${response.status})`);
@@ -94,33 +99,28 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-on-surface">
-      <header className="flex flex-col items-center pt-12">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-primary">
-          STEP 1 OF 2 · SIGN IN
-        </p>
-        <h1 className="mt-2 text-[18px] font-bold tracking-[-0.04em] text-primary">
-          BETHEL
-        </h1>
-      </header>
-
-      <main className="mx-auto flex w-full max-w-[420px] flex-1 items-start px-3 pb-8 pt-20 sm:px-4 sm:pt-24">
-        <form
-          onSubmit={handleSubmit}
-          className="w-full rounded-[16px] border border-[#d8ddec] bg-white px-4 py-4 shadow-[0_4px_20px_rgba(56,72,136,0.05)] sm:px-5 sm:py-5"
-        >
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-brand-gold">
-            Bethel General
+    <div className="min-h-screen bg-background p-4 text-on-surface md:p-6">
+      <div className="mx-auto flex min-h-[calc(100vh-2rem)] w-full max-w-md flex-col justify-between md:min-h-[calc(100vh-3rem)]">
+        <header className="flex flex-col items-center justify-center pt-10 text-center md:pt-14">
+          <Image
+            src="/bethel-shield.png"
+            alt="Bethel Logo"
+            width={80}
+            height={80}
+            className="mb-4 h-20 w-20 object-contain"
+            priority
+          />
+          <h1 className="text-[32px] font-black leading-tight tracking-[-0.02em] text-[#4868a8]">
+            Bethel Account
+          </h1>
+          <p className="mt-2 text-[16px] font-light leading-6 text-on-surface-variant">
+            A simpler way to stay protected.
           </p>
-          <h2 className="text-[23px] font-semibold leading-tight tracking-[-0.03em] text-primary sm:text-[25px]">
-            Sign in to continue
-          </h2>
-          <p className="mt-2 max-w-[24ch] text-[14px] leading-6 text-on-surface-variant">
-            A 6-digit code will be sent to your email. No password required.
-          </p>
+        </header>
 
-          <div className="mt-5 space-y-5">
-            <UnderlineField
+        <main className="w-full pb-6 md:pb-10">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <BottomBorderField
               id="login-email"
               label="Email Address"
               type="email"
@@ -130,7 +130,8 @@ export default function LoginPage() {
               onChange={setEmail}
               required
             />
-            <UnderlineField
+
+            <BottomBorderField
               id="login-phone"
               label="Phone Number"
               type="tel"
@@ -140,41 +141,35 @@ export default function LoginPage() {
               onChange={setPhone}
               required
             />
-          </div>
 
-          {error && (
-            <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
-              {error}
-            </p>
-          )}
-
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="mt-5 h-12 w-full rounded-[10px] bg-primary px-5 text-sm font-semibold text-white shadow-[0_6px_16px_rgba(56,72,136,0.12)] hover:bg-primary-container"
-          >
-            {isSubmitting ? (
-              <span className="inline-flex items-center gap-2">
-                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-                Sending code
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-2">
-                Send code
-                <ArrowRight className="h-4 w-4" />
-              </span>
+            {error && (
+              <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+                {error}
+              </p>
             )}
-          </Button>
 
-          <div className="mt-5 border-t border-[#e5e7eb] pt-4">
-            <p className="mx-auto max-w-[18ch] text-center text-[12px] leading-6 tracking-[0.01em] text-on-surface-variant">
-              This code will be used for verification and
-              <br />
-              secure account access.
-            </p>
-          </div>
-        </form>
-      </main>
+            <div className="pt-2">
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#4868a8] px-5 text-[14px] font-semibold text-white shadow-[0_6px_16px_rgba(56,72,136,0.12)] hover:bg-primary-container"
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/35 border-t-white" />
+                    Sending code
+                  </>
+                ) : (
+                  <>
+                    Get Started
+                    <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </main>
+      </div>
     </div>
   );
 }
