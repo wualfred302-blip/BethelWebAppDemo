@@ -113,7 +113,7 @@ export default function ApplyPage() {
   const { currentStep, nextStep, prevStep, goToStep, scanType, isRenewalFlow } = useApplicationStore();
   const [direction, setDirection] = useState(0);
   const [submitted, setSubmitted] = useState(false);
-  const [showSplash, setShowSplash] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
 
   const STEPS = useMemo(() => getSteps(scanType, isRenewalFlow), [scanType, isRenewalFlow]);
 
