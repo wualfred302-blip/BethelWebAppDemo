@@ -81,8 +81,8 @@ function SummaryPanel({
         {label}
       </span>
       <span
-        className={`mt-1 block break-words ${
-          emphasis ? 'text-[20px] font-semibold text-primary' : 'text-[16px] font-semibold text-on-surface'
+        className={`font-[family-name:var(--font-montserrat)] mt-1 block break-words ${
+          emphasis ? 'text-[20px] font-extrabold text-primary' : 'text-[16px] font-semibold text-on-surface'
         }`}
       >
         {value}
@@ -133,7 +133,7 @@ export default function QuoteReceiptCard({
         <span className="block text-[10px] font-bold uppercase tracking-[0.1em] text-brand-gold mb-1">
           {eyebrow}
         </span>
-        <h2 className="text-[26px] font-semibold leading-tight tracking-tight text-primary">{title}</h2>
+        <h2 className="font-[family-name:var(--font-montserrat)] text-[26px] font-bold leading-tight tracking-tight text-primary">{title}</h2>
         {subtitle && (
           <p className="mt-1 text-sm text-on-surface-variant">{subtitle}</p>
         )}
@@ -208,7 +208,7 @@ export default function QuoteReceiptCard({
               <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-outline">
                 {finalTotalLabel}
               </p>
-              <p className="break-words text-[20px] font-bold tracking-tight text-primary">{finalTotal}</p>
+              <p className="font-[family-name:var(--font-montserrat)] break-words text-[20px] font-extrabold tracking-tight text-primary">{finalTotal}</p>
             </div>
             {displayedTransactionValue && (
               <div className="min-w-0 text-right">

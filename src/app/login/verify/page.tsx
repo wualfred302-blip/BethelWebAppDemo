@@ -135,7 +135,7 @@ export default function VerifyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-on-surface">
+    <div className="min-h-screen bg-surface text-on-surface">
       <header className="flex items-center justify-between px-4 pt-4 sm:px-6 sm:pt-5">
         <button
           type="button"
@@ -156,11 +156,8 @@ export default function VerifyPage() {
       <main className="mx-auto flex w-full max-w-[420px] flex-1 items-start px-3 pb-8 pt-28 sm:px-4 sm:pt-32">
         <form
           onSubmit={handleVerify}
-          className="w-full rounded-[16px] border border-[#d8ddec] bg-white px-4 py-5 shadow-[0_4px_20px_rgba(56,72,136,0.05)] sm:px-5 sm:py-6"
+          className="w-full"
         >
-          <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.24em] text-brand-gold">
-            Bethel General
-          </p>
           <h1 className="text-[23px] font-semibold leading-tight tracking-[-0.04em] text-primary sm:text-[25px]">
             Enter verification code
           </h1>

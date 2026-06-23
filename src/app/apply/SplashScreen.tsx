@@ -1,50 +1,76 @@
 'use client';
 
+import Image from 'next/image';
+import { ArrowRight } from 'lucide-react';
+
 export default function SplashScreen({ onGetStarted }: { onGetStarted: () => void }) {
   return (
-    <div className="flex flex-col min-h-screen bg-white text-[#1a1a2e] overflow-hidden">
-      {/* Top — logo + descriptions grouped together */}
-      <main className="flex flex-col items-center text-center px-6 pt-[28vh]">
-        {/* Bethel shield logo */}
-        <img
-          src="/bethel-shield.png"
-          alt="Bethel General Insurance and Surety Corporation"
-          width={196}
-          height={196}
-        />
+    <div className="flex flex-col items-center justify-center min-h-screen bg-surface text-on-surface overflow-hidden px-6">
+      {/* ── Branding + Form — compact stack ─────────────── */}
+      <div className="w-full max-w-sm text-center">
+        {/* ── Logo Lockup ──────────────────────────────── */}
+        <div className="flex flex-col items-center">
+          {/* Shield — 30% bigger, lifted from title */}
+          <div className="mb-[-14px]">
+            <Image
+              src="/bethel-shield.png"
+              alt="Bethel General Insurance"
+              width={180}
+              height={180}
+              className="object-contain"
+            />
+          </div>
+          {/* BETHEL — clips through shield sides */}
+          <h1 className="-mt-1 text-center font-[family-name:var(--font-montserrat)] text-5xl font-black tracking-[-0.03em] text-primary leading-none">
+            BETHEL
+          </h1>
+        </div>
 
-        {/* Brand name — slightly spaced from logo */}
-        <h1 className="text-[28px] font-bold tracking-[-0.04em] -mt-10 mb-1" style={{ color: '#4868a8' }}>
-          Bethel
-        </h1>
-
-        {/* Corporation name — gold */}
-        <p
-          className="text-[11px] font-medium tracking-[0.1em] uppercase mb-3"
-          style={{ color: '#b89858' }}
-        >
-          General Insurance &amp; Surety Corporation
+        {/* Gold line below */}
+        <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.25em] text-brand-gold">
+          General Insurance
         </p>
 
-        {/* Tagline — navy */}
-        <p
-          className="text-[16px] font-medium leading-relaxed"
-          style={{ color: '#384888' }}
-        >
-          We provide the insurance<br />that works for you.
-        </p>
-      </main>
+        {/* ── Form fields ──────────────────────────────── */}
+        <div className="mt-10 space-y-5 text-left">
+          <div>
+            <label className="block text-[10px] font-bold uppercase tracking-[0.1em] text-outline mb-1">
+              Email Address
+            </label>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="input-underline w-full"
+            />
+          </div>
 
-      {/* Bottom — pinned action */}
-      <footer className="mt-auto px-6 pb-10">
+          <div>
+            <label className="block text-[10px] font-bold uppercase tracking-[0.1em] text-outline mb-1">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              placeholder="Enter your phone number"
+              className="input-underline w-full"
+            />
+          </div>
+        </div>
+
+        {/* ── CTA ──────────────────────────────────────── */}
         <button
+          type="button"
           onClick={onGetStarted}
-          style={{ cursor: 'pointer', WebkitTapHighlightColor: 'transparent' }}
-          className="w-full h-[40px] bg-[#384888] text-white text-[13px] font-medium rounded transition-colors active:bg-[#2d3a6d]"
+          className="mt-8 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3.5 text-sm font-bold uppercase tracking-[0.04em] text-primary-foreground shadow-md transition active:scale-[0.98] hover:shadow-lg"
         >
           Get Started
+          <ArrowRight className="h-4 w-4" />
         </button>
-      </footer>
+
+        {/* ── Trust line ───────────────────────────────── */}
+        <p className="mt-5 text-[10px] text-outline-variant text-center">
+          Your information is encrypted and secure.
+        </p>
+      </div>
     </div>
   );
 }
