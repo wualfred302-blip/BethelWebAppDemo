@@ -5,6 +5,7 @@ import { useApplicationStore } from '@/store/useApplicationStore';
 import { Button } from '@/components/ui/button';
 import { Camera, CheckCircle2, ChevronRight, Loader2, AlertTriangle } from 'lucide-react';
 import { mapMotorOcrToVehicleInfo, type MotorOcrMappingResult } from '@/lib/motor-ocr/mapping';
+import { calculateRenewalOffer } from '@/lib/renewal-offer';
 import type { MotorDocumentOcrResult } from '@/lib/motor-ocr/schema';
 
 type ScanStatus = 'idle' | 'scanning' | 'success' | 'error';
@@ -13,7 +14,7 @@ const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 const SUPPORTED_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']);
 
 export default function MotorScanStep() {
-  const { nextStep, prevStep, setMotorVehicleInfo, setMotorOcrData } = useApplicationStore();
+  const { nextStep, prevStep, setMotorVehicleInfo, setMotorOcrData, setRenewalMapping, setRenewalOffer, setIsRenewalFlow, motorOcrData } = useApplicationStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<ScanStatus>('idle');
   const [error, setError] = useState('');
@@ -64,11 +65,18 @@ export default function MotorScanStep() {
       } = await response.json();
 
       if (result.success && result.data) {
-        const mapped = mapMotorOcrToVehicleInfo(result.data);
-        setMotorOcrData(result.data);
+        const data = result.data;
+        const mapped = mapMotorOcrToVehicleInfo(data);
+        setMotorOcrData(data);
         setMotorVehicleInfo(mapped.values);
         setMapping(mapped);
         setStatus('success');
+
+        if (data.documentType === 'previous_policy') {
+          const offer = calculateRenewalOffer(data, mapped.values);
+          setRenewalMapping(mapped);
+          setRenewalOffer(offer);
+        }
       } else {
         setError(result.details || result.error || 'Failed to extract vehicle data');
         setStatus('error');
@@ -88,6 +96,13 @@ export default function MotorScanStep() {
 
   const handleSkip = () => {
     setMotorOcrData(null);
+    nextStep();
+  };
+
+  const handleReview = () => {
+    if (motorOcrData?.documentType === 'previous_policy') {
+      setIsRenewalFlow(true);
+    }
     nextStep();
   };
 
@@ -230,7 +245,7 @@ export default function MotorScanStep() {
 
           <Button
             type="button"
-            onClick={status === 'success' ? nextStep : handleSkip}
+            onClick={status === 'success' ? handleReview : handleSkip}
             className="min-w-[100px] bg-[#384888] text-primary-foreground font-semibold rounded-sm hover:opacity-90"
           >
             {status === 'success' ? 'Review' : 'Skip'}

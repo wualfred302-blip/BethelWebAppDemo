@@ -1,7 +1,7 @@
 import { motorDocumentOcrSchema, type MotorDocumentOcrResult } from './schema';
 import { generateMotorOcrJsonContent } from './providers/openrouter-gemini';
 
-export const MOTOR_OCR_PROMPT = `Extract normalized Philippine motor car insurance or OR-CR data from this document image.
+export const MOTOR_OCR_PROMPT = `Extract normalized Philippine motor car insurance policy or OR-CR data from this document image.
 
 Return only valid JSON with this exact shape:
 {
@@ -36,7 +36,13 @@ Return only valid JSON with this exact shape:
     "deductibleParticipation": { "value": "", "confidence": 0.0 to 1.0, "sourceLabel": "", "sourceText": "" },
     "previousPolicyNumber": { "value": "", "confidence": 0.0 to 1.0, "sourceLabel": "", "sourceText": "" },
     "previousInsurer": { "value": "", "confidence": 0.0 to 1.0, "sourceLabel": "", "sourceText": "" },
-    "previousPremium": { "value": "", "confidence": 0.0 to 1.0, "sourceLabel": "", "sourceText": "" }
+    "previousPremium": { "value": "", "confidence": 0.0 to 1.0, "sourceLabel": "", "sourceText": "" },
+    "premiumSubtotal": { "value": "", "confidence": 0.0 to 1.0, "sourceLabel": "", "sourceText": "" },
+    "premiumTaxes": { "value": "", "confidence": 0.0 to 1.0, "sourceLabel": "", "sourceText": "" },
+    "premiumTotal": { "value": "", "confidence": 0.0 to 1.0, "sourceLabel": "", "sourceText": "" },
+    "hasActsOfNature": { "value": "", "confidence": 0.0 to 1.0, "sourceLabel": "", "sourceText": "" },
+    "hasAutoPersonalAccident": { "value": "", "confidence": 0.0 to 1.0, "sourceLabel": "", "sourceText": "" },
+    "hasRoadsideAssistance": { "value": "", "confidence": 0.0 to 1.0, "sourceLabel": "", "sourceText": "" }
   },
   "unmappedText": [],
   "warnings": []
@@ -56,10 +62,19 @@ Use these mappings:
 - serial no. / chassis no. -> chassisNumber
 - motor no. / engine no. -> engineNumber
 - fair market value, FMV, sum insured -> estimatedMarketValue
-- AON, AOG, acts of god, acts of nature -> actsOfNature
+- AON, AOG, acts of god, acts of nature -> actsOfNature (value: "Included" or "Not Included")
 - TPPD, third party property damage -> thirdPartyPropertyDamageLimit
-- UPPA, auto personal accident -> autoPersonalAccident
+- UPPA, auto personal accident -> autoPersonalAccident (value: "Included" or "Not Included")
 - deductible, participation -> deductibleParticipation
+- previous policy no., policy no. -> previousPolicyNumber
+- insured by, insurer, company -> previousInsurer
+- total premium, gross premium, premium amount -> previousPremium
+- premium before taxes, net premium, basic premium -> premiumSubtotal
+- taxes, documentary stamp, VAT, LGT -> premiumTaxes
+- total amount due, grand total, total -> premiumTotal
+- acts of nature included -> hasActsOfNature (value: "true" if included, "false" if not)
+- personal accident included -> hasAutoPersonalAccident (value: "true" if included, "false" if not)
+- roadside assistance included -> hasRoadsideAssistance (value: "true" if included, "false" if not)
 
 Only include a field if the value is actually visible or strongly implied by labels on the document. Use YYYY-MM-DD for dates when possible. Use numeric strings without currency symbols for money fields when possible. Put uncertain visible text in unmappedText or warnings instead of inventing values.`;
 
@@ -77,7 +92,27 @@ function extractJsonObject(text: string) {
 
 function safeParseJson(text: string) {
   const candidate = extractJsonObject(text);
-  return JSON.parse(candidate);
+  try {
+    return JSON.parse(candidate);
+  } catch {
+    // Attempt to repair truncated JSON by closing open braces/brackets
+    let repaired = candidate;
+    const openBraces = (repaired.match(/{/g) || []).length;
+    const closeBraces = (repaired.match(/}/g) || []).length;
+    const openBrackets = (repaired.match(/\[/g) || []).length;
+    const closeBrackets = (repaired.match(/]/g) || []).length;
+
+    // Remove trailing incomplete key-value pairs
+    repaired = repaired.replace(/,\s*"[^"]*"\s*:\s*"[^"]*$/, '');
+    repaired = repaired.replace(/,\s*"[^"]*"\s*:\s*\{[^}]*$/, '');
+    repaired = repaired.replace(/,\s*"[^"]*"\s*:\s*\[[^\]]*$/, '');
+
+    // Close missing brackets/braces
+    for (let i = 0; i < openBrackets - closeBrackets; i++) repaired += ']';
+    for (let i = 0; i < openBraces - closeBraces; i++) repaired += '}';
+
+    return JSON.parse(repaired);
+  }
 }
 
 export async function extractMotorDocumentFromImage(input: {

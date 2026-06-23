@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { buildOtpEmailHtml } from '@/lib/email/otp-email';
-import { resend, resendFrom } from '@/lib/email/resend';
+import { brevoApiKey, sendBrevoEmail } from '@/lib/email/resend';
 import {
   OTP_CHALLENGE_COOKIE,
   OTP_TTL_MS,
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     );
   }
 
-  if (isProduction && !process.env.RESEND_API_KEY?.trim()) {
+  if (isProduction && !process.env.BREVO_API_KEY?.trim()) {
     return NextResponse.json(
       {
         error: 'Email verification is not configured. Please contact support.',
@@ -92,26 +92,17 @@ export async function POST(request: Request) {
     expiresMinutes: Math.max(1, Math.round(OTP_TTL_MS / 60000)),
   });
 
-  if (resend) {
-    try {
-      const { error } = await resend.emails.send({
-        from: resendFrom,
-        to: email,
-        subject: 'Your Bethel verification code',
-        html: emailHtml,
-      });
+  if (brevoApiKey) {
+    const { error } = await sendBrevoEmail({
+      to: email,
+      subject: 'Your Bethel verification code',
+      html: emailHtml,
+    });
 
-      if (error) {
-        console.error('[auth] resend returned an error', error);
-        return NextResponse.json(
-          { error: error.message ?? 'Unable to send verification code' },
-          { status: 502 },
-        );
-      }
-    } catch (sendError) {
-      console.error('[auth] resend threw while sending verification code', sendError);
+    if (error) {
+      console.error('[auth] brevo returned an error', error);
       return NextResponse.json(
-        { error: 'Unable to send verification code. Please try again.' },
+        { error: error ?? 'Unable to send verification code' },
         { status: 502 },
       );
     }
@@ -136,7 +127,7 @@ export async function POST(request: Request) {
     maxAge: Math.max(1, Math.floor(OTP_TTL_MS / 1000)),
   });
 
-  if (!isProduction && !resend) {
+  if (!isProduction && !brevoApiKey) {
     response.headers.set('x-bethel-dev-otp', challenge.code);
   }
 

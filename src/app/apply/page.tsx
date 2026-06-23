@@ -15,6 +15,8 @@ import ScanStep from './steps/ScanStep';
 import PolicyScanStep from './steps/PolicyScanStep';
 import MotorScanStep from './steps/MotorScanStep';
 import MotorVehicleDetailsStep from './steps/MotorVehicleDetailsStep';
+import RenewalOcrReviewStep from './steps/RenewalOcrReviewStep';
+import MatchedOfferStep from './steps/MatchedOfferStep';
 
 // ── Step definitions (dynamic per scan type) ────────────────
 
@@ -24,11 +26,21 @@ interface StepDef {
   component: React.ComponentType;
 }
 
-function getSteps(scanType: ScanType): StepDef[] {
+function getSteps(scanType: ScanType, isRenewal: boolean): StepDef[] {
+  if (isRenewal) {
+    return [
+      { label: 'Select', name: 'Choose Product', component: ScanSelectionStep },
+      { label: 'OCR', name: 'Renewal Match', component: RenewalOcrReviewStep },
+      { label: 'Offer', name: 'Renewal Offer', component: MatchedOfferStep },
+      { label: 'Cover Note', name: 'Cover Note', component: CoverNoteStep },
+      { label: 'Payment', name: 'Payment', component: PaymentStep },
+    ];
+  }
+
   const scanComponent =
     scanType === 'vehicle' ? MotorScanStep
     : scanType === 'policy' ? PolicyScanStep
-    : ScanStep; // 'permit' or 'manual' both use ScanStep
+    : ScanStep;
 
   const detailsComponent =
     scanType === 'vehicle' ? MotorVehicleDetailsStep
@@ -98,12 +110,12 @@ function SegmentedProgressBar({
 // ── Page component ────────────────────────────────────────
 
 export default function ApplyPage() {
-  const { currentStep, nextStep, prevStep, goToStep, scanType } = useApplicationStore();
+  const { currentStep, nextStep, prevStep, goToStep, scanType, isRenewalFlow } = useApplicationStore();
   const [direction, setDirection] = useState(0);
   const [submitted, setSubmitted] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(false);
 
-  const STEPS = useMemo(() => getSteps(scanType), [scanType]);
+  const STEPS = useMemo(() => getSteps(scanType, isRenewalFlow), [scanType, isRenewalFlow]);
 
   const handleGetStarted = useCallback(() => {
     setShowSplash(false);

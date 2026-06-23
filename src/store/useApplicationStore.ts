@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import type { BusinessPermitOcrData } from '@/lib/ocr-schema';
 import type { PolicyOcrData } from '@/lib/policy-ocr-schema';
 import type { MotorDocumentOcrResult } from '@/lib/motor-ocr/schema';
+import type { MotorOcrMappingResult } from '@/lib/motor-ocr/mapping';
+import type { RenewalOffer } from '@/lib/renewal-offer';
 
 export const TOTAL_STEPS = 5;
 
@@ -103,6 +105,11 @@ interface WizardState {
   motorOcrData: MotorDocumentOcrResult | null;
   scanType: ScanType;
 
+  // Renewal flow
+  isRenewalFlow: boolean;
+  renewalMapping: MotorOcrMappingResult | null;
+  renewalOffer: RenewalOffer | null;
+
   // Navigation
   nextStep: () => void;
   prevStep: () => void;
@@ -121,6 +128,11 @@ interface WizardState {
   setPolicyData: (data: PolicyOcrData | null) => void;
   setMotorOcrData: (data: MotorDocumentOcrResult | null) => void;
   setScanType: (type: ScanType) => void;
+
+  // Renewal setters
+  setIsRenewalFlow: (value: boolean) => void;
+  setRenewalMapping: (mapping: MotorOcrMappingResult | null) => void;
+  setRenewalOffer: (offer: RenewalOffer | null) => void;
 
   // Reset
   reset: () => void;
@@ -219,6 +231,9 @@ export const useApplicationStore = create<WizardState>()((set) => ({
   policyData: null,
   motorOcrData: null,
   scanType: null,
+  isRenewalFlow: false,
+  renewalMapping: null,
+  renewalOffer: null,
 
   // Navigation
   nextStep: () =>
@@ -277,6 +292,10 @@ export const useApplicationStore = create<WizardState>()((set) => ({
       coverNote: { ...state.coverNote, ...data },
     })),
 
+  setRenewalMapping: (mapping) => set({ renewalMapping: mapping }),
+  setRenewalOffer: (offer) => set({ renewalOffer: offer }),
+  setIsRenewalFlow: (value) => set({ isRenewalFlow: value }),
+
   setScanData: (data) =>
     set({
       scanData: data,
@@ -312,6 +331,9 @@ export const useApplicationStore = create<WizardState>()((set) => ({
       policyData: null,
       motorOcrData: null,
       scanType: null,
+      isRenewalFlow: false,
+      renewalMapping: null,
+      renewalOffer: null,
     }),
 }));
 

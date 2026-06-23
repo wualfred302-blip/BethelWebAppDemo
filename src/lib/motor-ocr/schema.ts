@@ -44,6 +44,12 @@ export const motorOcrFieldsSchema = z.object({
   previousPolicyNumber: extractedMotorFieldSchema.optional(),
   previousInsurer: extractedMotorFieldSchema.optional(),
   previousPremium: extractedMotorFieldSchema.optional(),
+  hasActsOfNature: extractedMotorFieldSchema.optional(),
+  hasAutoPersonalAccident: extractedMotorFieldSchema.optional(),
+  hasRoadsideAssistance: extractedMotorFieldSchema.optional(),
+  premiumSubtotal: extractedMotorFieldSchema.optional(),
+  premiumTaxes: extractedMotorFieldSchema.optional(),
+  premiumTotal: extractedMotorFieldSchema.optional(),
 });
 
 export const motorDocumentOcrSchema = z.object({
